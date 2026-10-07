@@ -1,0 +1,11 @@
+@page
+@model DuyTien.AssetManagement.Server.Pages.Admin.AuthorizationModel
+@{
+    ViewData["Title"] = "Ma trận quyền";
+}
+<h1 class="h3">Ma trận quyền hệ thống</h1>
+<p>Năm role là cố định. Không cấp permission trực tiếp cho user.</p>
+@foreach (var role in Model.Roles)
+{
+    <section class="mb-4"><h2 class="h5">@role</h2><p>@string.Join(", ", Model.Permissions[role])</p></section>
+}

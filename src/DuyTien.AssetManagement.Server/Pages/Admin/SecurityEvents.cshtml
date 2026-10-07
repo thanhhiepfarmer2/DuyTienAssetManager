@@ -1,0 +1,14 @@
+@page
+@model DuyTien.AssetManagement.Server.Pages.Admin.SecurityEventsModel
+@{
+    ViewData["Title"] = "Sự kiện bảo mật";
+}
+<h1 class="h3">Sự kiện bảo mật</h1>
+@if (Model.Events.Count == 0) { <p>Chưa có sự kiện.</p> }
+else
+{
+    <div class="table-responsive"><table class="table table-sm">
+        <thead><tr><th>Thời gian UTC</th><th>Hành động</th><th>Kết quả</th><th>Actor</th><th>Target</th><th>Mã lỗi</th></tr></thead>
+        <tbody>@foreach (var item in Model.Events) { <tr><td>@item.Timestamp.ToString("u")</td><td>@item.Action</td><td>@item.Outcome</td><td>@item.ActorUserId</td><td>@item.TargetUserId</td><td>@item.FailureCode</td></tr> }</tbody>
+    </table></div>
+}

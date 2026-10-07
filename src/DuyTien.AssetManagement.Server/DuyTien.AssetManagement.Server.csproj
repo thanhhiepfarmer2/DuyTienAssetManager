@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\DuyTien.AssetManagement.Application\DuyTien.AssetManagement.Application.csproj" />
+    <ProjectReference Include="..\DuyTien.AssetManagement.Infrastructure.Google\DuyTien.AssetManagement.Infrastructure.Google.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>7fd8ca1d-c49a-4cad-9151-9d80f0cc12bc</UserSecretsId>
+  </PropertyGroup>
+
+</Project>

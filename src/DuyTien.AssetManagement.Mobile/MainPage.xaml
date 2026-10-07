@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DuyTien.AssetManagement.Mobile.MainPage"
+             Title="Mã số hóa tài sản">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="16">
+            <Label
+                Text="Mã số hóa tài sản Duy Tiến"
+                Style="{StaticResource Headline}"
+                SemanticProperties.HeadingLevel="Level1" />
+            <Label
+                Text="Khung ứng dụng Android/iOS đã sẵn sàng. Chức năng đăng nhập và quản lý tài sản sẽ được bổ sung ở các Task tiếp theo."
+                Style="{StaticResource Body}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

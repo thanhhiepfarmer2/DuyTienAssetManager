@@ -1,0 +1,21 @@
+# Danh sách Task
+
+| ID | Tên | Trạng thái | Phụ thuộc |
+|---|---|---|---|
+| TASK-001 | [Kiểm tra repo và tích hợp workflow](TASK-001-bootstrap.md) | DONE | — |
+| TASK-002 | [Xác lập yêu cầu và hợp nhất tài liệu](TASK-002.md) | DONE | Không phụ thuộc code |
+| TASK-003 | [Chốt kiến trúc và setup môi trường dev](TASK-003.md) | IN_REVIEW | TASK-002; Google evidenced, host/device gates còn mở |
+| TASK-004 | [PoC Sheets/Drive, writer và idempotency](TASK-004.md) | DONE | Live Google và manual tab/TXT/control-file có user-provided evidence; TASK-003 vẫn IN_REVIEW |
+| TASK-005 | [Đăng nhập, admin và phân quyền server/web](TASK-005.md) | IN_REVIEW | Local format/build/57 tests pass; live system spreadsheet + UI/UAT là gate |
+| TASK-006 | [Import cây và xem/tìm danh mục](TASK-006.md) | TODO | TASK-005; mapping và state nháp |
+| TASK-007 | [CRUD tài sản trên web](TASK-007.md) | TODO | TASK-006; required fields từng loại và rule code demo |
+| TASK-008 | [Sửa/chuyển/ngừng cây và di chuyển đối tượng](TASK-008.md) | TODO | TASK-007 |
+| TASK-009 | [Drive ảnh và biểu mẫu DOCX/PDF](TASK-009.md) | TODO | TASK-007; file mẫu và Drive target |
+| TASK-010 | [Import Items và snapshot số lượng](TASK-010.md) | TODO | TASK-006; nguồn stock snapshot và ngưỡng |
+| TASK-011 | [Báo cáo tài sản và tồn hết/sắp hết](TASK-011.md) | TODO | TASK-007, TASK-010 |
+| TASK-012 | [App Android: nhập liệu và chụp ảnh](TASK-012.md) | TODO | TASK-005, TASK-007, TASK-009; Android device/API endpoint |
+| TASK-013 | [App iOS: nhập liệu và chụp ảnh](TASK-013.md) | TODO | TASK-012; Mac/Xcode/signing/device |
+| TASK-014 | [Nghiệm thu, backup/restore và hướng dẫn](TASK-014.md) | TODO | TASK-008, TASK-009, TASK-011, TASK-012, TASK-013 |
+
+TASK-003 mới tạo scaffold và chốt kiến trúc; không có nghĩa TASK-004–TASK-014 đã
+được triển khai. AI cập nhật trạng thái bảng cùng trạng thái trong từng Task.

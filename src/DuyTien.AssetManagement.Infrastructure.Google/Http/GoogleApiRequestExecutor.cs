@@ -1,0 +1,142 @@
+using System.Net;
+using System.Net.Http.Headers;
+using DuyTien.AssetManagement.Application.ExternalStorage;
+using DuyTien.AssetManagement.Infrastructure.Google.Configuration;
+using DuyTien.AssetManagement.Infrastructure.Google.OAuth;
+
+namespace DuyTien.AssetManagement.Infrastructure.Google.Http;
+
+public sealed class GoogleApiRequestExecutor(
+    GoogleWorkspaceOptions options,
+    IGoogleAccessTokenProvider tokenProvider,
+    HttpClient httpClient,
+    Func<TimeSpan, CancellationToken, Task>? delayAsync = null)
+{
+    private readonly Func<TimeSpan, CancellationToken, Task> delayAsync =
+        delayAsync ?? Task.Delay;
+
+    public async Task<HttpResponseMessage> SendAsync(
+        Func<HttpRequestMessage> requestFactory,
+        GoogleRequestSemantics semantics,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(requestFactory);
+        var maxAttempts = Math.Max(1, options.MaxRetryAttempts);
+        var refreshedAfterUnauthorized = false;
+
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
+        {
+            using var request = requestFactory();
+            request.Headers.Authorization = new AuthenticationHeaderValue(
+                "Bearer",
+                await tokenProvider.GetAccessTokenAsync(cancellationToken).ConfigureAwait(false));
+            request.Headers.UserAgent.ParseAdd("DuyTien-AssetManagement/1.0");
+
+            HttpResponseMessage response;
+            try
+            {
+                response = await httpClient.SendAsync(
+                    request,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException exception) when (!cancellationToken.IsCancellationRequested)
+            {
+                if (semantics != GoogleRequestSemantics.NonIdempotentWrite && attempt < maxAttempts)
+                {
+                    await delayAsync(GetRetryDelay(response: null, attempt), cancellationToken)
+                        .ConfigureAwait(false);
+                    continue;
+                }
+
+                throw new ExternalStorageTransientException(
+                    "The Google API request timed out.",
+                    commitOutcomeUnknown: semantics == GoogleRequestSemantics.NonIdempotentWrite,
+                    exception);
+            }
+            catch (HttpRequestException exception)
+            {
+                if (semantics != GoogleRequestSemantics.NonIdempotentWrite && attempt < maxAttempts)
+                {
+                    await delayAsync(GetRetryDelay(response: null, attempt), cancellationToken)
+                        .ConfigureAwait(false);
+                    continue;
+                }
+
+                throw new ExternalStorageTransientException(
+                    "The Google API request failed at the network layer.",
+                    commitOutcomeUnknown: semantics == GoogleRequestSemantics.NonIdempotentWrite,
+                    exception);
+            }
+
+            if (response.IsSuccessStatusCode)
+            {
+                return response;
+            }
+
+            if (response.StatusCode == HttpStatusCode.Unauthorized && !refreshedAfterUnauthorized)
+            {
+                response.Dispose();
+                tokenProvider.Invalidate();
+                refreshedAfterUnauthorized = true;
+                attempt--;
+                continue;
+            }
+
+            var transient = response.StatusCode == HttpStatusCode.TooManyRequests ||
+                response.StatusCode == HttpStatusCode.RequestTimeout ||
+                (int)response.StatusCode >= 500;
+            var canRetry = transient &&
+                (semantics != GoogleRequestSemantics.NonIdempotentWrite ||
+                 response.StatusCode == HttpStatusCode.TooManyRequests);
+
+            if (canRetry && attempt < maxAttempts)
+            {
+                var delay = GetRetryDelay(response, attempt);
+                response.Dispose();
+                await delayAsync(delay, cancellationToken).ConfigureAwait(false);
+                continue;
+            }
+
+            var statusCode = response.StatusCode;
+            response.Dispose();
+            if (statusCode == HttpStatusCode.Unauthorized)
+            {
+                throw new ExternalStorageAuthenticationException(
+                    "Google rejected the OAuth access token.");
+            }
+
+            if (statusCode is HttpStatusCode.Forbidden or HttpStatusCode.NotFound)
+            {
+                throw new ExternalStorageAccessDeniedException(
+                    $"Google did not grant this app access to the requested resource (HTTP {(int)statusCode}).",
+                    (int)statusCode);
+            }
+
+            if (transient)
+            {
+                var outcomeUnknown = semantics == GoogleRequestSemantics.NonIdempotentWrite &&
+                    statusCode != HttpStatusCode.TooManyRequests;
+                throw new ExternalStorageTransientException(
+                    $"Google API returned transient HTTP {(int)statusCode} after {attempt} attempt(s).",
+                    outcomeUnknown);
+            }
+
+            throw new ExternalStorageException(
+                $"Google API returned HTTP {(int)statusCode}; no response body was logged.");
+        }
+
+        throw new InvalidOperationException("Retry loop ended unexpectedly.");
+    }
+
+    private TimeSpan GetRetryDelay(HttpResponseMessage? response, int attempt)
+    {
+        if (response?.Headers.RetryAfter?.Delta is { } retryAfter && retryAfter > TimeSpan.Zero)
+        {
+            return retryAfter;
+        }
+
+        var baseMilliseconds = Math.Max(1, options.InitialRetryDelayMilliseconds);
+        return TimeSpan.FromMilliseconds(baseMilliseconds * Math.Pow(2, attempt - 1));
+    }
+}

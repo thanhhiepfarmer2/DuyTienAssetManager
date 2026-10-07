@@ -1,0 +1,129 @@
+﻿{
+    "kit_version":  "1.0.0",
+    "created_utc":  "2026-10-05T09:16:12.8941855Z",
+    "project_path":  "D:\\Dev\\QuanLyTaiSan_DuyTien",
+    "installation_id":  "393ab217437c446d936d28cbd9303442",
+    "note":  "No existing files were overwritten. PROPOSED files need integration by local Codex. App build/test not run.",
+    "files":  [
+                  {
+                      "relative_path":  "AGENTS.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\AGENTS.md",
+                      "sha256":  "864D8D86D73283868E07853DC5420A66ECA85F5A2D6973FC077475C5799474BF"
+                  },
+                  {
+                      "relative_path":  "docs\\01-requirements\\PRODUCT-BRIEF.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\01-requirements\\PRODUCT-BRIEF.md",
+                      "sha256":  "A1A7A5C2FF9BDF6472F89B5A1FA274C6539F075606E88FF7DAE7778FE838AE3C"
+                  },
+                  {
+                      "relative_path":  "docs\\02-architecture\\README.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\02-architecture\\README.md",
+                      "sha256":  "3E17C6D81713B8FED2172D4B885687E4C5D2FAA5296CFDCEDCDBFBB9574D675E"
+                  },
+                  {
+                      "relative_path":  "docs\\03-database\\README.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\03-database\\README.md",
+                      "sha256":  "5DAA833C4182EA36BC40804F0D5FD07AC7CB8C7C4172BFE7568C32B39542CAB4"
+                  },
+                  {
+                      "relative_path":  "docs\\04-api\\README.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\04-api\\README.md",
+                      "sha256":  "0FB00B2BC7634F2A9B626A4BEFDFC870F7DD9CA33AEC9DA8E344A2374A570F04"
+                  },
+                  {
+                      "relative_path":  "docs\\05-ui-ux\\README.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\05-ui-ux\\README.md",
+                      "sha256":  "C01A35C425F46E42B36FA70F1C588F39FC9B5AEB4FBA4ACAB0A389F554EB969C"
+                  },
+                  {
+                      "relative_path":  "docs\\06-tasks\\INDEX.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\06-tasks\\INDEX.md",
+                      "sha256":  "457BAA95CE20C57409DA51CF8BD3186CA95336039F49A7A384189E43ECE6C060"
+                  },
+                  {
+                      "relative_path":  "docs\\06-tasks\\TASK-001-bootstrap.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\06-tasks\\TASK-001-bootstrap.md",
+                      "sha256":  "0F044769490B8B644AC5A2BBA4E5298B13AA9478AF7546ABDC2D9F6A13046D4A"
+                  },
+                  {
+                      "relative_path":  "docs\\07-testing\\README.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\07-testing\\README.md",
+                      "sha256":  "646D860E50286D94A0BBE5424776529403ABB4F273997B74F7CFC564DDE3BE1C"
+                  },
+                  {
+                      "relative_path":  "docs\\COMMANDS.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\COMMANDS.md",
+                      "sha256":  "03B6DC6DB25415C43680C3377D2F5734F22E6991DB414AA0D024E8000E6656A8"
+                  },
+                  {
+                      "relative_path":  "docs\\PLUGIN-ROUTING.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\PLUGIN-ROUTING.md",
+                      "sha256":  "C98A564477341B738A0C2EEF7485429A1591BCCA72A3685979B620AE4F0BF0F9"
+                  },
+                  {
+                      "relative_path":  "docs\\PROJECT-CONTEXT.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\PROJECT-CONTEXT.md",
+                      "sha256":  "4936ADCC3649AFA51C241AEFC31065328E7B2AC24F8267F3C0A7BADA8561429B"
+                  },
+                  {
+                      "relative_path":  "docs\\PROMPTS.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\PROMPTS.md",
+                      "sha256":  "B66C74DEE2AAA53E64951BB43F87FD973351E1345E1C31D9E622BEE81916A11E"
+                  },
+                  {
+                      "relative_path":  "docs\\templates\\ADR.template.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\templates\\ADR.template.md",
+                      "sha256":  "30B8166F6CDFB41DB36CC474998C20B293DBB77ECA45B50FDFB40942D1F7536D"
+                  },
+                  {
+                      "relative_path":  "docs\\templates\\PLAN.template.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\templates\\PLAN.template.md",
+                      "sha256":  "BD398AB9845740815F08C6990CABDFFFEFC418056412E2B77F97273F1781685B"
+                  },
+                  {
+                      "relative_path":  "docs\\templates\\REQUIREMENT.template.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\templates\\REQUIREMENT.template.md",
+                      "sha256":  "F855152775F35FF3A4EEF7DD34A58F1A7869860FD63E3617E696ADF19FD2E7BB"
+                  },
+                  {
+                      "relative_path":  "docs\\templates\\TASK.template.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\templates\\TASK.template.md",
+                      "sha256":  "1F229FE4B89910A225142EA1C4B0F9C3F8C85C0C8DDB40FF99D669DDA9C5C268"
+                  },
+                  {
+                      "relative_path":  "docs\\templates\\TEST-REPORT.template.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\templates\\TEST-REPORT.template.md",
+                      "sha256":  "3B7213EF3D46F24FF76B4014642C7D59DED0E1394CD3875AE91DEFBFB37AC226"
+                  },
+                  {
+                      "relative_path":  "docs\\WORKFLOW.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\docs\\WORKFLOW.md",
+                      "sha256":  "D8B11D1354C989A2D8584C8656379AE7BFCA02A19DEB10FF8C1640B278208808"
+                  },
+                  {
+                      "relative_path":  "README.md",
+                      "action":  "CREATE",
+                      "destination":  "D:\\Dev\\QuanLyTaiSan_DuyTien\\README.md",
+                      "sha256":  "4D2426DCA34EFDF98CFC3632DE7726DD58D404F6FBE8F0B8F3E53B1A0B264F95"
+                  }
+              ]
+}

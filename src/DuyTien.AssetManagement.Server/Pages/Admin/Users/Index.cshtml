@@ -1,0 +1,62 @@
+@page
+@model DuyTien.AssetManagement.Server.Pages.Admin.Users.IndexModel
+@{
+    ViewData["Title"] = "Quản trị tài khoản";
+}
+
+<h1 class="h3">Quản trị tài khoản</h1>
+
+@if (!string.IsNullOrEmpty(Model.TemporaryPassword))
+{
+    <div class="alert alert-warning" role="status">
+        <strong>Mật khẩu tạm (chỉ hiển thị trong phản hồi này):</strong>
+        <code>@Model.TemporaryPassword</code>
+    </div>
+}
+
+<section class="card card-body mb-4" aria-labelledby="create-user-heading">
+    <h2 id="create-user-heading" class="h5">Tạo tài khoản</h2>
+    <form method="post" asp-page-handler="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label asp-for="Input.Username" class="form-label"></label>
+                <input asp-for="Input.Username" class="form-control" autocomplete="off" />
+            </div>
+            <div class="col-md-5">
+                <label asp-for="Input.DisplayName" class="form-label"></label>
+                <input asp-for="Input.DisplayName" class="form-control" />
+            </div>
+            <div class="col-md-3 align-self-end">
+                <button type="submit" class="btn btn-primary">Tạo tài khoản</button>
+            </div>
+        </div>
+    </form>
+</section>
+
+@if (Model.Users.Count == 0)
+{
+    <p>Chưa có tài khoản.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead><tr><th>Username</th><th>Tên hiển thị</th><th>Trạng thái</th><th>Đổi mật khẩu</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var user in Model.Users)
+            {
+                <tr>
+                    <td>@user.Username</td>
+                    <td>@user.DisplayName</td>
+                    <td>@user.State</td>
+                    <td>@(user.MustChangePassword ? "Bắt buộc" : "Không")</td>
+                    <td><a asp-page="./Detail" asp-route-id="@user.UserId">Quản lý</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
