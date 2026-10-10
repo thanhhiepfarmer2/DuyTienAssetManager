@@ -1,5 +1,11 @@
 # PLAN-001 — Demo quản lý tài sản dựa trên Google Sheets/Drive
 
+## Ngoại lệ đã được người dùng cho phép — 2026-10-10
+
+Người dùng dừng nghiệm thu TASK-005 và cho phép triển khai local TASK-006 dù TASK-005 chưa DONE (2026-10-10).
+TASK-005 giữ `IN_REVIEW`: G2a/G2b PASS_MANUAL; G2c và browser còn mở DEFERRED_BY_USER; idle 30 phút thực PASS; W13 8h/24h/7d STOPPED_BY_USER. PID 18964 đã dừng đúng runner, credential UAT được AI xác minh không còn; giữ tài khoản/audit/bằng chứng lịch sử. Không chờ 17/10, không tiếp tục giao UAT hoặc yêu cầu secret. TASK-003 IN_REVIEW, TASK-004 DONE.
+
+
 - Requirement: [REQ-001](../01-requirements/REQ-001-asset-digitization.md)
 - Status: READY
 - Workflow chính / skill thực tế: `conductor:context-driven-development` cho Context → Spec/Plan và đồng bộ nguồn chuẩn; thực thi từng Task theo skill kỹ thuật phù hợp sau này.
@@ -16,8 +22,8 @@
 | 1 | [TASK-002](../06-tasks/TASK-002.md) | DONE | Requirement/Plan/Task authoritative và câu hỏi cho bước setup | Không phụ thuộc code |
 | 2 | [TASK-003](../06-tasks/TASK-003.md) | IN_REVIEW | ADR accepted, scaffold/framework và môi trường local; checkpoint external gates | Google/host/device |
 | 3 | [TASK-004](../06-tasks/TASK-004.md) | DONE | Local 31 tests pass; live Google và manual resource/control-file có user-provided evidence | TASK-003 vẫn IN_REVIEW nhưng không chặn checkpoint TASK-004 |
-| 4 | [TASK-005](../06-tasks/TASK-005.md) | IN_REVIEW | [Auth design](AUTH-DESIGN-PROPOSED.md), backend/API + Razor login/admin/roles/scope | Local format/build/57 tests pass; live Google + UI/UAT là gate |
-| 5 | [TASK-006](../06-tasks/TASK-006.md) | TODO | Import/xem/tìm cây 665 nút nháp và TXT | TASK-005 |
+| 4 | [TASK-005](../06-tasks/TASK-005.md) | IN_REVIEW | [Auth design](AUTH-DESIGN-PROPOSED.md), backend/API + Razor login/admin/roles/scope | Local 78/78 và 14 boundary riêng; Google/HTTP 173/173; idle30ph thực PASS; nghiệm thu còn lại DEFERRED_BY_USER/W13 STOPPED_BY_USER |
+| 5 | [TASK-006](../06-tasks/TASK-006.md) | IN_REVIEW | Local preview/import/tree/detail/search/TXT + Google adapter/API/Razor; build sạch, 46 tests + 12 hồi quy pass | Ngoại lệ bắt đầu khi TASK-005 IN_REVIEW; workbook gốc/Google live/browser còn NOT_RUN |
 | 6 | [TASK-007](../06-tasks/TASK-007.md) | TODO | Lát web + API CRUD tài sản có test | TASK-006; fields + rule mã demo |
 | 7 | [TASK-008](../06-tasks/TASK-008.md) | TODO | Move/delete cây và đối tượng an toàn | TASK-007 |
 | 8 | [TASK-009](../06-tasks/TASK-009.md) | TODO | Ảnh và DOCX/PDF trên Drive | TASK-007; Drive/file mẫu |
@@ -49,7 +55,8 @@ còn mở.
 - Auth scope: dùng cùng authorization service cho API/file/report/list/detail và có test trực tiếp.
 - Auth design TASK-005 đã `ACCEPTED`: scope gắn từng role assignment để nhiều
   role không khuếch đại quyền; system spreadsheet riêng và bootstrap bằng command.
-  Lượt local không tự tạo/chọn/ghi resource Google.
+  Lượt local 2026-10-07 không tạo/chọn/ghi resource Google; lượt 2026-10-09
+  đã provisioning/init DEV riêng, chưa bootstrap hoặc đạt toàn bộ UI/live gate.
 
 ## Kiểm thử và nghiệm thu
 [Kế hoạch nghiệm thu](../07-testing/ACCEPTANCE-PLAN.md) ánh xạ các case mức sản

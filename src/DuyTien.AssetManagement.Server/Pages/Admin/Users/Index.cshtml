@@ -22,10 +22,12 @@
             <div class="col-md-4">
                 <label asp-for="Input.Username" class="form-label"></label>
                 <input asp-for="Input.Username" class="form-control" autocomplete="off" />
+                <span asp-validation-for="Input.Username" class="text-danger"></span>
             </div>
             <div class="col-md-5">
                 <label asp-for="Input.DisplayName" class="form-label"></label>
                 <input asp-for="Input.DisplayName" class="form-control" />
+                <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
             </div>
             <div class="col-md-3 align-self-end">
                 <button type="submit" class="btn btn-primary">Tạo tài khoản</button>

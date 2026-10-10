@@ -47,10 +47,10 @@ public sealed class IndexModel(AuthApplicationService authService) : PageModel
 
     public sealed class CreateInput
     {
-        [Required, Display(Name = "Tên đăng nhập")]
+        [Required(ErrorMessage = "Vui lòng nhập tên đăng nhập."), Display(Name = "Tên đăng nhập")]
         public string Username { get; set; } = string.Empty;
 
-        [Required, Display(Name = "Tên hiển thị")]
+        [Required(ErrorMessage = "Vui lòng nhập tên hiển thị."), Display(Name = "Tên hiển thị")]
         public string DisplayName { get; set; } = string.Empty;
     }
 }

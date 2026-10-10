@@ -50,6 +50,10 @@ public sealed record AuthScopeGrant(
     public const string All = "ALL";
 }
 
+public sealed record AuthRoleAssignmentWithScopes(
+    AuthRoleAssignment Assignment,
+    IReadOnlyList<AuthScopeGrant> Scopes);
+
 public sealed record AuthSession(
     string SessionId,
     string UserId,

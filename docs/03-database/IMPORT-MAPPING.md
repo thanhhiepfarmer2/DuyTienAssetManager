@@ -32,3 +32,11 @@ Không có số tồn trong nguồn này; StockBalances lấy nguồn riêng ho�
 5. Chỉ publish version cây sau validation tổng thể; không để người dùng nhìn cây nửa cũ nửa mới.
 6. Reconcile/tiếp tục job sau restart/429/timeout; không tính thành công toàn job chỉ từ request cuối.
 Excel formulas không chạy để cấp mã. Kết quả text/export phòng formula injection; string bắt đầu =,+,-,@ cần xử lý khi xuất CSV/XLSX phù hợp.
+
+## Mapping local TASK-006 — 2026-10-10
+
+CATEGORY_F1_F3_V1: cấu trúc header A=STT/B=Danh mục/C=Mã; metadata header STT và Định nghĩa/Mô tả/Ghi chú/Definition, join exact STT đúng level, bỏ header lặp (F1)/(F2)/(F3). Header khác không được tự đoán; thiếu sheet metadata có warning. JSON staging nhận `definition` và `category_id` tùy chọn; status do server luôn DRAFT, draft_full_code từ client không dùng làm ID/path authoritative.
+
+SourceKey namespace mapping + SegmentCode duy nhất là **source mapping đã lưu**, không CategoryId; thay STT/tên không đổi ID. Đổi code cần explicit CategoryId đã biết (JSON), không match theo tên/STT. Code trùng hoặc remap key đã gắn ID khác bị chặn; lịch sử version giữ mã/path cũ. Full snapshot thay cây hiệu lực và preview các nhánh thiếu là REMOVE_FROM_VERSION, không xóa lịch sử. Tất cả nút cũ/mới phải trong scope IMPORT; move kiểm nguồn/đích cùng assignment. Import đầu cây mới cần Category ALL. Không hỗ trợ merge một file thiếu cha vào nhánh ngoài file, không tạo endpoint sửa/chuyển cây TASK-008.
+
+Đối với subset bounded của TASK-006, bước chunk tổng quát trong plan gốc được thay bằng một atomic batch cả snapshot+journal+pointer; timeout reconcile hoặc explicit retry cùng key/file, không PARTIAL. Giới hạn được ghi ở SHEETS-SCHEMA/Test Report, vượt giới hạn dừng không cắt dữ liệu. XLSX gốc chưa có trong repo; staging khớp baseline nhưng definition gốc chưa đối chiếu.

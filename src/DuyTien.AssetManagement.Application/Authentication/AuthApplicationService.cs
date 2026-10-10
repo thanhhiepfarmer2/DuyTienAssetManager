@@ -670,6 +670,23 @@ public sealed partial class AuthApplicationService(
                 .ToArray(),
             cancellationToken);
 
+    public Task<IReadOnlyList<AuthRoleAssignmentWithScopes>> ListRoleAssignmentsWithScopesAsync(
+        string userId,
+        CancellationToken cancellationToken = default) =>
+        store.ReadAsync<IReadOnlyList<AuthRoleAssignmentWithScopes>>(
+            state => state.RoleAssignments
+                .Where(item => item.UserId == userId)
+                .OrderBy(item => item.RoleCode, StringComparer.Ordinal)
+                .Select(assignment => new AuthRoleAssignmentWithScopes(
+                    assignment,
+                    state.RoleAssignmentScopes
+                        .Where(scope => scope.AssignmentId == assignment.AssignmentId)
+                        .OrderBy(scope => scope.ScopeType)
+                        .ThenBy(scope => scope.ScopeId, StringComparer.Ordinal)
+                        .ToArray()))
+                .ToArray(),
+            cancellationToken);
+
     public Task<IReadOnlyList<AuthSecurityEvent>> ListSecurityEventsAsync(
         int take = 100,
         CancellationToken cancellationToken = default) =>

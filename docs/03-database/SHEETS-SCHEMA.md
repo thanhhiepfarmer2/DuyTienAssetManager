@@ -1,5 +1,12 @@
 # Schema logic đề xuất cho Google Sheets
 
+## TASK-006 local subset — 2026-10-10
+
+Implementation subset theo phạm vi người dùng: Categories + TreeVersions + ImportJobs/ImportRows + Operations + AuditEvents + SchemaVersions, cùng business spreadsheet khác system. Header thực tế là `GoogleCategoryCatalogStore.Headers`; không triển khai các bảng còn lại chỉ vì được PROPOSED ở dưới. Schema marker CATEGORY_V1 chứa pointer DRAFT hiệu lực demo và Revision (số operation commit/no-op), khác SchemaVersion auth.
+Category có SourceKey/SourceSheet/SourceRow/SourceSTT lưu mapping, CategoryId opaque bất biến; source code không trở thành ID. TreeVersions giữ SourceHash/MappingVersion/ContentHash/actor/time. Operations lưu key theo actor, RequestHash/source hash/mapping, AlreadyImported và COMPLETE; no-op vẫn lưu key/audit nhưng không thêm Category/version. ImportRows của no-op không nhân bản dòng; tham chiếu version đã có.
+Batch bounded atomic (tối đa1800KiB; bảng <=20000 dòng, input <=1000 nút/10MB), append lịch sử và update pointer cùng request, stringValue chống formula execution. Mọi tab vắng mới được tạo trong explicit import, không ở startup; partial schema/header/journal lạ dừng để bảo vệ dữ liệu. Retry uncertain read ledger, không append mù. Không cần chunk PARTIAL cho subset bounded; vượt giới hạn bị chặn trước write, chưa có generalized chunk/resume. Chưa apply hoặc nghiệm thu schema này trên Google thật: NOT_RUN_GOOGLE. System schema TASK-005 dev đã tồn tại và được nghiệm thu trước, không init lại.
+
+
 Status: PROPOSED — chưa triển khai toàn bộ schema. TASK-004 đã có resource PoC
 dev theo bằng chứng người dùng; system spreadsheet TASK-005 chưa được tạo/chọn/
 ghi. Không sử dụng sheet nhân sự nguồn như bảng Users.

@@ -64,7 +64,10 @@ public sealed class GoogleAuthSystemStore(
             var state = await LoadStateAsync(token).ConfigureAwait(false);
             var candidate = state.Clone();
             var result = mutation(candidate);
-            await PersistStateAsync(candidate, token).ConfigureAwait(false);
+            if (!HasSameData(state, candidate))
+            {
+                await PersistStateAsync(candidate, token).ConfigureAwait(false);
+            }
             return result;
         }, cancellationToken);
     }
@@ -136,8 +139,9 @@ public sealed class GoogleAuthSystemStore(
     private async Task<AuthSystemState> LoadStateAsync(CancellationToken cancellationToken)
     {
         EnsureConfigured();
+        var tables = await ReadTablesAsync(cancellationToken).ConfigureAwait(false);
         var state = new AuthSystemState();
-        foreach (var row in await ReadRowsAsync(Users, Headers[Users].Length, cancellationToken).ConfigureAwait(false))
+        foreach (var row in tables[Users])
         {
             state.Users.Add(new AuthUser(
                 row[0], row[1], row[2], row[3], row[4], ParseEnum<AuthUserState>(row[5]),
@@ -146,7 +150,7 @@ public sealed class GoogleAuthSystemStore(
                 ParseDate(row[14]), row[15], ParseInt(row[16])));
         }
 
-        foreach (var row in await ReadRowsAsync(Assignments, Headers[Assignments].Length, cancellationToken).ConfigureAwait(false))
+        foreach (var row in tables[Assignments])
         {
             state.RoleAssignments.Add(new AuthRoleAssignment(
                 row[0], row[1], row[2], EmptyToNull(row[3]), row[4],
@@ -154,14 +158,14 @@ public sealed class GoogleAuthSystemStore(
                 ParseDate(row[8]), row[9], ParseInt(row[10])));
         }
 
-        foreach (var row in await ReadRowsAsync(Scopes, Headers[Scopes].Length, cancellationToken).ConfigureAwait(false))
+        foreach (var row in tables[Scopes])
         {
             state.RoleAssignmentScopes.Add(new AuthScopeGrant(
                 row[0], row[1], ParseEnum<AuthScopeType>(row[2]), row[3],
                 ParseBool(row[4]), ParseInt(row[5])));
         }
 
-        foreach (var row in await ReadRowsAsync(Sessions, Headers[Sessions].Length, cancellationToken).ConfigureAwait(false))
+        foreach (var row in tables[Sessions])
         {
             state.Sessions.Add(new AuthSession(
                 row[0], row[1], ParseEnum<AuthClientType>(row[2]), row[3], EmptyToNull(row[4]),
@@ -170,7 +174,7 @@ public sealed class GoogleAuthSystemStore(
                 EmptyToNull(row[12]), ParseInt(row[13])));
         }
 
-        foreach (var row in await ReadRowsAsync(RefreshTokens, Headers[RefreshTokens].Length, cancellationToken).ConfigureAwait(false))
+        foreach (var row in tables[RefreshTokens])
         {
             state.RefreshTokens.Add(new RefreshTokenMarker(
                 row[0], row[1], row[2], row[3], ParseEnum<RefreshTokenState>(row[4]),
@@ -178,7 +182,7 @@ public sealed class GoogleAuthSystemStore(
                 EmptyToNull(row[9]), ParseNullableDate(row[10]), EmptyToNull(row[11]), ParseInt(row[12])));
         }
 
-        foreach (var row in await ReadRowsAsync(SecurityEvents, Headers[SecurityEvents].Length, cancellationToken).ConfigureAwait(false))
+        foreach (var row in tables[SecurityEvents])
         {
             state.SecurityEvents.Add(new AuthSecurityEvent(
                 row[0], EmptyToNull(row[1]), EmptyToNull(row[2]), EmptyToNull(row[3]), row[4],
@@ -231,27 +235,56 @@ public sealed class GoogleAuthSystemStore(
             .ConfigureAwait(false) ?? throw new ExternalStorageException("Google Sheets returned empty system metadata.");
     }
 
-    private async Task<IReadOnlyList<string[]>> ReadRowsAsync(
-        string sheetTitle,
-        int columnCount,
+    private static bool HasSameData(AuthSystemState before, AuthSystemState after) =>
+        before.Users.SequenceEqual(after.Users) &&
+        before.RoleAssignments.SequenceEqual(after.RoleAssignments) &&
+        before.RoleAssignmentScopes.SequenceEqual(after.RoleAssignmentScopes) &&
+        before.Sessions.SequenceEqual(after.Sessions) &&
+        before.RefreshTokens.SequenceEqual(after.RefreshTokens) &&
+        before.SecurityEvents.SequenceEqual(after.SecurityEvents);
+
+    private async Task<IReadOnlyDictionary<string, string[][]>> ReadTablesAsync(
         CancellationToken cancellationToken)
     {
-        var lastColumn = ColumnName(columnCount);
-        var range = Uri.EscapeDataString($"'{sheetTitle}'!A:{lastColumn}");
-        var relative = $"spreadsheets/{Uri.EscapeDataString(options.SystemSpreadsheetId!)}/values/{range}" +
-            "?majorDimension=ROWS&valueRenderOption=UNFORMATTED_VALUE";
+        string[] titles = [Users, Assignments, Scopes, Sessions, RefreshTokens, SecurityEvents];
+        var ranges = string.Join("&", titles.Select(title =>
+            $"ranges={Uri.EscapeDataString($"'{title}'!A:{ColumnName(Headers[title].Length)}")}"));
+        var relative = $"spreadsheets/{Uri.EscapeDataString(options.SystemSpreadsheetId!)}/values:batchGet" +
+            $"?majorDimension=ROWS&valueRenderOption=UNFORMATTED_VALUE&{ranges}";
         using var response = await api.SendAsync(
             () => new HttpRequestMessage(HttpMethod.Get, BuildUri(relative)),
             GoogleRequestSemantics.SafeRead,
             cancellationToken).ConfigureAwait(false);
         await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        var result = await JsonSerializer.DeserializeAsync<ValueRangeResponse>(stream, JsonOptions, cancellationToken)
-            .ConfigureAwait(false);
-        return (result?.Values ?? [])
-            .Skip(1)
-            .Where(row => row.Length > 0 && !string.IsNullOrWhiteSpace(ToText(row[0])))
-            .Select(row => Normalize(row, columnCount))
-            .ToArray();
+        var result = await JsonSerializer.DeserializeAsync<BatchValueRangeResponse>(
+            stream, JsonOptions, cancellationToken).ConfigureAwait(false);
+        if (result is null || result.SpreadsheetId != options.SystemSpreadsheetId ||
+            result.ValueRanges?.Length != titles.Length)
+        {
+            throw new ExternalStorageException("Google Sheets returned incomplete system tables.");
+        }
+
+        var tables = new Dictionary<string, string[][]>(StringComparer.Ordinal);
+        for (var index = 0; index < titles.Length; index++)
+        {
+            var title = titles[index];
+            var range = result.ValueRanges[index];
+            var separator = range?.Range?.IndexOf('!') ?? -1;
+            var returnedTitle = separator > 0 ? range!.Range![..separator].Trim('\'') : null;
+            var rows = range?.Values;
+            if (returnedTitle != title || rows is not { Length: > 0 } || rows.Any(row => row is null) ||
+                !rows[0].Select(ToText).SequenceEqual(Headers[title], StringComparer.Ordinal))
+            {
+                throw new ExternalStorageException("Google Sheets returned invalid system table headers or ranges.");
+            }
+
+            tables[title] = rows.Skip(1)
+                .Where(row => row.Length > 0 && !string.IsNullOrWhiteSpace(ToText(row[0])))
+                .Select(row => Normalize(row, Headers[title].Length))
+                .ToArray();
+        }
+
+        return tables;
     }
 
     private Task<HttpResponseMessage> SendBatchAsync(
@@ -483,5 +516,6 @@ public sealed class GoogleAuthSystemStore(
     private sealed record SpreadsheetResponse(string SpreadsheetId, SheetResponse[] Sheets);
     private sealed record SheetResponse(SheetProperties Properties);
     private sealed record SheetProperties(int SheetId, string Title);
-    private sealed record ValueRangeResponse(JsonElement[][] Values);
+    private sealed record BatchValueRangeResponse(string SpreadsheetId, ValueRangeResponse[]? ValueRanges);
+    private sealed record ValueRangeResponse(string? Range, JsonElement[][]? Values);
 }

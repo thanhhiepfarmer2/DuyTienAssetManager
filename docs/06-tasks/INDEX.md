@@ -6,8 +6,8 @@
 | TASK-002 | [Xác lập yêu cầu và hợp nhất tài liệu](TASK-002.md) | DONE | Không phụ thuộc code |
 | TASK-003 | [Chốt kiến trúc và setup môi trường dev](TASK-003.md) | IN_REVIEW | TASK-002; Google evidenced, host/device gates còn mở |
 | TASK-004 | [PoC Sheets/Drive, writer và idempotency](TASK-004.md) | DONE | Live Google và manual tab/TXT/control-file có user-provided evidence; TASK-003 vẫn IN_REVIEW |
-| TASK-005 | [Đăng nhập, admin và phân quyền server/web](TASK-005.md) | IN_REVIEW | Local format/build/57 tests pass; live system spreadsheet + UI/UAT là gate |
-| TASK-006 | [Import cây và xem/tìm danh mục](TASK-006.md) | TODO | TASK-005; mapping và state nháp |
+| TASK-005 | [Đăng nhập, admin và phân quyền server/web](TASK-005.md) | IN_REVIEW | 173/173 live; 78/78 local và 14 boundary riêng; G2a/G2b PASS_MANUAL; idle 30ph thực PASS; UAT còn lại DEFERRED_BY_USER, W13 STOPPED_BY_USER; ngoại lệ cho phép TASK-006 local |
+| TASK-006 | [Import cây và xem/tìm danh mục](TASK-006.md) | IN_REVIEW | Ngoại lệ người dùng cho phép khi TASK-005 chưa DONE; build sạch, 46/46 local + 12/12 hồi quy; nguồn XLSX gốc/Google/browser NOT_RUN |
 | TASK-007 | [CRUD tài sản trên web](TASK-007.md) | TODO | TASK-006; required fields từng loại và rule code demo |
 | TASK-008 | [Sửa/chuyển/ngừng cây và di chuyển đối tượng](TASK-008.md) | TODO | TASK-007 |
 | TASK-009 | [Drive ảnh và biểu mẫu DOCX/PDF](TASK-009.md) | TODO | TASK-007; file mẫu và Drive target |

@@ -1,6 +1,6 @@
 # Ma trận quyền và phạm vi — TASK-005
 
-Status: `ACCEPTED` ngày 2026-10-07; implementation local đã qua review, live gate chưa chạy.
+Status: `ACCEPTED` ngày 2026-10-07; implementation local đã qua review; live DEV provisioning/ACL/schema pass 2026-10-09, quyền/phiên live và UI UAT còn thiếu.
 
 Mục tiêu đã xác lập: permission hành động và phạm vi dữ liệu phải được kiểm tra
 phía server. Năm role dưới đây là role ứng dụng cho demo, không phải chức danh

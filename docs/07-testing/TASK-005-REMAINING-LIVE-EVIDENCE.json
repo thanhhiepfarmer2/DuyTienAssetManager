@@ -1,0 +1,622 @@
+{
+  "task": "TASK-005",
+  "source": "AI direct HTTP/Google; not browser",
+  "startedAtUtc": "2026-10-10T07:12:29.811164+00:00",
+  "state": "STOPPED_BY_USER",
+  "cases": [
+    {
+      "case": "DEV owner-only separate resource / exact drive.file",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:12:30.657208+00:00"
+    },
+    {
+      "case": "Login admin",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:12:33.327330+00:00"
+    },
+    {
+      "case": "Primary identity",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:12:36.096681+00:00"
+    },
+    {
+      "case": "Primary unrestricted Admin",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:12:36.098840+00:00"
+    },
+    {
+      "case": "Primary effective Admin three ALL",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:12:36.665514+00:00"
+    },
+    {
+      "case": "Check existing backup before create",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:12:41.497599+00:00"
+    },
+    {
+      "case": "Create fake backup admin",
+      "expected": 201,
+      "actual": 201,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:12:47.941003+00:00"
+    },
+    {
+      "case": "Assign backup Admin three ALL",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:12:52.474562+00:00"
+    },
+    {
+      "case": "Login admin_second_demo",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:12:57.150370+00:00"
+    },
+    {
+      "case": "Change backup mandatory password",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:02.632539+00:00"
+    },
+    {
+      "case": "Login admin_second_demo",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:07.280882+00:00"
+    },
+    {
+      "case": "Backup effective Admin identity",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:11.104455+00:00"
+    },
+    {
+      "case": "Backup unrestricted Admin",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:11.111259+00:00"
+    },
+    {
+      "case": "Google backup active effective Admin same assignment three ALL",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:11.715632+00:00"
+    },
+    {
+      "case": "Razor login form admin_second_demo",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:15.701670+00:00"
+    },
+    {
+      "case": "Razor login admin_second_demo",
+      "expected": 302,
+      "actual": 302,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:22.011742+00:00"
+    },
+    {
+      "case": "Razor login leaves mandatory-change flow admin_second_demo",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:22.014093+00:00"
+    },
+    {
+      "case": "Backup Razor protected administration",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:26.558295+00:00"
+    },
+    {
+      "case": "Two admins allow primary lock",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:32.426036+00:00"
+    },
+    {
+      "case": "Backup remains admin while primary locked",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:36.526407+00:00"
+    },
+    {
+      "case": "Primary old access revoked by lock",
+      "expected": 401,
+      "actual": 401,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:41.138262+00:00"
+    },
+    {
+      "case": "Two admins allow primary unlock",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:47.378224+00:00"
+    },
+    {
+      "case": "Backup permits primary downgrade",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:52.338785+00:00"
+    },
+    {
+      "case": "Backup permits restore primary Admin",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:13:57.503788+00:00"
+    },
+    {
+      "case": "Backup permits primary lose one ALL",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:02.609517+00:00"
+    },
+    {
+      "case": "Restore primary active state",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:07.787531+00:00"
+    },
+    {
+      "case": "Restore original primary assignments",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:12.356572+00:00"
+    },
+    {
+      "case": "Primary restored active / effective Admin three ALL",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:12.917403+00:00"
+    },
+    {
+      "case": "Login admin",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:17.115701+00:00"
+    },
+    {
+      "case": "Primary relogin after restoration",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:21.123852+00:00"
+    },
+    {
+      "case": "Primary restored login Admin",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:21.125239+00:00"
+    },
+    {
+      "case": "Backup session cleanup including Razor",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:27.730879+00:00"
+    },
+    {
+      "case": "Create fake web fixture default_idle",
+      "expected": 201,
+      "actual": 201,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:33.219648+00:00"
+    },
+    {
+      "case": "Login uat005_web_default_idle_50f4a1",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:37.337379+00:00"
+    },
+    {
+      "case": "Change fixture temporary password default_idle",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:42.922653+00:00"
+    },
+    {
+      "case": "Razor login form uat005_web_default_idle_50f4a1",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:45.719744+00:00"
+    },
+    {
+      "case": "Razor login uat005_web_default_idle_50f4a1",
+      "expected": 302,
+      "actual": 302,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:51.994042+00:00"
+    },
+    {
+      "case": "Razor login leaves mandatory-change flow uat005_web_default_idle_50f4a1",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:51.998028+00:00"
+    },
+    {
+      "case": "Fixture protected page initially valid default_idle",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:56.138872+00:00"
+    },
+    {
+      "case": "Issued real timeout policy default_idle",
+      "expected": [
+        1800,
+        28800
+      ],
+      "actual": [
+        1800.0,
+        28800.0
+      ],
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:14:56.729435+00:00"
+    },
+    {
+      "case": "Create fake web fixture default_absolute",
+      "expected": 201,
+      "actual": 201,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:02.431359+00:00"
+    },
+    {
+      "case": "Login uat005_web_default_absolute_3bc52f",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:07.325520+00:00"
+    },
+    {
+      "case": "Change fixture temporary password default_absolute",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:12.457897+00:00"
+    },
+    {
+      "case": "Razor login form uat005_web_default_absolute_3bc52f",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:15.710345+00:00"
+    },
+    {
+      "case": "Razor login uat005_web_default_absolute_3bc52f",
+      "expected": 302,
+      "actual": 302,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:22.273729+00:00"
+    },
+    {
+      "case": "Razor login leaves mandatory-change flow uat005_web_default_absolute_3bc52f",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:22.277828+00:00"
+    },
+    {
+      "case": "Fixture protected page initially valid default_absolute",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:26.124328+00:00"
+    },
+    {
+      "case": "Issued real timeout policy default_absolute",
+      "expected": [
+        1800,
+        28800
+      ],
+      "actual": [
+        1800.0,
+        28800.0
+      ],
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:26.708981+00:00"
+    },
+    {
+      "case": "Create fake web fixture remember_idle",
+      "expected": 201,
+      "actual": 201,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:32.425843+00:00"
+    },
+    {
+      "case": "Login uat005_web_remember_idle_edbde5",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:36.995938+00:00"
+    },
+    {
+      "case": "Change fixture temporary password remember_idle",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:42.781752+00:00"
+    },
+    {
+      "case": "Razor login form uat005_web_remember_idle_edbde5",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:45.729124+00:00"
+    },
+    {
+      "case": "Razor login uat005_web_remember_idle_edbde5",
+      "expected": 302,
+      "actual": 302,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:52.178361+00:00"
+    },
+    {
+      "case": "Razor login leaves mandatory-change flow uat005_web_remember_idle_edbde5",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:52.182813+00:00"
+    },
+    {
+      "case": "Fixture protected page initially valid remember_idle",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:56.158385+00:00"
+    },
+    {
+      "case": "Issued real timeout policy remember_idle",
+      "expected": [
+        86400,
+        604800
+      ],
+      "actual": [
+        86400.0,
+        604800.0
+      ],
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:15:56.773045+00:00"
+    },
+    {
+      "case": "Create fake web fixture remember_absolute",
+      "expected": 201,
+      "actual": 201,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:16:02.569063+00:00"
+    },
+    {
+      "case": "Login uat005_web_remember_absolute_65dd02",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:16:07.562888+00:00"
+    },
+    {
+      "case": "Change fixture temporary password remember_absolute",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:16:12.579165+00:00"
+    },
+    {
+      "case": "Razor login form uat005_web_remember_absolute_65dd02",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:16:15.744720+00:00"
+    },
+    {
+      "case": "Razor login uat005_web_remember_absolute_65dd02",
+      "expected": 302,
+      "actual": 302,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:16:22.051553+00:00"
+    },
+    {
+      "case": "Razor login leaves mandatory-change flow uat005_web_remember_absolute_65dd02",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:16:22.053080+00:00"
+    },
+    {
+      "case": "Fixture protected page initially valid remember_absolute",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:16:26.158525+00:00"
+    },
+    {
+      "case": "Issued real timeout policy remember_absolute",
+      "expected": [
+        86400,
+        604800
+      ],
+      "actual": [
+        86400.0,
+        604800.0
+      ],
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:16:26.818298+00:00"
+    },
+    {
+      "case": "Primary runner session cleanup",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:16:32.598666+00:00"
+    },
+    {
+      "case": "Keep idle active without extending absolute default_absolute",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:35:36.407810+00:00"
+    },
+    {
+      "case": "Real elapsed server expiry default_idle",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:44:57.320109+00:00"
+    },
+    {
+      "case": "Keep idle active without extending absolute default_absolute",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T07:55:40.068796+00:00"
+    },
+    {
+      "case": "Keep idle active without extending absolute default_absolute",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "observedAtUtc": "2026-10-10T08:15:42.896582+00:00"
+    }
+  ],
+  "webTimeouts": [
+    {
+      "case": "default_idle",
+      "username": "uat005_web_default_idle_50f4a1",
+      "source": "AI HTTP / real wall-clock",
+      "state": "PASS_REAL_ELAPSED",
+      "createdAtUtc": "2026-10-10T07:14:50.709820+00:00",
+      "idleExpiresAtUtc": "2026-10-10T07:44:50.709820+00:00",
+      "absoluteExpiresAtUtc": "2026-10-10T15:14:50.709820+00:00",
+      "checkAfterUtc": "2026-10-10T07:44:53.709820+00:00",
+      "activityIntervalSeconds": null,
+      "checks": [
+        {
+          "atUtc": "2026-10-10T07:44:57.311761+00:00",
+          "expected": "302 login",
+          "actualStatus": 302,
+          "redirectToLogin": true
+        }
+      ]
+    },
+    {
+      "case": "default_absolute",
+      "username": "uat005_web_default_absolute_3bc52f",
+      "source": "AI HTTP / real wall-clock",
+      "state": "STOPPED_BY_USER",
+      "createdAtUtc": "2026-10-10T07:15:20.725006+00:00",
+      "idleExpiresAtUtc": "2026-10-10T07:45:20.725006+00:00",
+      "absoluteExpiresAtUtc": "2026-10-10T15:15:20.725006+00:00",
+      "checkAfterUtc": "2026-10-10T15:15:23.725006+00:00",
+      "activityIntervalSeconds": 1200,
+      "checks": [
+        {
+          "atUtc": "2026-10-10T07:35:36.406683+00:00",
+          "expected": 200,
+          "actualStatus": 200
+        },
+        {
+          "atUtc": "2026-10-10T07:55:40.067830+00:00",
+          "expected": 200,
+          "actualStatus": 200
+        },
+        {
+          "atUtc": "2026-10-10T08:15:42.895223+00:00",
+          "expected": 200,
+          "actualStatus": 200
+        }
+      ],
+      "stateBeforeStop": "PENDING_ELAPSED",
+      "stoppedAtUtc": "2026-10-10T08:25:32.810189+00:00"
+    },
+    {
+      "case": "remember_idle",
+      "username": "uat005_web_remember_idle_edbde5",
+      "source": "AI HTTP / real wall-clock",
+      "state": "STOPPED_BY_USER",
+      "createdAtUtc": "2026-10-10T07:15:50.733224+00:00",
+      "idleExpiresAtUtc": "2026-10-11T07:15:50.733224+00:00",
+      "absoluteExpiresAtUtc": "2026-10-17T07:15:50.733224+00:00",
+      "checkAfterUtc": "2026-10-11T07:15:53.733224+00:00",
+      "activityIntervalSeconds": null,
+      "checks": [],
+      "stateBeforeStop": "PENDING_ELAPSED",
+      "stoppedAtUtc": "2026-10-10T08:25:32.810189+00:00"
+    },
+    {
+      "case": "remember_absolute",
+      "username": "uat005_web_remember_absolute_65dd02",
+      "source": "AI HTTP / real wall-clock",
+      "state": "STOPPED_BY_USER",
+      "createdAtUtc": "2026-10-10T07:16:20.746448+00:00",
+      "idleExpiresAtUtc": "2026-10-11T07:16:20.746448+00:00",
+      "absoluteExpiresAtUtc": "2026-10-17T07:16:20.746448+00:00",
+      "checkAfterUtc": "2026-10-17T07:16:23.746448+00:00",
+      "activityIntervalSeconds": 43200,
+      "checks": [],
+      "stateBeforeStop": "PENDING_ELAPSED",
+      "stoppedAtUtc": "2026-10-10T08:25:32.810189+00:00"
+    }
+  ],
+  "temporaryCredentialRemoved": true,
+  "backup": {
+    "username": "admin_second_demo",
+    "state": "Active",
+    "effectiveRole": "Admin",
+    "scopeIds": [
+      "ALL",
+      "ALL",
+      "ALL"
+    ],
+    "mustChangePassword": false,
+    "loginVerified": true,
+    "passwordRetained": false
+  },
+  "stateBeforeStop": "W10_PASS_W13_PENDING_REAL_TIME",
+  "stoppedAtUtc": "2026-10-10T08:25:32.810189+00:00",
+  "stopEvidence": {
+    "source": "AI direct process inspection",
+    "pid": 18964,
+    "commandAndCreationTimeMatchedBeforeStop": true,
+    "stopCommandExitCode": 0,
+    "runnerAbsentVerified": true,
+    "runnerExitCode": null,
+    "temporaryUatSecretPresent": false,
+    "bootstrapSecretPresent": false,
+    "accountsAndAuditPreserved": true,
+    "reason": "Người dùng dừng nghiệm thu TASK-005 và cho phép triển khai local TASK-006 dù TASK-005 chưa DONE (2026-10-10)."
+  }
+}

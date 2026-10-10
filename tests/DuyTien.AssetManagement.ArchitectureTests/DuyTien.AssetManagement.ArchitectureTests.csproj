@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -28,4 +28,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\docs\03-database\category-candidates.json" Link="Fixtures\category-candidates.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

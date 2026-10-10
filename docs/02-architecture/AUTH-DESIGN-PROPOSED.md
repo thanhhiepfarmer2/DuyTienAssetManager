@@ -1,6 +1,6 @@
 # Thiết kế đăng nhập, admin và phân quyền cho TASK-005
 
-- Status: `ACCEPTED` về nghiệp vụ ngày 2026-10-07; implementation local đã qua review trong TASK-005, live gate chưa chạy.
+- Status: `ACCEPTED` về nghiệp vụ ngày 2026-10-07; implementation local đã qua review trong TASK-005; live provisioning/ACL/schema pass 2026-10-09, bootstrap/phiên/quyền và UI UAT chưa đạt.
 - Ngày: 2026-10-07.
 - Requirement: [REQ-001](../01-requirements/REQ-001-asset-digitization.md), AC-03/AC-04.
 - Task: [TASK-005](../06-tasks/TASK-005.md), trạng thái `IN_REVIEW`.
@@ -216,3 +216,16 @@ Người dùng đã duyệt ngày 2026-10-07:
 Các timeout, token rotation, giới hạn phiên, tên tab/field và cơ chế command theo
 phương án demo cũng được duyệt. Chi tiết kỹ thuật còn lại do implementation giải
 quyết, nhưng không được làm thay đổi các ràng buộc nghiệp vụ trên.
+
+
+### Ghi chú implementation/UAT quota — 2026-10-09
+
+Google auth snapshot đọc sáu bảng bằng values:batchGet trong một request, kiểm
+spreadsheet/count/range/header trước parse. Mutation không đổi bỏ persist; mutation
+đổi LastSeenAt/security/user/assignment/scope/token/audit vẫn ghi batch nguyên tử.
+Không cache auth/quyền, không đổi drive.file/Desktop hoặc timeout/password policy.
+Provider tạm lỗi không được coi là phiên invalid: API và Razor trả503/no-store với
+thông báo chung, không xóa cookie/chuyển login. Cùng phiên được kiểm lại từ store
+khi provider phục hồi. Invalid/revoked session và thiếu quyền giữ401/403 tương ứng.
+HTTP fake fault/recovery đã có regression; browser G1 và live retest có evidence
+riêng, không coi unit pass là Google/browser pass.

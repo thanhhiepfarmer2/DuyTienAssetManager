@@ -1,3 +1,5 @@
+using DuyTien.AssetManagement.Application.Categories;
+using DuyTien.AssetManagement.Server.Categories;
 using DuyTien.AssetManagement.Application.Authentication;
 using DuyTien.AssetManagement.Application.Concurrency;
 using DuyTien.AssetManagement.Application.ExternalStorage;
@@ -47,6 +49,9 @@ builder.Services.AddSingleton(serviceProvider =>
         serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleApi")));
 builder.Services.AddSingleton<GoogleSheetsDataStore>();
 builder.Services.AddSingleton<GoogleAuthSystemStore>();
+builder.Services.AddSingleton<ICategoryCatalogStore, GoogleCategoryCatalogStore>();
+builder.Services.AddSingleton<CategoryCatalogService>();
+builder.Services.AddSingleton<CategoryPreviewCache>();
 builder.Services.AddSingleton<IAuthSystemStore>(serviceProvider =>
     serviceProvider.GetRequiredService<GoogleAuthSystemStore>());
 builder.Services.AddSingleton<IAssetDataStore>(serviceProvider =>
@@ -112,15 +117,16 @@ if (await AuthCommandRunner.TryRunAsync(args, app.Services))
     return;
 }
 
+app.UseExceptionHandler("/Error");
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseAuthentication();
+app.UseTask005SessionAuthentication();
 app.Use(async (context, next) =>
 {
     var mustChange = context.User.Identity?.IsAuthenticated == true &&
@@ -160,6 +166,7 @@ app.UseAuthorization();
 app.MapStaticAssets();
 app.MapRazorPages().WithStaticAssets();
 app.MapTask005AuthApi();
+app.MapTask006CategoryApi();
 
 app.MapGet(
     "/api/system/status",

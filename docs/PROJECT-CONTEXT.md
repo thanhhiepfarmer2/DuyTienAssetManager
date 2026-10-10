@@ -1,10 +1,30 @@
 # Bối cảnh dự án
 
-Ngày khởi tạo bộ mẫu: 2026-10-05. Ngày cập nhật: 2026-10-07.
-Trạng thái: `TASK005_LOCAL_IN_REVIEW` — TASK-004 `DONE`; thiết kế auth đã được
-duyệt, local format/build/57 test pass. System spreadsheet TASK-005 chưa được
-tạo/chọn/ghi nên live gate chưa đạt. TASK-003 vẫn `IN_REVIEW` vì hosting/
-domain và thiết bị/signing còn mở.
+## Kết quả local TASK-006 — 2026-10-10
+
+TASK-006 `IN_REVIEW`: preview/validation/idempotent import/version diff DRAFT, tree/detail/tìm/TXT và permission/scope server, Google business adapter/API/Razor đã triển khai. Build sạch exit 0; 46/46 test task + 12/12 hồi quy liên quan pass, failed/skipped 0, exit 0. Staging đúng 665/15/98/552/39. Workbook XLSX gốc không có trong repository; metadata gốc/hash chưa tái xác minh. Google live/browser TASK-006 NOT_RUN, không chứng nhận từ fake/render HTML. [Báo cáo](07-testing/TEST-REPORT-TASK-006.md).
+Backend workspace PID18664 đã dừng đúng executable trước build, chưa restart UAT. Không tự nhập staging vào Google. TASK-007–014 vẫn TODO; chưa commit/push/deploy.
+
+
+## Ngoại lệ đã được người dùng cho phép — 2026-10-10
+
+Người dùng dừng nghiệm thu TASK-005 và cho phép triển khai local TASK-006 dù TASK-005 chưa DONE (2026-10-10).
+TASK-005 giữ `IN_REVIEW`: G2a/G2b PASS_MANUAL; G2c và browser còn mở DEFERRED_BY_USER; idle 30 phút thực PASS; W13 8h/24h/7d STOPPED_BY_USER. PID 18964 đã dừng đúng runner, credential UAT được AI xác minh không còn; giữ tài khoản/audit/bằng chứng lịch sử. Không chờ 17/10, không tiếp tục giao UAT hoặc yêu cầu secret. TASK-003 IN_REVIEW, TASK-004 DONE.
+
+
+Ngày khởi tạo bộ mẫu: 2026-10-05. Ngày cập nhật: 2026-10-10.
+Trạng thái: TASK-005 IN_REVIEW; baseline local78/78/live173/173 exit0 được giữ.
+G1a/G1b người dùng xác nhận PASS thủ công ngày2026-10-10. Thêm14 test boundary
+TimeProvider PASS_LOCAL exit0; không đổi policy/product, không rerun suite đã đạt.
+G2a bốn bước PASS_MANUAL (rỗng/thiếu tên/tạo hợp lệ/trùng không bản sao);
+G2b tên/Viewer/scope/GET mở lại PASS_MANUAL;
+G2c validation/password8/login sau reset PASS_MANUAL;
+G2d Viewer admin URLs bị chặn/own form truy cập PASS_MANUAL;
+G2e trở đi/editor/revoke/layout/flags còn mở; W10 đã PASS_HTTP_GOOGLE; W13 thời gian thực
+default idle30ph đã PASS thực lúc14:44:57; ba mốc8h/24h/7ngày
+còn mở. Reset/Login sau mất password tạm PASS_MANUAL; G2c validation đã PASS_MANUAL, G2d Viewer đã PASS_MANUAL, chờ G2e đổi quyền. Runner PID18964 giữ cookie chỉ RAM; credential tạm
+đã xóa/xác minh absent độc lập sau setup.
+Một backend HTTPS7008/HTTP5211, owner1; TASK-003 IN_REVIEW, TASK-004 DONE.
 
 ## Đã được người dùng xác lập
 
@@ -34,21 +54,25 @@ domain và thiết bị/signing còn mở.
 TASK-005 local bổ sung domain auth/RBAC/scope/session, Google system adapter,
 process lease liên tiến trình, API mobile bearer, web cookie, Razor Pages
 login/change-password/admin và lệnh init/bootstrap/recovery. Fake auth store chỉ
-ở test; chưa gọi Google cho system spreadsheet.
+ở test. Ngày 2026-10-09 đã provisioning/init system spreadsheet DEV riêng và
+kiểm tra chỉ đọc trực tiếp trên Google; admin đã bootstrap; no-op không đổi user/hash/version/role/ALL, khóa bootstrap xóa.
 
 Code TASK-004 gọi Google qua scope duy nhất `drive.file`, có provisioning/Picker
 và fail-closed với token scope rộng. Người dùng đã chạy readiness,
 access-boundary, init và PoC trên Google thật; kết quả chi tiết nằm tại
 [TEST-REPORT-TASK-004](07-testing/TEST-REPORT-TASK-004.md). Người dùng đã xác nhận
 thủ công tab/record, TXT đúng folder/owner và tính hợp lệ file control; AI không
-trực tiếp quan sát. Chưa triển khai auth user, CRUD, import, báo cáo hoặc
-TASK-005–TASK-014.
+trực tiếp quan sát. TASK-005 đã có implementation local nhưng chưa đủ live/UAT;
+TASK-006 local đã triển khai (xem kết quả hiện hành ở đầu tài liệu); CRUD tài sản/báo cáo và TASK-007–TASK-014 chưa triển khai.
 `LiveConnectionVerified=false` khi thiếu cấu hình vẫn là trạng thái runtime đúng
 và không tự thay thế evidence môi trường.
 
 ## Đã kiểm tra trên máy local
 
-- Thư mục không phải Git worktree; không có branch/remote/commit và TASK-003 không khởi tạo Git.
+- Hiện tại (2026-10-09): Git worktree tại thư mục dự án, branch `main`, remote
+  có tên `origin`, HEAD `b324c74` (2026-10-07). Git status ban đầu sạch, exit 0.
+  Không xem/in URL remote, không fetch/commit/push. Checkpoint lịch sử TASK-003
+  chưa có Git và không khởi tạo Git được giữ nguyên trong report cũ.
 - SDK 10.0.400, runtime 10.0.11, MSBuild 18.9.6; MAUI workload 10.0.20/10.0.100 đã cài.
 - Restore solution: exit 0.
 - Build server: exit 0, 0 warnings, 0 errors.
@@ -56,7 +80,7 @@ và không tự thay thế evidence môi trường.
   gồm request scope, token fail-closed, Picker/provisioning, HTTP stub allow/deny
   và 2 test canary bảo đảm HttpClient log không lộ URL/resource ID, token/header
   hay body nhạy cảm.
-- Checkpoint TASK-005 local: `dotnet format` và verify exit 0; build server exit 0,
+- Checkpoint TASK-005 local lịch sử 2026-10-07: `dotnet format` và verify exit 0; build server exit 0,
   0 warnings/0 errors; tests 57 passed, 0 failed, 0 skipped. Có HTTP integration
   Kestrel cho bearer/admin/hash boundary, Google system adapter HTTP stub và unit
   cho password/scope/session/last-admin/file lease. Live Google/UI là `NOT_RUN`.
@@ -88,7 +112,7 @@ và không tự thay thế evidence môi trường.
 | Ma trận role/scope/chức danh | **ACCEPTED** cho demo tại [PERMISSIONS](01-requirements/PERMISSIONS.md) | Triển khai/test server-side; chức danh không tự cấp quyền |
 | Nguồn snapshot tồn và ngưỡng | `TBD` | Chốt trước TASK-010 |
 | Thiết bị/signing | Người dùng cho biết Mac/Xcode/iPhone sẵn sàng; chưa xác minh | Kết nối và ghi version/team/device/OS trước khi báo iOS pass |
-| Git/remote | `TBD`; hiện không có Git | Không tự khởi tạo hoặc xuất dữ liệu |
+| Git/remote | Đã có Git: `main`, remote `origin`, HEAD `b324c74` | Không commit/push/deploy trong lượt TASK-005 live/UAT |
 
 ## Công việc hiện tại
 
@@ -98,16 +122,23 @@ và không tự thay thế evidence môi trường.
   evidence, hosting/domain và thiết bị/signing còn mở.
 - [TASK-004](06-tasks/TASK-004.md): `DONE` — local build/31 tests, live Google và
   manual tab/TXT/control-file có bằng chứng do người dùng cung cấp.
-- [TASK-005](06-tasks/TASK-005.md): `IN_REVIEW` — local format/build/57 tests
-  pass; live system spreadsheet và UI/UAT là gate trước `DONE`.
-- TASK-006–TASK-014: `TODO`; chưa triển khai.
+- [TASK-005](06-tasks/TASK-005.md): `IN_REVIEW` — local78/78/build sạch;
+  Google live173/173 exit0 và cleanup verified. Browser G1 trước fix lỗi quota;
+  G1a/G1b, G2a/G2b PASS_MANUAL; W10 PASS_HTTP_GOOGLE; nghiệm thu còn lại DEFERRED_BY_USER, W13 dài STOPPED_BY_USER; xem
+  [checklist](07-testing/UAT-CHECKLIST-TASK-005.md).
+- [TASK-006](06-tasks/TASK-006.md): `IN_REVIEW` — local build/46 tests/12 hồi quy pass; Google/browser/workbook gốc chưa kiểm.
+- TASK-007–TASK-014: `TODO`; chưa triển khai.
 
 TASK-005 có [thiết kế auth `ACCEPTED`](02-architecture/AUTH-DESIGN-PROPOSED.md):
 năm role cố định, scope gắn role assignment, password chỉ min 8, session/refresh
 rotation, bootstrap/recovery command, system spreadsheet riêng, API + Razor Pages
 và test bằng dữ liệu giả. `Location.ParentId`, active admin theo assignment hiệu
-lực/đủ ALL và process lease liên tiến trình đã được code/test local. Chưa tạo/
-chọn/ghi system spreadsheet Google trong lượt local.
+lực/đủ ALL và process lease liên tiến trình đã được code/test local. Lượt local
+2026-10-07 chưa ghi system spreadsheet; lượt 2026-10-09 đã tạo/init DEV riêng.
+Người dùng xác nhận vẫn dùng máy đã setup, chưa chuyển máy; process/port kiểm
+trước CLI. AI stop/build/start đúng một backend, restart marker đã kiểm chứng;
+không lặp provisioning/init/bootstrap đã đạt. Bootstrap secret và credential UAT
+đều xóa/xác minh. Backend hiện chạy để browser UAT, Task chưa đủ gate DONE.
 
 ## Lịch sử quyết định
 
@@ -135,3 +166,90 @@ chọn/ghi system spreadsheet Google trong lượt local.
   khẩu chỉ tối thiểu 8 ký tự. TASK-005 chuyển `IN_PROGRESS`; live Google để sau.
 - 2026-10-07: local TASK-005 hoàn tất implementation/review với format/build và
   57/57 test pass; chuyển `IN_REVIEW`, không `DONE` vì chưa chạy live Google/UI.
+
+- 2026-10-09: xác minh Git hiện có; dùng lại OAuth Desktop/drive.file đã cấu
+  hình, không mở rộng scope hoặc chạy lại PoC TASK-004. Provisioning DEV System,
+  xác minh owner-only ACL và schema version 1 bằng AI trực tiếp; chưa bootstrap.
+  Sửa API giữ 401/403 với Accept HTML; build sạch/58 test pass/HTTP preflight
+  12/12. TASK-005 vẫn IN_REVIEW vì thiếu secret, phiên/quyền live và browser UAT.
+
+- 2026-10-09 tiếp tục: bootstrap/no-op Google pass (hai CLI exit 0, snapshot giữ nguyên); người dùng xác nhận đổi mật khẩu/login lại; sửa NullString trong UAT helper. Runner live đang chạy, TASK-005 giữ IN_REVIEW chờ đầy đủ gate.
+
+- Checkpoint tiếp tục: sửa Razor Detail để hiển thị/nạp scope đã lưu; format/build sạch và 61/61 test pass. Runner live lần đầu có 9 assertion đạt rồi exit 1 ở checkpoint công cụ, đã cleanup credential; đang chờ prompt nhập lại để chạy restart/phiên/quyền. Web đã dừng, TASK-005 vẫn IN_REVIEW.
+
+- Checkpoint restart: marker flow đã chạy, mobile/cookie/identity/password sau restart pass và last-admin API409 ba thao tác/user không đổi. Runner20pass/1fail do URL công cụ, đã sửa; credential/marker xóa, backend chạy một instance. TASK-005 IN_REVIEW chờ live còn lại/browser.
+
+- 2026-10-09 sửa lỗi quota: runner9pass/1fail exit1, G1 lỗi quay lại login; batch reads/no-op writes/503 đã local78tests+build sạch. Live/browser chờ retest, credential xóa/xác minh; TASK-005 IN_REVIEW.
+
+- 2026-10-09 sau sửa quota: live runner173/173 exit0; access/lockout15 phút thật, Viewer/revoke/rotation/reuse/audit/max5 đạt; cleanup verified, read probe owner-only/drive.file/schema/catalog đúng, Users4. Web1instance; browser G1 retest còn chờ.
+
+## Checkpoint lịch sử trước quyết định hoãn — 2026-10-10
+
+- G1a PASS_MANUAL: người dùng login admin mới và xác nhận cả /Admin/Users,
+  /Admin/Authorization (5 role), /Admin/SecurityEvents đều đúng expected, không
+  quay về login. G1b PASS_MANUAL: đủ ba guard khóa/hạ Viewer/bỏ một ALL; GET lại
+  vẫn Admin/ba ALL/cấp con. Nguồn người dùng xác nhận thủ công; không có exit code.
+- Lần thử G1a đầu hôm nay ERR_CONNECTION_REFUSED: AI kiểm BackendCount0 và
+  ListenerCount0, start lại đúng một backend bằng dotnet run --no-build --launch-profile
+  https; login GET200 và BackendCount1/2ports/owner1. Server vẫn chạy, không gán exit0.
+- Chỉ thêm AuthSessionTimeoutTests.cs, không đổi product/policy: build test project
+  --no-restore --no-dependencies exit0, 0warning/0error; filtered test --no-build
+  --no-restore --filter FullyQualifiedName~AuthSessionTimeoutTests exit0,
+  14passed/0failed/0skipped. TimeProvider giả lập kiểm boundary idle/absolute web
+  30ph/8h, remember24h/7ngày, refresh14/30ngày; không là bằng chứng thời gian live.
+  Baseline78/78 không chạy lại; không báo tổng92/92 đã chạy.
+- Probe chỉ đọc trước W10 exit0: đúng DEV riêng/owner-only1permission/exactdrive.file,
+  schema1/13tab/5role, Users4. Runner W10/W13 mới đã kiểm syntax exit0, đang chạy
+  nền ẩn PID18964; command launch exit0 chỉ chứng minh tạo process, chưa exit runner.
+- Còn mở: G2 browser/validation/Viewer/revoke/layout/flags và scope fake sau restart;
+  W13 default idle30ph PASS_REAL_ELAPSED; ba mốc8h/24h/7ngày còn chờ; W10 đã PASS_HTTP_GOOGLE. Refresh14/30ngày
+  đã kiểm boundary giả lập; checklist W13 yêu cầu elapsed web/remember, không suy
+  diễn đã kiểm refresh dài trên Google. Credential UAT vừa được người dùng nhập
+  qua prompt ẩn, đã xóa sau setup/xác minh absent; finally vẫn kiểm cleanup.
+- TASK-005 IN_REVIEW; TASK-003 IN_REVIEW, TASK-004 DONE. Không lặp setup/bootstrap/
+  suite173, không commit/push/deploy/TASK-006.
+
+- 2026-10-10 W10 PASS_HTTP_GOOGLE: backup Active/Admin ba ALL, login và phục hồi primary đạt; runner65 assertion đã quan sát PASS (chưa exit), bốn W13 real-time pending tới10/10 14:44/22:15,11/10 14:15,17/10 14:16 giờVN. Credential UAT/bootstrap absent kiểm độc lập; browser G2a chờ xác nhận.
+
+- G2a (2026-10-10): PASS_MANUAL cho submit rỗng, thiếu tên hiển thị, tạo user
+  hợp lệ và username trùng bị chặn/không thêm bản sao. Username người dùng báo:
+  uat005_ui_1010, uat005_ui_1010_02. Nguồn người dùng xác nhận thủ công; không
+  có exit code. Username sai định dạng và password tạm chỉ một response chưa
+  được người dùng xác nhận riêng, không suy diễn PASS. G2b sửa tên/gán Viewer/
+  scope/mở lại đang chờ; W13 default idle30ph đạt thật, ba mốc khác pending theo artifact hiện tại.
+
+- G2b (2026-10-10): PASS_MANUAL theo xác nhận người dùng cho
+  uat005_ui_1010_02: đổi tên UAT Viewer 1010-02, gán Viewer/Active với
+  OU-DEMO-A, LOC-DEMO-A, CAT-DEMO-EQUIPMENT/cấp con; GET mở lại giữ đúng
+  tên, role, scope và checkbox. Không có exit code; chưa chứng minh restart
+  scope fake. G2c đăng nhập lần đầu/validation đổi password đang chờ.
+
+- Lịch sử G2c: người dùng quên password tạm, đã hướng dẫn reset đúng user;
+  bước Reset/Login nay PASS_MANUAL. Không suy diễn PASS cho validation hoặc
+  thu hồi phiên cũ trước khi có kết quả riêng.
+- W13 default idle30ph PASS_REAL_ELAPSED: runner gửi cookie gốc từ RAM tới
+  /Account/ChangePassword lúc 2026-10-10 07:44:57 UTC (14:44:57 giờVN), nhận302
+  về /Account/Login; session tạo07:14:50 UTC, idle deadline07:44:50 UTC. Trước
+  đó protected GET200, không request giữ idle của fixture này trong30ph. Nguồn
+  AI chạy/quan sát HTTP thực, không là browser. Ba mốc8h/24h/7ngày vẫn pending;
+  runner PID18964 còn sống, chưa có exit code. Credential tạm đã cleanup.
+
+- Reset/Login (2026-10-10): PASS_MANUAL theo người dùng, đúng
+  uat005_ui_1010_02: admin reset, user login bằng password tạm mới và được
+  yêu cầu đổi password. Không có exit code. Đã giải quyết việc mất password
+  tạm; validation đổi password và login sau đổi vẫn chờ G2c. Chưa có browser
+  evidence thu hồi cookie đang hoạt động/reset-old-password/audit riêng W08.
+
+- G2c (2026-10-10): PASS_MANUAL theo người dùng cho cả bước1/2/3, đúng
+  uat005_ui_1010_02 sau reset: /Admin/Users trước đổi quay về ChangePassword;
+  current sai, new7, confirm khác đều validation/không đổi password; password
+  tự chọn8 chữ thường đổi thành công/về login; password tạm trước đổi bị từ
+  chối, password mới login được/không bắt đổi lại. Không có exit code. Đây là
+  flow sau reset, không phải login bằng password tạo ban đầu đã mất. G2d Viewer
+  access denied và các gate revoke/lock/reset/logout/layout còn chờ.
+
+- G2d (2026-10-10): PASS_MANUAL theo người dùng cho uat005_ui_1010_02
+  (Viewer): /Admin/Users, /Admin/Authorization, /Admin/SecurityEvents đều
+  chuyển AccessDenied/Không có quyền, không lộ dữ liệu quản trị/không về login.
+  /Account/ChangePassword vẫn mở được, không cảnh báo bắt buộc đổi. Không có
+  exit code. Editor/browser revoke/lock/reset/logout/layout còn chờ G2e trở đi.

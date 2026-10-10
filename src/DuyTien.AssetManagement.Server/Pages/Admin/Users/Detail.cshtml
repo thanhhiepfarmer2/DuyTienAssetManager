@@ -50,8 +50,29 @@
         </div>
     </form>
     <h3 class="h6 mt-4">Assignment hiện tại</h3>
-    @if (Model.Assignments.Count == 0) { <p>Chưa có assignment.</p> }
-    else { <ul>@foreach (var assignment in Model.Assignments) { <li>@assignment.RoleCode — @assignment.State — @assignment.EffectiveFrom.ToString("u")</li> }</ul> }
+    @if (Model.AssignmentDetails.Count == 0)
+    {
+        <p>Chưa có assignment.</p>
+    }
+    else
+    {
+        @foreach (var detail in Model.AssignmentDetails)
+        {
+            <section class="mt-3" aria-label="Assignment @detail.Assignment.RoleCode">
+                <h4 class="h6">@detail.Assignment.RoleCode — @detail.Assignment.State — @detail.Assignment.EffectiveFrom.ToString("u")</h4>
+                @if (detail.Scopes.Count == 0) { <p>Chưa có scope.</p> }
+                else
+                {
+                    <ul>
+                        @foreach (var scope in detail.Scopes)
+                        {
+                            <li>@scope.ScopeType: <code>@scope.ScopeId</code> — Bao gồm cấp con: @(scope.IncludeDescendants ? "Có" : "Không")</li>
+                        }
+                    </ul>
+                }
+            </section>
+        }
+    }
 </section>
 
 @section Scripts { <partial name="_ValidationScriptsPartial" /> }

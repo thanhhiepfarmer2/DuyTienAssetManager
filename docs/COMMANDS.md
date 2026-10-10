@@ -7,7 +7,8 @@ Solution dùng SDK được pin trong `global.json`:
 
 - .NET SDK 10.0.400; runtime 10.0.11; MSBuild 18.9.6.
 - MAUI workload 10.0.20/10.0.100.
-- Không có Git worktree.
+- Hiện có Git worktree: `main`, remote `origin`, HEAD `b324c74` kiểm tra ngày
+  2026-10-09; không commit/push/deploy trong lượt này.
 - Không cần Google credential để build/test local. Live integration TASK-004 dùng
   lệnh riêng; user-run evidence và manual user confirmation đã đủ để `DONE`.
 
@@ -83,9 +84,10 @@ curl.exe -s -o NUL -w "%{http_code} %{redirect_url}" http://localhost:5211/
 Kết quả TASK-003 trước thay đổi: HTTPS trang Razor 200; API trả `SCAFFOLD`.
 Checkpoint TASK-004: host khởi động/lắng nghe HTTPS 7008 và HTTP 5211; HTTP trả
 307. HTTPS curl/status `NOT_RUN` do curl Schannel báo `SEC_E_NO_CREDENTIALS` dù
-đã dùng `-k`, nên chưa có actual response body mới trong phiên. State code hiện
-được cập nhật thành `TASK004_DONE`; chưa chạy lại smoke HTTP
-trong lượt review live evidence. `-k` chỉ dành cho smoke local, không phải cấu
+đã dùng `-k`, nên checkpoint đó chưa có actual response body mới. State code
+của checkpoint TASK-004 là `TASK004_DONE`. Source TASK-005 hiện dùng hằng
+`TASK005_LOCAL_IN_PROGRESS` ở status endpoint; chưa gọi lại endpoint đó trong
+lượt 2026-10-09, không lấy hằng này để quyết định trạng thái Task/UAT. `-k` chỉ dành cho smoke local, không phải cấu
 hình production.
 
 ## Cấu hình ngoài repo và lệnh Google dev
@@ -147,7 +149,9 @@ test report TASK-004.
 
 ## TASK-005 — system spreadsheet và auth
 
-Các lệnh dưới đây đã được chuẩn bị nhưng **chưa chạy với Google** trong lượt local.
+Checkpoint local 2026-10-07 chưa chạy các lệnh dưới đây với Google. Ngày
+2026-10-09 đã chạy provisioning `system-spreadsheet` và `auth-system-init`
+(exit 0), owner/ACL/scope/schema được AI xác minh trực tiếp. Bootstrap/no-op đã chạy hai CLI exit 0; khóa bootstrap xóa. Recovery chưa chạy. Không chạy lại provisioning: ID DEV đã có.
 Trước mọi lệnh `auth-system-init`, bootstrap hoặc recovery, phải dừng web server
 và bảo đảm không có auth CLI khác chạy. Web và CLI lấy cùng process lease/file
 lock; nếu còn writer khác, lệnh sẽ fail thay vì dựa vào lock RAM.
@@ -216,3 +220,201 @@ rg -n -i --glob '*.csproj' --glob '!**/obj/**' 'EntityFramework|Sqlite|SqlServer
 `TBD`, `DRAFT`, `PROPOSED` và `NOT_RUN` có thể là trạng thái hợp lệ; kiểm
 tra nhằm phát hiện tuyên bố mâu thuẫn. Build artifacts trong `bin/obj` được loại
 khỏi kiểm tra tài liệu/secret.
+
+## TASK-005 — kiểm tra live/UAT đã làm sạch
+
+```powershell
+# Chỉ đọc Google: kiểm scope, DEV riêng, owner-only ACL, 13 tab/schema/5 role và số user.
+.\scripts\Test-Task005GoogleDev.ps1
+
+# Sau khi start đúng một backend local; kiểm HTTP chưa đăng nhập, không nhập credential.
+python -B .\scripts\Test-Task005WebPreflight.py
+
+# Chỉ chạy tương tác sau bootstrap và đổi mật khẩu admin trong Razor Pages.
+# Prompt ẩn; ghi fake user/audit lên system spreadsheet DEV; không in password/token.
+python -B .\scripts\Test-Task005MobileLive.py
+```
+
+Ngày 2026-10-09: Google probe exit 0; HTTP probe exit 0, 12/12 assertion;
+mobile runner **NOT_RUN**, mới kiểm tra syntax. HTTPS certificate exception
+chỉ dùng cho URL cố định localhost trong probe, không sửa trust store hoặc
+cấu hình triển khai. HTTP probe không chứng minh browser/layout/cookie đăng nhập.
+Mobile runner tự giữ token trong RAM, rotate token admin khi gần hết hạn và
+checkpoint trước giãn request 16 giây; bản sửa batch hiện giãn 5 giây; không thay timeout auth. Tài khoản giả
+`uat005_*` được giữ lại để audit, Admin có thể reset qua flow đã có; không xóa.
+Phải chạy Google probe trước để biết đúng đích DEV, không chạy runner cùng lúc
+với UAT khác. Runner không chứng minh restart/last-admin/expiry theo thời gian
+thực/browser hay MAUI; các gate đó nằm trong
+[UAT-CHECKLIST-TASK-005](07-testing/UAT-CHECKLIST-TASK-005.md).
+
+Build và test bản sửa API chạy tuần tự: exit 0, 0 warning/0 error, 58 passed,
+0 failed, 0 skipped. Bằng chứng chi tiết tại report TASK-005. Web cuối lượt
+đã dừng; không để server giữ lease khi nhập secret rồi chạy bootstrap.
+
+## TASK-005 — tiếp tục bootstrap/UAT sau đổi mật khẩu
+
+Ngày 2026-10-09: hai CLI `auth-bootstrap-admin` đã exit 0. Lần đầu tạo admin;
+lần hai no-op với secret khác, snapshot user/hash/version/role/ALL không đổi,
+khóa bootstrap đã xóa. Driver phiên bản đầu exit 1 sau 10 assertion bootstrap,
+trước nhánh web; không coi toàn driver PASS. Driver hiện chỉ kiểm bootstrap:
+
+```powershell
+# Chỉ khi cần bootstrap/no-op và web đã dừng, secret bootstrap đã được nhập.
+.\scripts\Test-Task005BootstrapLive.ps1
+```
+
+Người dùng xác nhận đã đổi mật khẩu bắt buộc và đăng nhập lại. Để AI UAT bằng
+mật khẩu mới mà không đưa credential vào args/chat/log, dùng khóa tạm ngoài repo:
+
+```powershell
+.\scripts\Set-Task005UatSecret.ps1
+python -u -B .\scripts\Test-Task005MobileLive.py --operator-secret --restart-checkpoint
+```
+
+Prompt ẩn lưu `UatTask005:AdminPassword` trong user-secrets của server. Runner
+đọc trong RAM và xóa đúng khóa này ở `finally`, cả khi fail; không sửa các khóa
+khác và giữ replacement nếu người dùng thay credential trong lúc chạy. Nếu bị
+kill/host crash trước `finally`, phải xóa khóa qua user-secrets, không in giá trị.
+`File.Replace` PowerShell dùng `NullString.Value` cho backup null; Python dùng
+`os.replace`. Không chạy lại bootstrap chỉ để nhập mật khẩu admin đã đổi.
+
+Ở checkpoint `RESTART_CHECKPOINT_READY`, AI dừng backend đang giữ lease, xác minh
+port/process đã dừng, start lại đúng một backend bằng lệnh Run ở trên; sau khi
+listening tạo marker temp theo đường dẫn runner in (không chứa secret). Runner
+xóa marker sau khi nhận, timeout 10 phút. Không dùng stdin để chuyển credential. Runner
+kiểm mobile session/identity và cookie Razor tồn tại sau restart, đăng nhập lại
+bằng password mới; last-admin chỉ thử nếu API chứng minh đúng một user bootstrap.
+Các ca bổ sung: cookie flags/default/remember, anti-forgery thiếu/sai, cookie bị
+chặn API bearer, Viewer access denied, cookie revoke khi đổi quyền/khóa/reset,
+sáu phiên/max 5, logout. Đây là HTTP live; tương tác/layout browser vẫn cần manual.
+Chưa gán PASS trước actual output/exit; tạm ngừng UAT browser khác khi runner
+đang gọi Google để tránh dồn quota.
+
+Checkpoint cuối: bản sửa Razor scope đã format verify/build sạch/test 61/61 exit 0, chạy tuần tự. Web đã dừng, process/port 0. Runner lần đầu đạt 9 assertion rồi exit 1 tại checkpoint stdin EOF và xóa credential; bản marker đã syntax pass nhưng chưa rerun, cần nhập lại prompt UAT. Các đoạn NOT_RUN phía trên mô tả checkpoint trước, report là nguồn actual hiện tại.
+
+
+Continuation UAT hiện tại: dùng lại credential tạm người dùng đã lưu; Google
+read probe exit 0, đúng một admin. Không provisioning/init/bootstrap lại.
+Runner thêm hai fixture hoàn toàn giả riêng để kiểm access sau 15 phút thật,
+refresh sau expiry, lần sai thứ5 lock15 phút, correct-password bị chặn trong
+lockout, attempt11 trả429 và login sau lockout expiry. Deadline tự trôi trong
+khi các case khác chạy; không sửa timeout cấu hình. Cùng lệnh
+`python -u -B .\scripts\Test-Task005MobileLive.py --operator-secret --restart-checkpoint`.
+Fixture/audit được giữ lại, credential/token chỉ trong RAM; chỉ actual output
+mới là bằng chứng, không coi syntax pass hoặc thời gian chưa trôi là PASS.
+
+
+Checkpoint restart mới: mobile/cookie/identity/login sau restart và last-admin
+API409 ba thao tác đã đạt. Runner20pass/1fail(exit1) do sai URL Razor, đã sửa
+/Detail và probe anonymous route; chưa full suite PASS. Credential/marker đã
+xóa/xác minh; web một instance đang chạy. Nhập lại prompt UAT rồi rerun; không
+lặp provisioning/init/bootstrap. Viewer/revoke/token/audit và browser còn thiếu.
+Marker precondition phải đếm unique ports2/owner1, localhost có4 rows IPv4+IPv6.
+
+
+## Tiếp tục sau sửa quota Google
+
+Build sạch/78 tests local exit0; hiện web dừng, credential UAT đã xóa.
+Provisioning/init/bootstrap và restart đã có bằng chứng, không lặp setup.
+Prompt nhập lại credential, AI start backend bằng lệnh Run và chạy:
+
+```powershell
+python -u -B .\scripts\Test-Task005MobileLive.py --operator-secret
+```
+
+Sau batch-read/no-op fix, API/Razor giãn tối thiểu 5 giây; không chạy browser
+song song. Runner thêm actual access15 phút/lockout15 phút/rate limit fixtures;
+không sửa timeout. Cleanup finally và boolean kiểm khóa absent là bắt buộc.
+Các mô tả NOT_RUN/checkpoint cuối phía trên là lịch sử; nguồn actual mới nhất
+là Test Report. Browser vẫn cần người dùng xác nhận riêng.
+
+
+Checkpoint live sau sửa quota: cùng lệnh --operator-secret (không restart flag)
+exit0/173 assertions; preflight12/12 exit0; Google read probe sau run exit0/Users4;
+credentialUAT/BootstrapAbsent=True đã kiểm riêng. Server giữ1instance cho browser.
+Không nhập secret/rerun runner khi chỉ làm browser. TASK-005 IN_REVIEW vì browser
+và timeout dài chưa đủ.
+
+Format thực tế cho bản sửa quota (chạy tuần tự, cả hai exit0):
+
+```powershell
+dotnet format .\src\DuyTien.AssetManagement.Server\DuyTien.AssetManagement.Server.csproj --no-restore --include src\DuyTien.AssetManagement.Infrastructure.Google\Adapters\GoogleAuthSystemStore.cs src\DuyTien.AssetManagement.Server\Authentication\AuthStorageAvailabilityExtensions.cs src\DuyTien.AssetManagement.Server\Authentication\OpaqueSessionAuthenticationHandler.cs src\DuyTien.AssetManagement.Server\Program.cs src\DuyTien.AssetManagement.Server\Pages\Admin\Users\Index.cshtml.cs
+dotnet format .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --include tests\DuyTien.AssetManagement.ArchitectureTests\GoogleAuthSystemStoreTests.cs tests\DuyTien.AssetManagement.ArchitectureTests\AuthApiIntegrationTests.cs
+```
+
+
+## TASK-005 — kiểm timeout bổ sung (2026-10-10)
+
+Chỉ thêm test, không đổi mã server/chính sách. Web tiếp tục chạy; build riêng test
+không build lại dependency/output server, rồi chỉ chạy lớp test mới:
+
+```powershell
+dotnet build .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --no-dependencies --nologo -v:minimal
+dotnet test .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-build --no-restore --nologo -v:minimal --filter FullyQualifiedName~AuthSessionTimeoutTests
+```
+
+TimeProvider giả lập, fake store; giữ nguyên default30min/8h/24h/7d/14d/30d.
+Không thay W13 real elapsed; không chạy lại toàn suite78 hoặc live173 đã đạt.
+
+
+## TASK-005 — runner chỉ W10 và W13 thực (2026-10-10)
+
+Không chạy lại suite 173 assertion. Dùng một backend HTTPS7008 đang chạy, resource
+DEV owner-only/exact drive.file đã kiểm trước khi ghi; credential operator nhập
+qua Set-Task005UatSecret.ps1. Runner không nhận password qua args/stdin; phục hồi
+admin chính trong finally, xóa credential ngay sau setup và xác minh absent.
+
+```powershell
+python -B -c "import ast; from pathlib import Path; ast.parse(Path('scripts/Test-Task005RemainingLive.py').read_text(encoding='utf-8')); print('SyntaxOK=True')"
+python -u -B .\scripts\Test-Task005RemainingLive.py --start-web-timeouts
+```
+
+Lệnh thứ hai có thể chạy nền bằng Start-Process -WindowStyle Hidden, stdout/stderr
+đến file tạm ngoài repo (output runner chỉ expected/actual/status). Không ghi secret
+trong command/log. Script không overwrite artifact đã tồn tại hoặc admin dự phòng
+đã có; trường hợp đó phải kiểm checkpoint trước, không rerun mù.
+
+W10: tạo admin_second_demo nếu absent, Admin/ALL ba chiều hiệu lực, đổi password
+đầu tiên, xác minh login/API/Razor HTTP; khóa/hạ role/bỏ ALL của admin chính được
+phép khi còn backup rồi phục hồi. Credential backup chỉ RAM; muốn dùng tiếp qua
+browser, admin chính có thể reset qua UI và người vận hành tự đổi password.
+W13: bốn user giả độc lập, cookie chỉ RAM; idle thật30ph/24h không hoạt động,
+absolute thật8h/7ngày giữ idle bằng GET mỗi20ph/12h. Không đổi chính sách hoặc
+đồng hồ. Artifact TASK-005-REMAINING-LIVE-EVIDENCE.json ghi PENDING đến deadline,
+đứt process/server hoặc request lỗi không là PASS. HTTP không chứng minh browser.
+
+Lệnh launch thực tế 2026-10-10 (không có secret args):
+
+```powershell
+$runnerPython = (Get-Command python -ErrorAction Stop).Source
+$runnerStdout = Join-Path ([IO.Path]::GetTempPath()) 'DuyTien-Task005-Remaining-20261010.out.log'
+$runnerStderr = Join-Path ([IO.Path]::GetTempPath()) 'DuyTien-Task005-Remaining-20261010.err.log'
+# Đã kiểm cả hai path absent trước launch; không overwrite checkpoint.
+$runnerProcess = Start-Process -FilePath $runnerPython -ArgumentList @('-u','-B','scripts\Test-Task005RemainingLive.py','--start-web-timeouts') -WorkingDirectory (Get-Location).Path -WindowStyle Hidden -RedirectStandardOutput $runnerStdout -RedirectStandardError $runnerStderr -PassThru
+$runnerProcess.Id
+```
+
+Launch exit0/PID18964; không đồng nghĩa runner exit0. Artifact clean ghi tiến độ,
+runner còn chờ deadline. Không rerun/create duplicate khi process còn sống.
+
+```powershell
+dotnet format .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --verify-no-changes --include tests/DuyTien.AssetManagement.ArchitectureTests/AuthSessionTimeoutTests.cs --verbosity minimal
+```
+
+Verify riêng file mới exit0; không chạy lại suite78 hoặc live173.
+
+## TASK-006 local — 2026-10-10
+
+Dừng đúng backend của workspace trước build để tránh tranh chấp output. Không dùng credential UAT/Google live trong test local. Build/test tuần tự:
+
+```powershell
+dotnet build .\src\DuyTien.AssetManagement.Server\DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal
+dotnet test .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~Category"
+dotnet test .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-build --no-restore --nologo -v:minimal --filter "FullyQualifiedName~ScopeAuthorizationTests|FullyQualifiedName~AuthApiIntegrationTests|FullyQualifiedName~AuthRazorUserDetailTests"
+git diff --check
+```
+
+Razor `/Categories`, `/Categories/Detail/{id}`, `/Categories/Import` có antiforgery.
+API bearer: GET `/api/categories?q=...`, `/tree`, `/{id}`, `/export`; POST `/api/categories/imports/preview` multipart trường `file`; POST `/imports/commit` JSON `{previewId, confirmDuplicateNames}`. Preview gắn actor/TTL 15 phút (không đổi chính sách phiên auth), commit retry trong TTL dùng ledger key server. Restart trước commit cần upload/preview lại; retry file đã commit không tạo bản sao. Không auto import staging/startup.
+
+Format TASK-006: từng csproj Application/Infrastructure.Google/Server/ArchitectureTests, `dotnet format <csproj> --no-restore --include <absolute paths các file mới TASK-006> --verbosity minimal`; bốn lệnh exit0. Include Application/Categories; adapter GoogleCategoryCatalogStore.cs; Server/Categories và Pages/Categories; bốn Category* test files. Không format toàn repo hoặc auth/user file đang có. `node --check .\src\DuyTien.AssetManagement.Server\wwwroot\js\category-import.js` kiểm syntax JS, không chứng minh browser. Không tiếp tục runner W13 hoặc secret UAT theo chỉ đạo dừng hiện hành.

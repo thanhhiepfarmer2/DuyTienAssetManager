@@ -1,0 +1,1749 @@
+{
+  "task": "TASK-005",
+  "date": "2026-10-10",
+  "source": "AI chạy/quan sát trực tiếp",
+  "state": "IN_REVIEW_BROWSER_AND_LONG_TIMEOUT_GATES",
+  "runs": [
+    {
+      "task": "TASK-005",
+      "date": "2026-10-09",
+      "source": "AI chạy/quan sát trực tiếp",
+      "state": "FAILED_TOOL_ROUTE",
+      "runnerExitCode": 1,
+      "passed": 20,
+      "failed": 1,
+      "cases": [
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Admin identity",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Admin role present",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "case": "Razor login form",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Razor anti-forgery field present",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "case": "Razor valid login",
+          "expected": 302,
+          "actual": 302,
+          "pass": true
+        },
+        {
+          "case": "Session cookie present",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "case": "Cookie HttpOnly/Secure/SameSite Lax",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "case": "Remember cookie persistence",
+          "expected": false,
+          "actual": false,
+          "pass": true
+        },
+        {
+          "case": "Admin session survives backend restart",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Admin identity/roles after restart",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "case": "Admin Razor cookie survives restart",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Additional restart login session logout",
+          "expected": 204,
+          "actual": 204,
+          "pass": true
+        },
+        {
+          "case": "Last-admin precondition",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Last admin cannot be locked",
+          "expected": 409,
+          "actual": 409,
+          "pass": true
+        },
+        {
+          "case": "Last admin cannot become Viewer",
+          "expected": 409,
+          "actual": 409,
+          "pass": true
+        },
+        {
+          "case": "Last admin cannot lose one ALL",
+          "expected": 409,
+          "actual": 409,
+          "pass": true
+        },
+        {
+          "case": "Last admin remains unchanged",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Last-admin user snapshot unchanged",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "case": "Persisted Razor role/scope detail",
+          "expected": 200,
+          "actual": 404,
+          "pass": false
+        }
+      ]
+    },
+    {
+      "task": "TASK-005",
+      "date": "2026-10-09",
+      "source": "AI chạy/quan sát trực tiếp",
+      "state": "FAILED_GOOGLE_QUOTA",
+      "runnerExitCode": 1,
+      "passed": 9,
+      "failed": 1,
+      "cases": [
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Admin identity",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Admin role present",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "case": "Razor login form",
+          "expected": 200,
+          "actual": 200,
+          "pass": true
+        },
+        {
+          "case": "Razor anti-forgery field present",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "case": "Razor valid login",
+          "expected": 302,
+          "actual": 302,
+          "pass": true
+        },
+        {
+          "case": "Session cookie present",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "case": "Cookie HttpOnly/Secure/SameSite Lax",
+          "expected": true,
+          "actual": true,
+          "pass": true
+        },
+        {
+          "case": "Remember cookie persistence",
+          "expected": false,
+          "actual": false,
+          "pass": true
+        },
+        {
+          "case": "Last-admin precondition",
+          "expected": 200,
+          "actual": 500,
+          "pass": false
+        }
+      ],
+      "diagnostic": {
+        "google429": 45,
+        "types": [
+          "DuyTien.AssetManagement.Application.ExternalStorage.ExternalStorageTransientException"
+        ]
+      },
+      "temporaryCredentialRemoved": true,
+      "browserG1": {
+        "source": "Người dùng xác nhận thủ công",
+        "state": "FAIL_MANUAL",
+        "actual": "Login admin thành công; mở Tài khoản hoặc Phân quyền lại yêu cầu đăng nhập, tải chậm; các bước G1 chưa kiểm tra được."
+      }
+    },
+    {
+      "task": "TASK-005",
+      "date": "2026-10-09",
+      "state": "PASS_LIVE_HTTP_GOOGLE",
+      "source": "AI chạy/quan sát trực tiếp",
+      "command": "python -u -B .\\scripts\\Test-Task005MobileLive.py --operator-secret",
+      "runnerExitCode": 0,
+      "passed": 173,
+      "failed": 0,
+      "cases": [
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Admin identity",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Admin role present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor login form",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor anti-forgery field present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor valid login",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Session cookie present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Cookie HttpOnly/Secure/SameSite Lax",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Remember cookie persistence",
+          "expected": false,
+          "actual": false,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Last-admin precondition",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Last admin cannot be locked",
+          "expected": 409,
+          "actual": 409,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Last admin cannot become Viewer",
+          "expected": 409,
+          "actual": 409,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Last admin cannot lose one ALL",
+          "expected": 409,
+          "actual": 409,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Last admin remains unchanged",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Last-admin user snapshot unchanged",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted Razor role/scope detail",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted selected role",
+          "expected": [
+            "Admin"
+          ],
+          "actual": [
+            "Admin"
+          ],
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted scope field Input.OrgUnitScopeId",
+          "expected": "ALL",
+          "actual": "ALL",
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted scope field Input.LocationScopeId",
+          "expected": "ALL",
+          "actual": "ALL",
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted scope field Input.CategoryScopeId",
+          "expected": "ALL",
+          "actual": "ALL",
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted descendant checkbox",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted scope display",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Admin Razor user list",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "User list contains admin",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Authenticated missing anti-forgery",
+          "expected": 400,
+          "actual": 400,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Authenticated invalid anti-forgery",
+          "expected": 400,
+          "actual": 400,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Cookie cannot call bearer admin API",
+          "expected": 403,
+          "actual": 403,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor login form",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor anti-forgery field present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor valid login",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Session cookie present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Cookie HttpOnly/Secure/SameSite Lax",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Remember cookie persistence",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Remember absolute expiry 7 days",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Remember session authenticated",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor anti-forgery field present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Remember logout",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Remember logout cookie revoked",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Remember logout requests login",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Create expiry fixture",
+          "expected": 201,
+          "actual": 201,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Expiry fixture access initially valid",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Create lockout fixture",
+          "expected": 201,
+          "actual": 201,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Failed login attempt 1",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Failed login attempt 2",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Failed login attempt 3",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Failed login attempt 4",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Failed login attempt 5",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Read fifth-failure lockout",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Fifth failure sets 15-minute lockout",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Correct password blocked during lockout",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Failed/rate-limited window attempt 7",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Failed/rate-limited window attempt 8",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Failed/rate-limited window attempt 9",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Failed/rate-limited window attempt 10",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Eleventh attempt rate limited",
+          "expected": 429,
+          "actual": 429,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Create fake account",
+          "expected": 201,
+          "actual": 201,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Temporary password response no-store",
+          "expected": "no-store",
+          "actual": "no-store",
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Assign Viewer/scopes",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted Razor role/scope detail",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted selected role",
+          "expected": [
+            "Viewer"
+          ],
+          "actual": [
+            "Viewer"
+          ],
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted scope field Input.OrgUnitScopeId",
+          "expected": "OU-DEMO-A",
+          "actual": "OU-DEMO-A",
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted scope field Input.LocationScopeId",
+          "expected": "LOC-DEMO-A",
+          "actual": "LOC-DEMO-A",
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted scope field Input.CategoryScopeId",
+          "expected": "CAT-DEMO-EQUIPMENT",
+          "actual": "CAT-DEMO-EQUIPMENT",
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted descendant checkbox",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Persisted scope display",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "First login must change",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Must-change blocks admin API",
+          "expected": 403,
+          "actual": 403,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Password 7 rejected",
+          "expected": 400,
+          "actual": 400,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Simple lowercase password 8 accepted",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Password change access revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Password change refresh revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Must-change cleared",
+          "expected": false,
+          "actual": false,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Access expiry issued for 15 minutes",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Viewer admin denied application/json",
+          "expected": 403,
+          "actual": 403,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Viewer API no redirect application/json",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Viewer admin denied text/html",
+          "expected": 403,
+          "actual": 403,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Viewer API no redirect text/html",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Refresh rotation",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Access and refresh changed",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Old access after rotation",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Rotated access valid",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Old refresh reuse denied",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Refresh reuse family access revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Refresh reuse family refresh revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor login form",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor anti-forgery field present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor valid login",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Session cookie present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Cookie HttpOnly/Secure/SameSite Lax",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Remember cookie persistence",
+          "expected": false,
+          "actual": false,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Viewer Razor admin denied",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Viewer redirects to access denied",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Viewer access denied page",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Change role assignments",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Authorization change access revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Authorization change refresh revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Authorization change cookie revoked",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Authorization change requests login",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Multiple role identity",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Two role assignments active",
+          "expected": [
+            "AssetEditor",
+            "DocumentManager"
+          ],
+          "actual": [
+            "AssetEditor",
+            "DocumentManager"
+          ],
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Multiple assignments in Razor detail",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor displays both role/scope groups",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Editor has no admin permission",
+          "expected": 403,
+          "actual": 403,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor login form",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor anti-forgery field present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor valid login",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Session cookie present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Cookie HttpOnly/Secure/SameSite Lax",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Remember cookie persistence",
+          "expected": false,
+          "actual": false,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Lock fake user",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Lock access revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Lock refresh revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Lock cookie revoked",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Lock requests login",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Locked login denied",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Unlock fake user",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor login form",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor anti-forgery field present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor valid login",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Session cookie present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Cookie HttpOnly/Secure/SameSite Lax",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Remember cookie persistence",
+          "expected": false,
+          "actual": false,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Reset fake user",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Reset response no-store",
+          "expected": "no-store",
+          "actual": "no-store",
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Reset access revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Reset refresh revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Reset cookie revoked",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Reset requests login",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Reset requires password change",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Change reset password",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile logout",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Logout access revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Logout refresh revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Sixth session revokes oldest",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Newest session remains active",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Cleanup six-session test",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Logout all",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Logout-all first access revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Logout-all first refresh revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Logout-all second access revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Logout-all second refresh revoked",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Access expired after real 15 minutes",
+          "expected": 401,
+          "actual": 401,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Refresh after access expiry",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Expiry fixture refreshed access valid",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Expiry fixture logout",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Mobile login",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Login allowed after actual lockout expiry",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Lockout fixture logout",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Admin runner refresh rotation",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Read audit",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Expected audit actions",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Admin web logout form",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Razor anti-forgery field present",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Admin web logout",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Admin web logout cookie revoked",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Admin web logout requests login",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        },
+        {
+          "case": "Admin runner session logout",
+          "expected": 204,
+          "actual": 204,
+          "pass": true,
+          "source": "AI chạy/quan sát trực tiếp"
+        }
+      ],
+      "temporaryCredentialRemoved": true,
+      "cleanupVerified": {
+        "TemporaryUatSecretPresent": false,
+        "BootstrapSecretPresent": false
+      },
+      "postRunReadProbe": {
+        "exitCode": 0,
+        "OAuthExactDriveFile": true,
+        "DevResourceVerified": true,
+        "AclOwnerOnly": true,
+        "PermissionCount": 1,
+        "SchemaVersion": 1,
+        "RequiredTabCount": 13,
+        "MissingTabCount": 0,
+        "RoleCount": 5,
+        "CatalogMatches": true,
+        "UserRecordCount": 4,
+        "AdminExists": true
+      },
+      "limits": [
+        "HTTP is not browser interaction/layout evidence.",
+        "Long web/remember/refresh elapsed expiry not run.",
+        "Scope descendant/multiple-assignment/move core proven locally; no TASK-006 endpoints."
+      ]
+    }
+  ],
+  "browserUat20261010": [
+    {
+      "case": "G1a",
+      "expected": "Admin Users/Authorization5roles/SecurityEvents accessible without bounce; safe audit",
+      "actual": "User confirmed all three URLs PASS",
+      "status": "PASS_MANUAL",
+      "source": "Người dùng xác nhận thủ công",
+      "exitCode": null
+    },
+    {
+      "case": "G1b",
+      "expected": "Last Admin three guards reject; GET reload Admin/ALL/descendants unchanged",
+      "actual": "User confirmed all steps PASS",
+      "status": "PASS_MANUAL",
+      "source": "Người dùng xác nhận thủ công",
+      "exitCode": null
+    },
+    {
+      "case": "G2a",
+      "source": "Người dùng xác nhận thủ công",
+      "reportedOn": "2026-10-10",
+      "exitCode": null,
+      "usernamesReported": [
+        "uat005_ui_1010",
+        "uat005_ui_1010_02"
+      ],
+      "confirmedCases": [
+        {
+          "case": "Submit rỗng",
+          "status": "PASS_MANUAL"
+        },
+        {
+          "case": "Thiếu tên hiển thị",
+          "status": "PASS_MANUAL"
+        },
+        {
+          "case": "Tạo user hợp lệ",
+          "status": "PASS_MANUAL"
+        },
+        {
+          "case": "Username trùng",
+          "actual": "Bị chặn, không thêm bản sao",
+          "status": "PASS_MANUAL"
+        }
+      ],
+      "notConfirmed": [
+        "Username sai định dạng",
+        "Mật khẩu tạm chỉ một response"
+      ],
+      "next": "G2b display name/Viewer/scopes/reopen pending"
+    },
+    {
+      "case": "G2b",
+      "status": "PASS_MANUAL",
+      "source": "Người dùng xác nhận thủ công",
+      "reportedOn": "2026-10-10",
+      "exitCode": null,
+      "username": "uat005_ui_1010_02",
+      "expectedAndConfirmed": {
+        "displayName": "UAT Viewer 1010-02",
+        "role": "Viewer",
+        "state": "Active",
+        "scopeIds": [
+          "OU-DEMO-A",
+          "LOC-DEMO-A",
+          "CAT-DEMO-EQUIPMENT"
+        ],
+        "includeDescendants": true,
+        "formAndPersistedAssignmentSurviveGetReopen": true
+      },
+      "notProven": [
+        "Restart with fake scopes",
+        "Viewer access denied",
+        "Password change validation"
+      ],
+      "next": "G2c first login/password validation pending"
+    },
+    {
+      "case": "G2c precondition",
+      "status": "NOT_RUN_MISSING_TEMPORARY_PASSWORD",
+      "source": "Người dùng xác nhận thủ công",
+      "reportedOn": "2026-10-10",
+      "exitCode": null,
+      "username": "uat005_ui_1010_02",
+      "actual": "Forgot temporary password; cannot login",
+      "next": "Admin UI reset same fake user; new temporary password kept privately; reset/login not yet observed"
+    },
+    {
+      "case": "G2c Reset/Login recovery",
+      "status": "PASS_MANUAL",
+      "source": "Người dùng xác nhận thủ công",
+      "reportedOn": "2026-10-10",
+      "exitCode": null,
+      "username": "uat005_ui_1010_02",
+      "expectedAndConfirmed": [
+        "Admin UI reset same user",
+        "New temporary password login succeeds",
+        "Mandatory password change shown"
+      ],
+      "notProven": [
+        "Password change validation",
+        "Login after password change",
+        "Old active cookie revocation by reset",
+        "Specific reset/change audit"
+      ],
+      "next": "G2c validation and successful change/relogin"
+    },
+    {
+      "case": "G2c",
+      "status": "PASS_MANUAL",
+      "source": "Người dùng xác nhận thủ công",
+      "reportedOn": "2026-10-10",
+      "exitCode": null,
+      "username": "uat005_ui_1010_02",
+      "context": "Password validation and successful change after operator reset; original creation temporary password was lost",
+      "confirmedCases": [
+        {
+          "case": "Protected admin URL before mandatory password change",
+          "actual": "Returns to ChangePassword",
+          "status": "PASS_MANUAL"
+        },
+        {
+          "case": "Wrong current password; valid new/confirmation",
+          "actual": "Validation; no password change",
+          "status": "PASS_MANUAL"
+        },
+        {
+          "case": "New/confirmation 7 characters",
+          "actual": "Minimum 8 validation; no password change",
+          "status": "PASS_MANUAL"
+        },
+        {
+          "case": "Confirmation mismatch with new at least8",
+          "actual": "Validation; no password change",
+          "status": "PASS_MANUAL"
+        },
+        {
+          "case": "Chosen simple lowercase8 password change",
+          "actual": "Success; redirect login",
+          "status": "PASS_MANUAL"
+        },
+        {
+          "case": "Pre-change temporary password rejected",
+          "actual": "Generic login rejection",
+          "status": "PASS_MANUAL"
+        },
+        {
+          "case": "New password login",
+          "actual": "Success; must-change no longer required",
+          "status": "PASS_MANUAL"
+        }
+      ],
+      "next": "G2d Viewer denied admin URLs, then revoke/lock/reset/logout/layout"
+    },
+    {
+      "case": "G2d",
+      "status": "PASS_MANUAL",
+      "source": "Người dùng xác nhận thủ công",
+      "reportedOn": "2026-10-10",
+      "exitCode": null,
+      "username": "uat005_ui_1010_02",
+      "role": "Viewer",
+      "confirmedCases": [
+        {
+          "url": "/Admin/Users",
+          "expectedAndConfirmed": "AccessDenied/no user list/no login bounce"
+        },
+        {
+          "url": "/Admin/Authorization",
+          "expectedAndConfirmed": "AccessDenied/no catalog/no login bounce"
+        },
+        {
+          "url": "/Admin/SecurityEvents",
+          "expectedAndConfirmed": "AccessDenied/no audit/no login bounce"
+        },
+        {
+          "url": "/Account/ChangePassword",
+          "expectedAndConfirmed": "Form accessible with valid session; mandatory-change warning absent"
+        }
+      ],
+      "next": "G2e role/scope update revokes old cookie; relogin AssetEditor denied administration"
+    }
+  ],
+  "focusedLocalTimeout20261010": {
+    "source": "AI chạy trực tiếp; fake TimeProvider/InMemory store",
+    "productPolicyChanged": false,
+    "buildExitCode": 0,
+    "warnings": 0,
+    "errors": 0,
+    "testExitCode": 0,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "filter": "FullyQualifiedName~AuthSessionTimeoutTests",
+    "realElapsedEvidence": false,
+    "baseline78Rerun": false
+  },
+  "remainingLive20261010": {
+    "source": "AI direct HTTP/Google; not browser",
+    "artifact": "TASK-005-REMAINING-LIVE-EVIDENCE.json",
+    "runnerPid": 18964,
+    "launchExitCode": 0,
+    "runnerExitCode": null,
+    "observedAssertions": 67,
+    "failedObserved": 0,
+    "W10": "PASS_HTTP_GOOGLE",
+    "W13": "PASS_PARTIAL_REAL_ELAPSED_DEFAULT_IDLE_30_MINUTES",
+    "temporaryUatSecretPresent": false,
+    "bootstrapSecretPresent": false,
+    "independentPresenceProbeExitCode": 0,
+    "observedDefaultAbsoluteKeepalive200": "2026-10-10T07:35:36.406683+00:00",
+    "webTimeouts": [
+      {
+        "case": "default_idle",
+        "state": "PASS_REAL_ELAPSED",
+        "checks": [
+          {
+            "atUtc": "2026-10-10T07:44:57.311761+00:00",
+            "expected": "302 login",
+            "actualStatus": 302,
+            "redirectToLogin": true
+          }
+        ]
+      },
+      {
+        "case": "default_absolute",
+        "state": "PENDING_ELAPSED",
+        "checks": [
+          {
+            "atUtc": "2026-10-10T07:35:36.406683+00:00",
+            "expected": 200,
+            "actualStatus": 200
+          }
+        ]
+      },
+      {
+        "case": "remember_idle",
+        "state": "PENDING_ELAPSED",
+        "checks": []
+      },
+      {
+        "case": "remember_absolute",
+        "state": "PENDING_ELAPSED",
+        "checks": []
+      }
+    ]
+  },
+  "userDecision20261010": {
+    "source": "User explicit instruction",
+    "decision": "Người dùng dừng nghiệm thu TASK-005 và cho phép triển khai local TASK-006 dù TASK-005 chưa DONE (2026-10-10).",
+    "status": "IN_REVIEW",
+    "G2a": "PASS_MANUAL (4 explicitly confirmed cases)",
+    "G2b": "PASS_MANUAL",
+    "G2c": "DEFERRED_BY_USER: latest instruction says acceptance incomplete; earlier manual confirmations retained as history",
+    "remainingBrowser": "DEFERRED_BY_USER",
+    "remainingRealTimeouts": "STOPPED_BY_USER",
+    "defaultIdle30Minutes": "PASS_REAL_ELAPSED",
+    "temporaryCredentialAbsentVerifiedByAI": true,
+    "runner18964AbsentVerifiedByAI": true
+  }
+}

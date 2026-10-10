@@ -92,3 +92,7 @@ Importer phải đọc lại file nguồn và đối chiếu hash, không dùng 
 - `04_Quy định nguyên tắc đặt mã chung Duy Tiến.docx`: SHA-256 `ff79ba5c5949104d6b985963fe8f64e3c2a22b5f90a841d995e67174e88a9f21`
 - `Bảng mã(Nháp lần 5).xlsx`: SHA-256 `0f9c0ceb78ed321175de769a3a49f22a5fdf45fe7c0a69b25d00cad6902c1fbb`
 - `Vat_tu__hang_hoa__dich_vu1.2.xlsx`: SHA-256 `fca3b33c2f2ecc7811df964dd01e816678768b936f9f38821882994f7574d0d3`
+
+## Checkpoint TASK-006 — 2026-10-10
+
+AI đọc lại staging trong repository: 665/15/98/552, 39 tên nhiều code, không lệch baseline. Không tìm thấy workbook XLSX gốc kể cả hidden/ignored (ngoài bin/obj/.git); chưa tái xác minh hash/header/definition gốc. Nguồn authoritative vẫn workbook Nháp lần5 đã xác lập; không thay bằng DOCX 13F1. Parser metadata đã test với workbook giả, không là bằng chứng nguồn original.

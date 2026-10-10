@@ -1,0 +1,70 @@
+{
+  "task": "TASK-006",
+  "status": "IN_REVIEW",
+  "observedAtUtc": "2026-10-10T09:07:57.440185+00:00",
+  "source": "AI direct local command observation",
+  "baseline": {
+    "source": "repository category-candidates.json",
+    "total": 665,
+    "F1": 15,
+    "F2": 98,
+    "F3": 552,
+    "multiCodeNames": 39,
+    "delta": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "originalWorkbookPresent": false
+  },
+  "checks": [
+    {
+      "command": "dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal",
+      "exitCode": 0,
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "command": "dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter FullyQualifiedName~Category",
+      "exitCode": 0,
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-build --no-restore --nologo -v:minimal --filter FullyQualifiedName~ScopeAuthorizationTests|FullyQualifiedName~AuthApiIntegrationTests|FullyQualifiedName~AuthRazorUserDetailTests",
+      "exitCode": 0,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    },
+    {
+      "command": "node --check src/DuyTien.AssetManagement.Server/wwwroot/js/category-import.js",
+      "exitCode": 0,
+      "evidenceType": "syntax only, not browser"
+    }
+  ],
+  "notRun": [
+    "original workbook hash/header/definition",
+    "Google live TASK006 schema/import/reimport/restart/ACL",
+    "browser UAT desktop/mobile/JS interactions"
+  ],
+  "task005": "IN_REVIEW; remaining DEFERRED_BY_USER; runner W13 STOPPED_BY_USER",
+  "commitPushDeploy": false,
+  "realDataWrites": false,
+  "finalProcessAndSecretCheck": {
+    "source": "AI direct local inspection; booleans only",
+    "observedAtUtc": "2026-10-10T09:11:48.668474+00:00",
+    "commandExitCode": 0,
+    "w13RunnerAbsent": true,
+    "temporaryUatSecretPresent": false,
+    "bootstrapSecretPresent": false,
+    "workspaceBackendCount": 0
+  }
+}

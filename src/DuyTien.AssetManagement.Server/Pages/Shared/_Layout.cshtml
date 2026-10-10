@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
@@ -26,6 +26,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Quyền riêng tư</a>
                         </li>
+                        @if (User.Identity?.IsAuthenticated == true) { <li class="nav-item"><a class="nav-link text-dark" asp-page="/Categories/Index">Danh mục</a></li> }
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item"><a class="nav-link text-dark" asp-page="/Admin/Users/Index">Tài khoản</a></li>

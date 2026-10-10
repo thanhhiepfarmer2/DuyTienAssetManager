@@ -12,7 +12,7 @@ public sealed class DetailModel(AuthApplicationService authService, TimeProvider
 {
     public string Id { get; private set; } = string.Empty;
     public AuthUser? Account { get; private set; }
-    public IReadOnlyList<AuthRoleAssignment> Assignments { get; private set; } = [];
+    public IReadOnlyList<AuthRoleAssignmentWithScopes> AssignmentDetails { get; private set; } = [];
     public IReadOnlyList<string> Roles => AuthRole.All;
     public string? TemporaryPassword { get; private set; }
     public string? Message { get; private set; }
@@ -24,6 +24,21 @@ public sealed class DetailModel(AuthApplicationService authService, TimeProvider
     {
         if (!await LoadAsync(id, cancellationToken)) return NotFound();
         Input.DisplayName = Account!.DisplayName;
+        if (AssignmentDetails.Count == 1)
+        {
+            var detail = AssignmentDetails[0];
+            // The replacement form can represent one grant in each dimension and one shared flag.
+            if (detail.Scopes.Count == 3 &&
+                Enum.GetValues<AuthScopeType>().All(type => detail.Scopes.Count(scope => scope.ScopeType == type) == 1) &&
+                detail.Scopes.Select(scope => scope.IncludeDescendants).Distinct().Count() == 1)
+            {
+                Input.RoleCode = detail.Assignment.RoleCode;
+                Input.OrgUnitScopeId = detail.Scopes.Single(scope => scope.ScopeType == AuthScopeType.OrgUnit).ScopeId;
+                Input.LocationScopeId = detail.Scopes.Single(scope => scope.ScopeType == AuthScopeType.Location).ScopeId;
+                Input.CategoryScopeId = detail.Scopes.Single(scope => scope.ScopeType == AuthScopeType.CategorySubtree).ScopeId;
+                Input.IncludeDescendants = detail.Scopes[0].IncludeDescendants;
+            }
+        }
         return Page();
     }
 
@@ -107,7 +122,7 @@ public sealed class DetailModel(AuthApplicationService authService, TimeProvider
         Id = id;
         Account = await authService.GetUserAsync(id, cancellationToken);
         if (Account is null) return false;
-        Assignments = await authService.ListRoleAssignmentsAsync(id, cancellationToken);
+        AssignmentDetails = await authService.ListRoleAssignmentsWithScopesAsync(id, cancellationToken);
         if (string.IsNullOrEmpty(Input.DisplayName)) Input.DisplayName = Account.DisplayName;
         return true;
     }

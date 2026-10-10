@@ -20,9 +20,12 @@ Task/Plan liên quan: [TASK-002](../06-tasks/TASK-002.md), [PLAN-001](../02-arch
 | D-10 | Google integration chỉ request `drive.file` cho cả Sheets/Drive, không fallback quyền rộng; resource mới do app provisioning chủ động, resource có sẵn phải được người vận hành chọn qua Google Picker; nhập ID hoặc chọn folder cha không tự cấp quyền file con | Yêu cầu người dùng ngày 2026-10-07 |
 | D-11 | Duyệt năm role/scope/chức danh và demo auth TASK-005; Location có ParentId; admin hoạt động phải có assignment Admin hiệu lực với đủ ba ALL; auth maintenance loại trừ writer liên tiến trình; mật khẩu chỉ yêu cầu tối thiểu 8 ký tự, không có rule độ mạnh khác | Yêu cầu người dùng ngày 2026-10-07 |
 
-Chưa xác lập tài khoản Google vận hành, Google Cloud project/OAuth client,
-spreadsheetId/folderId, nhà cung cấp hosting/domain, rule mã demo và chi tiết
-thiết bị/signing. Không tự chọn dịch vụ trả phí, tạo Google resource hay deploy.
+Google dev đã được setup và nghiệm thu TASK-004; OAuth/resource IDs ở ngoài
+repo. Ngày 2026-10-09 người dùng cho phép provisioning/init/bootstrap system
+spreadsheet dev riêng bằng dữ liệu giả cho TASK-005; provisioning/ACL/schema đã
+đạt, bootstrap/phiên/quyền live và UI UAT còn thiếu. Nhà cung cấp hosting/domain,
+rule mã demo và chi tiết thiết bị/signing vẫn chưa xác lập. Không tự chọn dịch vụ
+trả phí hoặc deploy; tài nguyên Google chỉ thao tác trong phạm vi đã được giao.
 
 ## 2. Phạm vi sản phẩm và cách tách bản ghi
 - Categories: cây phân loại dùng chung cho 15 F1 hiện tại; cấp sâu mở rộng tới F10 khi có dữ liệu/rule đã xác lập.
@@ -132,14 +135,15 @@ Không cộng m2, kg, cái thành một con số “tổng số lượng”. Ch�
 | AC-15 | OAuth request chỉ có `drive.file`; resource mới do app provisioning hoặc resource có sẵn qua Picker truy cập được, còn file control có thật chưa cấp quyền bị từ chối; không fallback scope rộng | Request-boundary tests + live Google access-boundary evidence |
 
 ## 13. Các mục còn cần xác lập
-- OPEN-01: Tài khoản vận hành My Drive; Google Cloud project/OAuth client; Data
-  Access/grant `drive.file`; spreadsheet/folder qua provisioning hoặc Picker và
-  live evidence allow/deny.
+- OPEN-01: Gate Google dev của TASK-004 đã đạt bằng evidence user-run/manual;
+  không chạy lại PoC. TASK-005 đã xác minh system spreadsheet DEV riêng/owner-only
+  ACL/drive.file và init schema ngày 2026-10-09; bootstrap/phiên/quyền live và
+  browser UAT vẫn còn mở. Giá trị OAuth/resource IDs tiếp tục ngoài repo.
 - OPEN-02: Nhà cung cấp host/domain/TLS cho mạng công ty + Internet; rule cấp mã demo và người phê duyệt/công bố cây.
-- OPEN-03: Duyệt/điều chỉnh proposal năm role; xác nhận Asset demo bắt buộc đủ
-  OrgUnit/Location/Category và chức danh chỉ là template, sau đó mới map với cơ
-  cấu vai trò/đơn vị/địa điểm thật. Tập trường required theo từng loại tài sản
-  vẫn chưa xác lập.
+- OPEN-03: Năm role/scope, Asset demo đủ OrgUnit/Location/Category và chức danh
+  chỉ là template đã ACCEPTED ngày 2026-10-07. Mapping cơ cấu vai trò/đơn vị/
+  địa điểm thật và tập trường required theo từng loại tài sản vẫn chưa xác lập;
+  lượt TASK-005 chỉ dùng fixture giả.
 - OPEN-04: Snapshot tồn lấy từ nguồn nào, ai cập nhật, ngưỡng theo kho nào.
 - OPEN-05: Thiết bị Android/iPhone và OS mục tiêu; xác minh Mac/macOS/Xcode, signing team/profile và cách phân phối app nội bộ.
 - OPEN-06: Mẫu DOCX/PDF thực tế và chính sách retention/backup.

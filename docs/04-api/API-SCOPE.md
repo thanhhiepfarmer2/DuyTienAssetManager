@@ -39,3 +39,9 @@ Razor Pages `ACCEPTED` trong TASK-005: `/Account/Login`,
 `/Account/ChangePassword`, `/Account/AccessDenied`, `/Admin/Users`,
 `/Admin/Users/{id}`, `/Admin/Authorization`, `/Admin/SecurityEvents`. Các trang
 dùng cùng application/authorization service với API; TASK-005 chưa làm UI MAUI.
+
+## TASK-006 — routes đã triển khai local (override đề xuất tương ứng)
+
+GET `/api/categories?q=...`, `/api/categories/tree`, `/api/categories/{id}`: CATEGORIES_READ + scoped rows; GET `/api/categories/export`: CATEGORIES_EXPORT + scope, UTF-8 TXT. Không có POST/PATCH/DELETE CRUD hoặc move endpoint riêng trong task này. POST `/api/categories/imports/preview` multipart `file`: CATEGORIES_IMPORT + mọi row phạm vi ảnh hưởng, response preview/previewId; POST `/api/categories/imports/commit` JSON `{previewId,confirmDuplicateNames}`: recheck permission/revision/digest, key server của preview được lưu ledger cả no-op. Preview RAM gắn actor15min; sau restart upload/preview lại, ledger/file history chống duplicate. Cookie gọi API bị403, bearer validated bởi TASK-005; role CatalogManager/Admin chưa đủ nếu scope không hợp lệ.
+
+HTTP401/403/404/409/400 validation và503 upstream an toàn, no-store; list total chỉ phạm vi. Không pagination vì snapshot bounded1000, không raw auth/Google response. Live Google/browser chưa kiểm; xem TEST-REPORT-TASK-006.

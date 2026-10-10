@@ -16,6 +16,7 @@ public sealed class OpaqueSessionAuthenticationHandler(
     public const string SchemeName = "DuyTienOpaqueSession";
     public const string CookieName = "dt_session";
     public const string CredentialSourceClaim = "credential_source";
+    internal const string StorageUnavailableItem = "DuyTien.AuthStorageUnavailable";
     public const string MustChangePasswordClaim = "must_change_password";
 
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -31,11 +32,16 @@ public sealed class OpaqueSessionAuthenticationHandler(
         {
             session = await authService.ValidateAccessTokenAsync(token, Context.RequestAborted);
         }
+        catch (OperationCanceledException) when (Context.RequestAborted.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (Exception exception)
         {
             Logger.LogWarning(
                 "Auth session validation failed with {ExceptionType}; no credential was logged.",
                 exception.GetType().Name);
+            Context.Items[StorageUnavailableItem] = true;
             return AuthenticateResult.Fail("Session validation unavailable.");
         }
 
@@ -100,6 +106,7 @@ public sealed class OpaqueSessionAuthenticationHandler(
     }
 
     private bool AcceptsHtml() =>
+        !Request.Path.StartsWithSegments("/api") &&
         Request.Headers.Accept.Any(value =>
             value?.Contains("text/html", StringComparison.OrdinalIgnoreCase) == true);
 }

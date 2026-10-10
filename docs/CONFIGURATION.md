@@ -13,13 +13,13 @@ biệt hoàn toàn với tài khoản đăng nhập ứng dụng của admin/ng�
 
 | Khóa cấu hình | Biến môi trường tương đương | Loại | Trạng thái |
 |---|---|---|---|
-| `GoogleWorkspace:OAuthClientId` | `GoogleWorkspace__OAuthClientId` | Secret/config nhạy cảm | Chưa cấp |
-| `GoogleWorkspace:OAuthClientSecret` | `GoogleWorkspace__OAuthClientSecret` | Secret | Chưa cấp |
-| `GoogleWorkspace:OAuthRefreshToken` | `GoogleWorkspace__OAuthRefreshToken` | Secret/token | Chưa cấp |
-| `GoogleWorkspace:SpreadsheetId` | `GoogleWorkspace__SpreadsheetId` | Resource ID | Chưa cấp |
-| `GoogleWorkspace:SystemSpreadsheetId` | `GoogleWorkspace__SystemSpreadsheetId` | Resource ID spreadsheet auth riêng | `ACCEPTED`; chưa tạo/cấp/live |
-| `GoogleWorkspace:DriveFolderId` | `GoogleWorkspace__DriveFolderId` | Resource ID My Drive | Chưa cấp |
-| `GoogleWorkspace:AccessDeniedProbeFileId` | `GoogleWorkspace__AccessDeniedProbeFileId` | Resource ID control chỉ dùng live test | Chưa cấp |
+| `GoogleWorkspace:OAuthClientId` | `GoogleWorkspace__OAuthClientId` | Secret/config nhạy cảm | Có user-secrets; không in giá trị |
+| `GoogleWorkspace:OAuthClientSecret` | `GoogleWorkspace__OAuthClientSecret` | Secret | Có user-secrets; không in giá trị |
+| `GoogleWorkspace:OAuthRefreshToken` | `GoogleWorkspace__OAuthRefreshToken` | Secret/token | Có user-secrets; refresh trả đúng drive.file ngày 2026-10-09 |
+| `GoogleWorkspace:SpreadsheetId` | `GoogleWorkspace__SpreadsheetId` | Resource ID | Có user-secrets; bằng chứng TASK-004 giữ nguyên |
+| `GoogleWorkspace:SystemSpreadsheetId` | `GoogleWorkspace__SystemSpreadsheetId` | Resource ID spreadsheet auth riêng | Đã provisioning DEV riêng/init schema 1 ngày 2026-10-09; ACL chỉ owner; bootstrap/no-op đã đạt |
+| `GoogleWorkspace:DriveFolderId` | `GoogleWorkspace__DriveFolderId` | Resource ID My Drive | Có user-secrets; không kiểm lại PoC TASK-004 |
+| `GoogleWorkspace:AccessDeniedProbeFileId` | `GoogleWorkspace__AccessDeniedProbeFileId` | Resource ID control chỉ dùng live test | Có user-secrets; không chạy lại TASK-004 |
 
 Không nhập giá trị trực tiếp vào command history. Dùng script prompt ẩn; giá trị
 để trống giữ nguyên cấu hình hiện có:
@@ -83,7 +83,8 @@ Các tên khóa dưới đây đã được duyệt; không chứa giá trị th
   ASP.NET Core configuration. User-secrets dev có thể được lệnh xóa sau thành
   công; env/secret manager phải do người vận hành xóa hoặc rotate.
 - `SystemSpreadsheetId` được lưu ngoài client và chỉ có sau khi người vận hành
-  chủ động provisioning hoặc Picker. Lượt thiết kế này không tạo/chọn resource.
+  chủ động provisioning hoặc Picker. Lượt thiết kế 2026-10-07 không tạo/chọn;
+  lượt 2026-10-09 đã provisioning DEV riêng, xác minh ACL/init/bootstrap/no-op; khóa bootstrap đã xóa.
 - Chỉ yêu cầu mật khẩu có tối thiểu 8 ký tự. Không áp dụng bất kỳ điều kiện nội
   dung/độ mạnh nào khác cho create/bootstrap/reset/change.
 - Chi tiết chính sách tại
@@ -108,3 +109,75 @@ Các tên khóa dưới đây đã được duyệt; không chứa giá trị th
 Mobile gọi API chung qua HTTPS; không chứa Google credential. Base URL, signing
 Android/iOS và cấu hình phân phối sẽ được thêm khi hosting/domain và thiết bị mục
 tiêu được xác lập. Build target hiện tại chỉ gồm Android và iOS.
+
+## Checkpoint TASK-005 ngày 2026-10-09
+
+Kiểm tra cấu hình chỉ xuất tên khóa và boolean có/không. OAuth client/secret/
+refresh và resource TASK-004 có trong user-secrets, không có override environment
+cho các khóa đã kiểm tra. `SystemSpreadsheetId` được flow provisioning lưu ngoài
+repo; Google xác minh DEV System thuộc tài khoản OAuth hiện tại, không trashed,
+canEdit, chỉ một permission owner/user, shared=false và khác CSDL nghiệp vụ.
+Scope token refresh đúng duy nhất drive.file; không chạy consent hoặc đổi client.
+Đây không phải kiểm tra Google Console về loại client mới; giữ setup Desktop
+đã xác lập và implementation PKCE/loopback hiện có.
+
+Bootstrap đã chạy hai lần exit 0/no-op và khóa bị xóa; recovery không chạy. `Auth:SystemWriterLockFilePath` dùng default
+trong binary của cùng server project; web/CLI lấy cùng lease. Người dùng nói rõ
+vẫn làm trên máy đã setup, chưa chuyển máy. AI không thấy server DuyTien hoặc
+listener dự án trước CLI; các tiến trình dotnet quan sát là build infrastructure.
+Web đã dừng sau bản sửa UI, process/port 0. Người dùng đã đổi mật khẩu/login lại;
+credential UAT tạm đã xóa sau runner fail checkpoint công cụ. Không
+bootstrap lại để đặt mật khẩu mới; xem checklist TASK-005. Không ghi giá trị secret/resource
+ID vào report.
+
+### Credential UAT tạm
+
+`UatTask005:AdminPassword` chỉ phục vụ runner dev, không là policy hoặc backdoor
+ứng dụng. Prompt `Set-Task005UatSecret.ps1` lưu ngoài repo; không in giá trị.
+Runner `Test-Task005MobileLive.py --operator-secret --restart-checkpoint` đọc RAM,
+xóa đúng khóa ở finally (kể cả fail) bằng atomic replace và giữ các khóa khác.
+Nếu process bị kill trước finally, người vận hành xóa khóa ngoài repo. Người dùng
+đã sửa File.Replace backup null bằng NullString.Value và xác nhận lưu thành công;
+AI sửa pattern tương tự trong bootstrap helper, file giả probe pass. Không giữ
+password/hash/token trong tài liệu hoặc output nghiệm thu.
+
+Hiện tại credential UAT tạm không có (AI chỉ kiểm boolean False). Người dùng cần nhập lại prompt ẩn cho lần runner tiếp theo; không tái sử dụng khóa bootstrap đã xóa.
+
+Checkpoint sửa quota: credential runner lần tiếp theo cũng đã xóa (AI booleanFalse), web dừng. Không đổi scope/Desktop/client/resources/password policy/timeouts; giảm API round-trips và no-op writes. Lỗi Google503 giữ cookie/session, phải retry sau hồi phục.
+
+
+## Kết quả live sau sửa quota — 2026-10-09
+
+Build sạch/78 tests local exit0; HTTP preflight12/12 exit0; runner
+`python -u -B .\scripts\Test-Task005MobileLive.py --operator-secret` exit0,
+173/173 assertion. Viewer/revoke/last-admin/mobile rotation-reuse/logout/audit/
+max5/access15 phút thật/lockout15 phút thật/rate-limit đạt. Cookie/anti-forgery và
+Razor scopes đã PASS_HTTP_GOOGLE, không là PASS_BROWSER. Cleanup khóa UAT/
+bootstrap đều booleanFalse; read probe Google exit0 vẫn đúng DEV/owner-only/
+drive.file/schema1/13tab/5role, Users4/AdminExistsTrue. Một backend đang chạy
+HTTPS7008 để browser. G1 trước fix FAIL_MANUAL, retest đang chờ; G2/tương tác/
+layout, W10 và W13 elapsed dài chưa đầy đủ. TASK-005 IN_REVIEW; không lặp setup.
+TASK-003 IN_REVIEW, TASK-004 DONE, Task sau chỉ bắt đầu sau gate TASK-005.
+
+## Checkpoint UAT hiện tại — 2026-10-10
+
+G1a/G1b PASS do người dùng xác nhận thủ công. W10 PASS_HTTP_GOOGLE: fake backup
+Active/Admin cùng assignment ba ALL hiệu lực, login API/Razor HTTP và phục hồi
+primary đã quan sát. Baseline78/live173 không chạy lại. Thêm14 test boundary
+TimeProvider PASS_LOCAL exit0, không đổi timeout; không thay bằng elapsed live.
+
+Runner W10/W13 riêng PID18964:65 assertion quan sát PASS, chưa exit; credential
+UAT xóa ngay sau setup và probe độc lập booleanFalse (bootstrap cũngFalse).
+Bốn W13 thời gian thật PENDING đến10/10 14:44/22:15,11/10 14:15 và17/10 14:16
+giờVN; cookie chỉ RAM, không rút ngắn policy. G2 browser còn chờ, W13 chưa PASS.
+Xem UAT-CHECKLIST-TASK-005 và TASK-005-REMAINING-LIVE-EVIDENCE.json. Giữ TASK-005
+IN_REVIEW, TASK-003 IN_REVIEW, TASK-004 DONE; không deploy/commit/push/TASK-006.
+
+Checkpoint bổ sung2026-10-10: W13 defaultidle30ph PASS_REAL_ELAPSED HTTP302 login
+lúc14:44:57 giờVN; 8h/24h/7ngày vẫn pending. G2a bốn bước và G2b PASS_MANUAL;
+G2c chưa chạy vì mất password tạm, hướng dẫn reset đúng user giả qua browser.
+Chưa xác nhận reset thành công; TASK-005 vẫn IN_REVIEW.
+
+## Checkpoint hiện hành 2026-10-10
+
+TASK-005 UAT còn lại dừng theo người dùng: runnerW13 PID18964 không còn; credential UatTask005:AdminPassword và bootstrap absent đã kiểm chỉ xuấtboolean, không yêu cầu nhập lại. Các đoạn pending/17-10 phía trên là lịch sử trước quyết định dừng. TASK-006 dùng GoogleWorkspace:SpreadsheetId cho business, khác SystemSpreadsheetId; OAuth Desktop/drive.file/lease giữ nguyên. Không tạo config secret mới, không auto init/import ở startup. Chưa ghi schema/data TASK-006 vào Google thật; testfake không phải cấu hình chạy ứng dụng. Backend workspace đã dừng để build.

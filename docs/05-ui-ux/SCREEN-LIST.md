@@ -6,3 +6,5 @@ UI ẩn/disable thao tác theo quyền, nhưng API vẫn là nơi enforce. Có l
 Thao tác xóa/chuyển cây có màn preview đếm children/assets/docs và phạm vi; giữ ID hiện rõ, lý do bắt buộc cho bulk.
 Mobile online-first, giữ draft form trong phiên khi lỗi mạng; không tuyên bố offline sync. File tạm được cleanup, không lưu Google secret/cache nhạy cảm tùy ý.
 Ngôn ngữ: tiếng Việt; chưa có yêu cầu song ngữ cho ứng dụng này.
+
+TASK-006 local đã có `/Categories` (tree/tìm/empty/error/TXT), `/Categories/Detail/{id}` (path chỉ trong scope/definition/provenance), `/Categories/Import` (upload→preview→diff/duplicate names→confirm DRAFT→commit; conflict/loading). Razor có antiforgery/no-store và cùng service API. HTML render/POST tự động pass; browser desktop/mobile/JS loading chưa nghiệm thu, không coi là browser UAT.

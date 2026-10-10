@@ -1,0 +1,17 @@
+@page
+@model DuyTien.AssetManagement.Server.Pages.Categories.IndexModel
+@{ ViewData["Title"] = "Danh mục DRAFT"; }
+<h1>Cây danh mục <span class="badge bg-warning text-dark">DRAFT</span></h1>
+<p>Cây nháp phục vụ demo; mã chưa được ban hành chính thức.</p>
+@if (Model.Error is not null) { <div role="alert" class="alert alert-danger">@Model.Error</div> }
+<form method="get" class="d-flex gap-2 mb-3"><label class="visually-hidden" for="Q">Từ khóa tên/mã/định nghĩa</label><input id="Q" name="Q" value="@Model.Q" maxlength="200" class="form-control" placeholder="Tìm tên, mã, định nghĩa (có hoặc không dấu)"/><button class="btn btn-primary">Tìm</button><a asp-page="Index" class="btn btn-outline-secondary">Xem cây</a></form>
+@if (User.IsInRole("Admin") || User.IsInRole("CatalogManager")) {
+<p><a asp-page="Import">Nạp/preview cây</a> · <a asp-page-handler="Export">Xuất TXT UTF-8 trong phạm vi</a></p>
+}
+<p>@Model.Catalog.Total nút được phép xem. Chỉ đường dẫn trong phạm vi được hiển thị.</p>
+@if (Model.Catalog.Nodes.Count == 0 && Model.Error is null) { <p role="status">Chưa có danh mục trong phạm vi hoặc không tìm thấy kết quả.</p> }
+<div class="table-responsive"><table class="table"><caption>Các danh mục được phép xem</caption><thead><tr><th>Tên / cây</th><th>Cấp</th><th>Mã đoạn</th><th>Đường dẫn được phép</th></tr></thead><tbody>
+@foreach (var n in Model.Catalog.Nodes) {
+<tr><td><span style="padding-left:@(n.VisibleDepth * 1.25)rem"><a asp-page="Detail" asp-route-id="@n.CategoryId">@n.Name</a></span>@if(n.PathIsPartial){<small> (nhánh được phép)</small>}</td><td>F@n.FLevel</td><td>@n.SegmentCode</td><td>@n.FullCode<br/><small>@n.Path</small></td></tr>
+}
+</tbody></table></div>
