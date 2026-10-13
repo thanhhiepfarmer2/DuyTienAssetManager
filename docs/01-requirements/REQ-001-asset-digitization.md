@@ -148,3 +148,17 @@ Không cộng m2, kg, cái thành một con số “tổng số lượng”. Ch�
 - OPEN-05: Thiết bị Android/iPhone và OS mục tiêu; xác minh Mac/macOS/Xcode, signing team/profile và cách phân phối app nội bộ.
 - OPEN-06: Mẫu DOCX/PDF thực tế và chính sách retention/backup.
 Các Task độc lập vẫn được phân tích trong lúc làm rõ; không tự đánh dấu toàn bộ spec READY_TO_IMPLEMENT khi các gate phụ thuộc còn mở.
+
+## Checkpoint triển khai local FR-04 — 2026-10-13
+
+Người dùng cho phép local TASK-007 khi TASK-006 IN_REVIEW, giữ nghiệm thu thủ công hoãn. [Thiết kế fixture TASK-007](../02-architecture/ASSET-DEMO-DESIGN-TASK-007.md) triển khai một loại MACHINE giả, DRAFT_DEMO; technical fields đủ kiểm scope, không thay required nghiệp vụ/GM-prefix đang OPEN. Fixture TEST/TST và CodeRule true trong test không là phê duyệt rule công ty. Không tự publish DRAFT, nạp personnel/Items/BOM thành tài sản hoặc coi quantity thiếu là0. Local pass không đóng các AC Google/web UAT.
+
+## TASK-008 local — 2026-10-13
+
+Theo ngoại lệ người dùng, làm local FR-03/FR-04 (sửa/move/ngừng cây và bulk Asset) khi TASK-005/006/007 IN_REVIEW. Publish kỹ thuật chỉ active pointer sang snapshot DRAFT đầy đủ; DRAFT_INACTIVE là nhánh ngừng dùng, không phê duyệt mã/cây. Giữ ID/code đã cấp, old code/path mapping và provenance; STT nguồn không là đường dẫn hiện tại. Asset subset TASK-007, không coi Items/Documents/Files chưa triển khai là rỗng. Rule mã/fields/source đơn vị/địa điểm vẫn OPEN/TBD; fixture giả không xác lập nghiệp vụ công ty. Local AC-06/07 pass không thay gate Google/browser/source. [Thiết kế](../02-architecture/TREE-MUTATION-DESIGN-TASK-008.md).
+
+## TASK-009 local — 2026-10-13
+
+Người dùng cho phép local FR-05/FR-06 dù TASK-005–008 IN_REVIEW, giữ hoãn trước. Ảnh web, registry/versions, cặp DOCX/PDF, scoped gateway và durable upload operation/reconcile/retention đã triển khai local. DRAFT_DEMO/PUBLISHED_DEMO là trạng thái demo có confirm, không ban hành mẫu công ty; file nguồn thật chưa có trong repo. Không chốt format business code, rule Asset/nguồn đơn vị/địa điểm/workbook gốc vẫn OPEN/TBD.
+
+Giới hạn10MiB ảnh/25MiB document là config kỹ thuật demo theo đề xuất, chưa policy vận hành. PNG/JPEG subset, DOCX không macro/embedded OLE/external relationship, PDF signature/trailer validation; chưa antivirus/PDF sanitizer, không tự convert/native Docs. Dữ liệu thiếu không ghép version khác để làm counterpart. File Drive giữ khi soft-delete/cancel/Asset delete/archive; cleanup/retention thời hạn công ty chưa xác lập. Không camera/mobile/TASK-010. Local tests không đóng AC Google/browser, guard tree metadata giữ nguyên. [Thiết kế](../02-architecture/MEDIA-DESIGN-TASK-009.md).

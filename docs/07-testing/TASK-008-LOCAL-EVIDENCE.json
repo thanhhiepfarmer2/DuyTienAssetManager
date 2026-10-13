@@ -1,0 +1,121 @@
+{
+  "task": "TASK-008",
+  "date": "2026-10-13",
+  "status": "IN_REVIEW",
+  "workingDirectory": "D:\\Dev\\QuanLyTaiSan_DuyTien",
+  "source": "AI_RUN_OBSERVED_LOCAL",
+  "data": "SYNTHETIC_FIXTURE_AND_LOCAL_HTTP_STUB",
+  "realGoogleWrites": false,
+  "realBrowserUat": false,
+  "commands": [
+    {
+      "command": "dotnet build .\\src\\DuyTien.AssetManagement.Server\\DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal",
+      "exitCode": 0,
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "command": "dotnet test .\\tests\\DuyTien.AssetManagement.ArchitectureTests\\DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter \"FullyQualifiedName~TreeMutation\"",
+      "exitCode": 0,
+      "passed": 42,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "dotnet test .\\tests\\DuyTien.AssetManagement.ArchitectureTests\\DuyTien.AssetManagement.ArchitectureTests.csproj --no-build --no-restore --nologo -v:minimal --filter \"FullyQualifiedName~CategoryCatalogTests|FullyQualifiedName~CategoryHttpRazorTests|FullyQualifiedName~GoogleCategoryCatalogStoreTests|FullyQualifiedName~AssetCrudTests|FullyQualifiedName~AssetCrudHttpRazorTests|FullyQualifiedName~GoogleAssetCatalogTests|FullyQualifiedName~ScopeAuthorizationTests\"",
+      "exitCode": 0,
+      "passed": 91,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node --check .\\src\\DuyTien.AssetManagement.Server\\wwwroot\\js\\tree-change.js",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "checkpoint": "BEFORE_REPORT_SYNC",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "checkpoint": "AFTER_REPORT_SYNC",
+      "exitCode": 0
+    }
+  ],
+  "observedTaskTestHistory": [
+    {
+      "passed": 17,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "passed": 26,
+      "failed": 2,
+      "exitCode": 1,
+      "reason": "Test assertion used table title instead of resolved sheetId; corrected without changing atomic expectation."
+    },
+    {
+      "passed": 34,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "passed": 35,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "passed": 37,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "passed": 40,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "passed": 42,
+      "failed": 0,
+      "exitCode": 0,
+      "reason": "Additional scoped history and confirmed commit with failed UI refresh tests."
+    }
+  ],
+  "format": "Four related projects sequentially exit0, two new guard/test files reformatted separately exit0; includes in report. Two final unit/HTTP test files separately formatted exit0.",
+  "processProbe": {
+    "backendCount": 0,
+    "oldUatRunnerCount": 0,
+    "exitCode": 0
+  },
+  "gitHead": "c643fcb",
+  "initialChangedEntries": 33,
+  "commitPushDeploy": false,
+  "gates": {
+    "google": "NOT_RUN_GOOGLE",
+    "browser": "NOT_RUN_BROWSER",
+    "businessRulesAndReferences": "OPEN_TBD_NOT_VERIFIED",
+    "task006OriginalWorkbook": "NOT_VERIFIED_SOURCE"
+  },
+  "approvalReview": {
+    "rejectedAction": "Remove duplicate metadata guard call",
+    "reason": "Risk of bypassing unsupported-table guard before Google mutation",
+    "resolution": "Kept both guard calls; no bypass; no remaining local blocker."
+  },
+  "documentCheck": {
+    "source": "AI_RUN_OBSERVED_LOCAL",
+    "command": "PowerShell UTF8 here-string to python -B -, read-only link/JSON/status/credential-pattern checker",
+    "exitCode": 0,
+    "localLinksChecked": 81,
+    "filesPatternScanned": 61,
+    "issues": 0,
+    "initialCheckerExitCode": 1,
+    "initialCheckerReason": "Checker rejected markdown backticks around TASK-006 Status; parser corrected, repository status unchanged."
+  },
+  "sdk": "10.0.400",
+  "sdkCommandExitCode": 0,
+  "preservedDocumentProbe": {
+    "command": "git diff --quiet -- docs/06-tasks/TASK-003.md docs/06-tasks/TASK-004.md docs/06-tasks/TASK-005.md docs/07-testing/UAT-CHECKLIST-TASK-005.md docs/07-testing/TEST-REPORT-TASK-005.md docs/06-tasks/TASK-009.md",
+    "exitCode": 0
+  }
+}

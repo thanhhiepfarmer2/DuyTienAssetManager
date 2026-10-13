@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Globalization;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -28,39 +29,7 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
     }
     public async Task CommitAsync(CategoryCatalogState candidate, long expectedRevision, CancellationToken cancellationToken = default)
     {
-        var metadata = await Metadata(cancellationToken).ConfigureAwait(false);
-        var previous = await Load(metadata, cancellationToken).ConfigureAwait(false);
-        if (previous.Revision != expectedRevision || candidate.Revision != expectedRevision + 1)
-            throw new CategoryConflictException("Version Google Sheets đã thay đổi; cần preview lại.");
-        if (candidate.Categories.Count < previous.Categories.Count || (candidate.Versions.Count != previous.Versions.Count + 1 && candidate.Versions.Count != previous.Versions.Count) || candidate.Operations.Count != previous.Operations.Count + 1 ||
-            !previous.Categories.SequenceEqual(candidate.Categories.Take(previous.Categories.Count)) ||
-            !previous.Versions.SequenceEqual(candidate.Versions.Take(previous.Versions.Count)) ||
-            !previous.Operations.SequenceEqual(candidate.Operations.Take(previous.Operations.Count)))
-            throw new CategoryConflictException("Không được ghi đè lịch sử danh mục.");
-        var tables = Tables(candidate);
-        var previousTables = previous.Revision == 0 ? null : Tables(previous);
-        var usedIds = metadata.Sheets.Select(s => s.Properties.SheetId).ToHashSet();
-        var requests = new List<object>();
-        foreach (var pair in Headers)
-        {
-            var existing = metadata.Sheets.SingleOrDefault(s => s.Properties.Title == pair.Key)?.Properties;
-            var allRows = tables[pair.Key];
-            var startRow = existing is null || pair.Key == "SchemaVersions" ? 0 : previousTables![pair.Key].Count;
-            var rows = allRows.Skip(startRow).ToList();
-            if (allRows.Count > 20000) throw new CategoryValidationException("Lịch sử bảng vượt giới hạn demo; chưa commit.");
-            var sheetId = existing?.SheetId ?? NextId(usedIds);
-            if (existing is null)
-                requests.Add(new { addSheet = new { properties = new { sheetId, title = pair.Key, gridProperties = new { rowCount = Math.Max(100, allRows.Count), columnCount = pair.Value.Length } } } });
-            else
-            {
-                if (existing.GridProperties.RowCount < allRows.Count)
-                    requests.Add(new { appendDimension = new { sheetId, dimension = "ROWS", length = allRows.Count - existing.GridProperties.RowCount } });
-                if (existing.GridProperties.ColumnCount < pair.Value.Length)
-                    throw new ExternalStorageException("Schema danh mục không đủ số cột; dừng import.");
-            }
-            if (rows.Count > 0) requests.Add(new { updateCells = new { start = new { sheetId, rowIndex = startRow, columnIndex = 0 },
-                rows = rows.Select(r => new { values = r.Select(v => new { userEnteredValue = new { stringValue = v } }).ToArray() }).ToArray(), fields = "userEnteredValue" } });
-        }
+        var requests = await PrepareAsync(candidate, expectedRevision, cancellationToken);
         var body = JsonSerializer.SerializeToUtf8Bytes(new { requests }, Json);
         if (body.Length > 1800 * 1024) throw new CategoryValidationException("Batch demo vượt 1800 KiB; chưa commit. Cần tác vụ mở rộng chunk riêng khi lịch sử quá lớn.");
         try
@@ -73,39 +42,88 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
         catch (ExternalStorageException)
         {
             var reconciled = await ReadAsync(cancellationToken).ConfigureAwait(false);
-            var operation = candidate.Operations.Last();
             if (reconciled.Revision == candidate.Revision && reconciled.ActiveTreeVersionId == candidate.ActiveTreeVersionId &&
-                reconciled.Operations.Contains(operation)) return;
+                JsonSerializer.Serialize(reconciled.TreeChanges, Json) == JsonSerializer.Serialize(candidate.TreeChanges, Json) && reconciled.Operations.SequenceEqual(candidate.Operations)) return;
             throw;
         }
     }
+    internal async Task<List<object>> PrepareAsync(CategoryCatalogState candidate, long expectedRevision, CancellationToken cancellationToken)
+    {
+        var metadata = await Metadata(cancellationToken).ConfigureAwait(false);
+        var previous = await Load(metadata, cancellationToken).ConfigureAwait(false);
+        if (previous.Revision != expectedRevision || candidate.Revision != expectedRevision + 1)
+            throw new CategoryConflictException("Version Google Sheets đã thay đổi; cần preview lại.");
+        if (candidate.Categories.Count < previous.Categories.Count || (candidate.Versions.Count != previous.Versions.Count + 1 && candidate.Versions.Count != previous.Versions.Count) || candidate.Operations.Count + candidate.TreeChanges.Count != previous.Operations.Count + previous.TreeChanges.Count + 1 ||
+            !previous.Categories.SequenceEqual(candidate.Categories.Take(previous.Categories.Count)) ||
+            !previous.Versions.SequenceEqual(candidate.Versions.Take(previous.Versions.Count)) ||
+            !previous.Operations.SequenceEqual(candidate.Operations.Take(previous.Operations.Count)) || JsonSerializer.Serialize(previous.TreeChanges, Json) != JsonSerializer.Serialize(candidate.TreeChanges.Take(previous.TreeChanges.Count), Json))
+            throw new CategoryConflictException("Không được ghi đè lịch sử danh mục.");
+        var tables = Tables(candidate);
+        var previousTables = previous.Revision == 0 ? null : Tables(previous);
+        var allHeaders = AllHeaders;
+        foreach (var version in candidate.Versions) if (CategoryTreeShape.Validate(candidate.Categories.Where(n => n.TreeVersionId == version.TreeVersionId).ToArray()).Count > 0) throw new CategoryValidationException("Snapshot cây không hợp lệ.");
+        var usedIds = metadata.Sheets.Select(s => s.Properties.SheetId).ToHashSet();
+        var requests = new List<object>();
+        foreach (var pair in tables)
+        {
+            var existing = metadata.Sheets.SingleOrDefault(s => s.Properties.Title == pair.Key)?.Properties;
+            var allRows = tables[pair.Key];
+            var startRow = existing is null || pair.Key == "SchemaVersions" ? 0 : (previousTables!.GetValueOrDefault(pair.Key)?.Count ?? 0);
+            var rows = allRows.Skip(startRow).ToList();
+            if (allRows.Any(r => r.Any(cell => cell.Length > 45000))) throw new CategoryValidationException("Ô lịch sử cây vượt45000 ký tự; chưa commit.");
+            if (allRows.Count > 20000) throw new CategoryValidationException("Lịch sử bảng vượt giới hạn demo; chưa commit.");
+            var sheetId = existing?.SheetId ?? NextId(usedIds);
+            if (existing is null)
+                requests.Add(new { addSheet = new { properties = new { sheetId, title = pair.Key, gridProperties = new { rowCount = Math.Max(100, allRows.Count), columnCount = allHeaders[pair.Key].Length } } } });
+            else
+            {
+                if (existing.GridProperties.RowCount < allRows.Count)
+                    requests.Add(new { appendDimension = new { sheetId, dimension = "ROWS", length = allRows.Count - existing.GridProperties.RowCount } });
+                if (existing.GridProperties.ColumnCount < allHeaders[pair.Key].Length)
+                    throw new ExternalStorageException("Schema danh mục không đủ số cột; dừng import.");
+            }
+            if (rows.Count > 0) requests.Add(new { updateCells = new { start = new { sheetId, rowIndex = startRow, columnIndex = 0 },
+                rows = rows.Select(r => new { values = r.Select(v => new { userEnteredValue = new { stringValue = v } }).ToArray() }).ToArray(), fields = "userEnteredValue" } });
+        }
+        return requests;
+    }
+    public static string[] TreeChangeHeader { get; } = ["OperationId", "IdempotencyKey", "Actor", "RequestHash", "Kind", "BeforeTreeVersionId", "TreeVersionId", "ExpectedTreeRevision", "ExpectedAssetRevision", "Reason", "CompletedAt", "PreviewHash", "RequestJson", "CategoryIdsJson", "AssetIdsJson", "DiffRef", "ResultJson"];
+    public static string[] TreeChangeDetailHeader { get; } = ["OperationId", "CategoryId", "Name", "BeforePath", "AfterPath", "BeforeLevel", "AfterLevel", "BeforeState", "AfterState"];
+    private static IReadOnlyDictionary<string, string[]> AllHeaders => Headers.Concat(new[] { new KeyValuePair<string, string[]>("TreeChanges", TreeChangeHeader), new KeyValuePair<string, string[]>("TreeChangeDetails", TreeChangeDetailHeader) }).ToDictionary(p => p.Key, p => p.Value, StringComparer.Ordinal);
     private async Task<Spreadsheet> Metadata(CancellationToken ct)
     {
         if (options.GetMissingSheetsSettings().Count > 0 || string.IsNullOrWhiteSpace(options.SystemSpreadsheetId) || options.SpreadsheetId == options.SystemSpreadsheetId)
             throw new ExternalStorageException("Cấu hình business spreadsheet phải đầy đủ và khác system spreadsheet.");
         using var response = await api.SendAsync(() => new HttpRequestMessage(HttpMethod.Get, UriFor("?fields=sheets.properties(sheetId,title,gridProperties)")), GoogleRequestSemantics.SafeRead, ct).ConfigureAwait(false);
-        var value = await response.Content.ReadFromJsonAsync<Spreadsheet>(Json, ct).ConfigureAwait(false);
-        return value ?? throw new ExternalStorageException("Không đọc được metadata danh mục.");
+        var value = await ReadJson<Spreadsheet>(response, ct);
+        if (value.Sheets is null || value.Sheets.Any(s => s?.Properties?.GridProperties is null || string.IsNullOrWhiteSpace(s.Properties.Title)) || value.Sheets.Select(s => s.Properties.Title).Distinct(StringComparer.Ordinal).Count() != value.Sheets.Length) throw new ExternalStorageException("Metadata danh mục không hợp lệ.");
+        return value;
     }
     private async Task<CategoryCatalogState> Load(Spreadsheet metadata, CancellationToken ct)
     {
         var existing = Headers.Keys.Where(t => metadata.Sheets.Any(s => s.Properties.Title == t)).ToArray();
-        if (existing.Length == 0) return new();
+        var hasChanges = metadata.Sheets.Any(s => s.Properties.Title == "TreeChanges");
+        var hasDetails = metadata.Sheets.Any(s => s.Properties.Title == "TreeChangeDetails");
+        if (hasChanges != hasDetails) throw new ExternalStorageException("Journal cây thiếu bảng chi tiết; không ghi đè.");
+        if (existing.Length == 0 && !hasChanges) return new();
         if (existing.Length != Headers.Count) throw new ExternalStorageException("Schema danh mục chưa đầy đủ; không tự ghi đè dữ liệu chưa xác định.");
-        var query = string.Join('&', existing.Select(t => "ranges=" + Uri.EscapeDataString($"'{t}'!A1:O20001")));
+        if (hasChanges) existing = existing.Append("TreeChanges").Append("TreeChangeDetails").ToArray();
+        var allHeaders = AllHeaders;
+        var query = string.Join('&', existing.Select(t => "ranges=" + Uri.EscapeDataString($"'{t}'!A1:AZ20001")));
         using var response = await api.SendAsync(() => new HttpRequestMessage(HttpMethod.Get, UriFor("/values:batchGet?" + query + "&valueRenderOption=UNFORMATTED_VALUE")), GoogleRequestSemantics.SafeRead, ct).ConfigureAwait(false);
-        var value = await response.Content.ReadFromJsonAsync<BatchValues>(Json, ct).ConfigureAwait(false);
-        if (value?.ValueRanges.Length != Headers.Count) throw new ExternalStorageException("Google trả thiếu bảng danh mục.");
+        var value = await ReadJson<BatchValues>(response, ct);
+        if (value?.ValueRanges?.Length != existing.Length) throw new ExternalStorageException("Google trả thiếu bảng danh mục.");
         var tables = new Dictionary<string, string[][]>(StringComparer.Ordinal);
         for (var i = 0; i < existing.Length; i++)
         {
             var title = existing[i]; var range = value.ValueRanges[i];
-            if (!range.Range.StartsWith("'" + title + "'!", StringComparison.Ordinal) && !range.Range.StartsWith(title + "!", StringComparison.Ordinal))
+            if (range?.Range is null || !range.Range.StartsWith("'" + title + "'!", StringComparison.Ordinal) && !range.Range.StartsWith(title + "!", StringComparison.Ordinal))
                 throw new ExternalStorageException("Google trả range khác yêu cầu.");
+            if (range.Values?.Any(r => r is null) == true) throw new ExternalStorageException("Dòng danh mục null.");
             var rows = (range.Values ?? []).Select(r => r.Select(v => v.ValueKind == JsonValueKind.String ? v.GetString()! : v.GetRawText()).ToArray()).ToArray();
-            if (rows.Length == 0 || !rows[0].SequenceEqual(Headers[title]) || rows.Length > 20000)
+            if (rows.Length == 0 || !rows[0].SequenceEqual(allHeaders[title]) || rows.Length > 20000)
                 throw new ExternalStorageException("Header/schema hoặc kích thước bảng danh mục không hợp lệ; không overwrite.");
-            if (rows.Skip(1).Any(r => r.Length != Headers[title].Length)) throw new ExternalStorageException("Dòng danh mục không đủ cột.");
+            if (rows.Skip(1).Any(r => r.Length != allHeaders[title].Length)) throw new ExternalStorageException("Dòng danh mục không đủ cột.");
             tables[title] = rows.Skip(1).ToArray();
         }
         try
@@ -120,8 +138,15 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
                 if (r[4] != "CATEGORY_IMPORT" || r[5] != "COMPLETE") throw new ExternalStorageException("Operation business không được hỗ trợ.");
                 state.Operations.Add(new(r[0],r[1],r[2],r[3],r[6],int.Parse(r[7]),DateTimeOffset.Parse(r[8],CultureInfo.InvariantCulture),r[9],r[10],bool.Parse(r[11])));
             }
-            if (state.Operations.Count != state.Revision || !state.Versions.Any(v => v.TreeVersionId == state.ActiveTreeVersionId) ||
-                state.Versions.Any(v => v.State != "DRAFT") || state.Categories.Any(n => n.State != "DRAFT")) throw new ExternalStorageException("Pointer hoặc state danh mục không hợp lệ.");
+            TreeNodeImpact[] ReadDiff(string operationId, string reference)
+            {
+                if (reference != "DETAIL_ROWS") throw new ExternalStorageException("Diff reference không hợp lệ.");
+                return tables["TreeChangeDetails"].Where(r => r[0] == operationId).Select(r => new TreeNodeImpact(r[1],r[2],r[3],r[4],int.Parse(r[5],CultureInfo.InvariantCulture),int.Parse(r[6],CultureInfo.InvariantCulture),r[7],r[8])).ToArray();
+            }
+            if (tables.TryGetValue("TreeChanges", out var changes))
+                foreach (var r in changes) state.TreeChanges.Add(new(r[0],r[1],r[2],r[3],r[4],r[5],r[6],long.Parse(r[7],CultureInfo.InvariantCulture),long.Parse(r[8],CultureInfo.InvariantCulture),r[9],DateTimeOffset.Parse(r[10],CultureInfo.InvariantCulture),r[11],JsonSerializer.Deserialize<TreeMutationRequest>(r[12],Json)!,JsonSerializer.Deserialize<string[]>(r[13],Json)!,JsonSerializer.Deserialize<string[]>(r[14],Json)!,ReadDiff(r[0],r[15]),JsonSerializer.Deserialize<TreeMutationResult>(r[16],Json)!));
+            if (state.Operations.Count + state.TreeChanges.Count != state.Revision || !state.Versions.Any(v => v.TreeVersionId == state.ActiveTreeVersionId) ||
+                state.Versions.Any(v => v.State != "DRAFT") || state.Categories.Any(n => n.State is not ("DRAFT" or "DRAFT_INACTIVE"))) throw new ExternalStorageException("Pointer hoặc state danh mục không hợp lệ.");
             // Reject unmanaged edits instead of overwriting unknown rows at computed append offsets.
             var expectedTables = Tables(state);
             foreach (var table in tables)
@@ -130,14 +155,19 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
             foreach (var version in state.Versions)
             {
                 var nodes = state.Categories.Where(n => n.TreeVersionId == version.TreeVersionId).ToArray();
-                var byId = nodes.ToDictionary(n => n.CategoryId, StringComparer.Ordinal);
-                if (nodes.Any(n => n.ParentId is not null && !byId.ContainsKey(n.ParentId))) throw new ExternalStorageException("Danh mục thiếu cha.");
-                var inputs = nodes.Select(n => new CategoryInput(n.SourceSheet,n.SourceRow,n.SourceStt,n.ParentId is null ? null : byId[n.ParentId].SourceStt,n.FLevel,n.Name,n.SegmentCode,n.Definition)).ToArray();
-                if (CategoryCatalogService.Validate(inputs).Count > 0) throw new ExternalStorageException("Cây danh mục lưu trữ không hợp lệ.");
+                if (CategoryTreeShape.Validate(nodes).Count > 0) throw new ExternalStorageException("Cây danh mục lưu trữ không hợp lệ.");
+                if (version.MappingVersion == "TASK008_TREE_V1" && Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(nodes, Json))) != version.ContentHash) throw new ExternalStorageException("Snapshot cây không khớp digest đã commit.");
+
+            }
+            foreach (var change in state.TreeChanges)
+            {
+                if (change.Request is null || change.Result is null || change.CategoryIds is null || change.AssetIds is null || change.Diff is null || change.Request.Kind != change.Kind || change.Request.Reason != change.Reason || change.Result.TreeRevision != change.ExpectedTreeRevision + 1 || change.Result.AssetRevision != change.ExpectedAssetRevision + change.Result.ChangedAssetCount || change.Diff.Length != change.Result.ChangedCategoryCount || change.CategoryIds.Distinct(StringComparer.Ordinal).Count() != change.CategoryIds.Length || change.AssetIds.Distinct(StringComparer.Ordinal).Count() != change.AssetIds.Length || !state.Versions.Any(v => v.TreeVersionId == change.BeforeTreeVersionId) || !state.Versions.Any(v => v.TreeVersionId == change.TreeVersionId)) throw new ExternalStorageException("Tree change ledger không hợp lệ.");
+                var beforeIds = state.Categories.Where(n => n.TreeVersionId == change.BeforeTreeVersionId).Select(n => n.CategoryId).ToHashSet(StringComparer.Ordinal);
+                if (!beforeIds.SetEquals(state.Categories.Where(n => n.TreeVersionId == change.TreeVersionId).Select(n => n.CategoryId))) throw new ExternalStorageException("Không được mất/đổi ID qua tree change.");
             }
             return state;
         }
-        catch (Exception e) when (e is FormatException or OverflowException or InvalidOperationException or ArgumentException)
+        catch (Exception e) when (e is JsonException or FormatException or OverflowException or InvalidOperationException or ArgumentException)
         { throw new ExternalStorageException("Dữ liệu schema danh mục không hợp lệ."); }
     }
     private static Dictionary<string, List<string[]>> Tables(CategoryCatalogState s)
@@ -155,7 +185,26 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
             if (!o.AlreadyImported) tables["ImportRows"].AddRange(s.Categories.Where(n => n.TreeVersionId == o.TreeVersionId).Select(n => new[] {o.OperationId,n.SourceSheet,n.SourceRow.ToString(CultureInfo.InvariantCulture),n.SourceStt,"COMPLETE",n.CategoryId,"DRAFT; giữ riêng tên nhiều mã"}));
             tables["AuditEvents"].Add(["AUDIT-"+o.OperationId,o.OperationId,o.ActorUserId,o.TreeVersionId,o.AlreadyImported?"CATEGORY_IMPORT_NOOP":"CATEGORY_IMPORT","{}",JsonSerializer.Serialize(new {o.TotalRows,State="DRAFT"}),"Commit preview đã xác nhận",o.CompletedAt.ToString("O")]);
         }
+        if (s.TreeChanges.Count > 0)
+        {
+            tables["TreeChanges"] = new() { TreeChangeHeader };
+            tables["TreeChangeDetails"] = new() { TreeChangeDetailHeader };
+            foreach (var o in s.TreeChanges)
+            {
+                tables["TreeChanges"].Add([o.OperationId,o.IdempotencyKey,o.Actor,o.RequestHash,o.Kind,o.BeforeTreeVersionId,o.TreeVersionId,o.ExpectedTreeRevision.ToString(CultureInfo.InvariantCulture),o.ExpectedAssetRevision.ToString(CultureInfo.InvariantCulture),o.Reason,o.CompletedAt.ToString("O"),o.PreviewHash,JsonSerializer.Serialize(o.Request,Json),JsonSerializer.Serialize(o.CategoryIds,Json),JsonSerializer.Serialize(o.AssetIds,Json),"DETAIL_ROWS",JsonSerializer.Serialize(o.Result,Json)]);
+                tables["TreeChangeDetails"].AddRange(o.Diff.Select(d => new[] {o.OperationId,d.CategoryId,d.Name,d.BeforePath,d.AfterPath,d.BeforeLevel.ToString(CultureInfo.InvariantCulture),d.AfterLevel.ToString(CultureInfo.InvariantCulture),d.BeforeState,d.AfterState}));
+                tables["AuditEvents"].Add(["AUDIT-"+o.OperationId,o.OperationId,o.Actor,o.TreeVersionId,o.Kind,JsonSerializer.Serialize(new {o.BeforeTreeVersionId,o.ExpectedTreeRevision}),JsonSerializer.Serialize(new {o.TreeVersionId,o.Result,DiffCount=o.Diff.Length,DetailOperationId=o.OperationId}),o.Reason,o.CompletedAt.ToString("O")]);
+            }
+        }
         return tables;
+    }
+    private static async Task<T> ReadJson<T>(HttpResponseMessage response, CancellationToken ct)
+    {
+        try { return await response.Content.ReadFromJsonAsync<T>(Json, ct) ?? throw new ExternalStorageException("Google trả thiếu dữ liệu danh mục."); }
+        catch (JsonException) { throw new ExternalStorageException("Google trả JSON/schema danh mục không hợp lệ."); }
+        catch (HttpRequestException e) { throw new ExternalStorageTransientException("Không đọc được response danh mục Google.", false, e); }
+        catch (IOException e) { throw new ExternalStorageTransientException("Không đọc được response danh mục Google.", false, e); }
+        catch (OperationCanceledException e) when (!ct.IsCancellationRequested) { throw new ExternalStorageTransientException("Response danh mục Google timeout.", false, e); }
     }
     private Uri UriFor(string suffix) => new(new Uri(options.SheetsApiBaseUrl), "spreadsheets/" + Uri.EscapeDataString(options.SpreadsheetId!) + suffix);
     private static int NextId(HashSet<int> ids) { var id = 6000; while (!ids.Add(id)) id++; return id; }

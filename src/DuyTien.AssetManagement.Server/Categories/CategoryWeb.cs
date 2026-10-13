@@ -68,6 +68,7 @@ public static class CategoryWeb
         group.MapGet("", async (string? q, ClaimsPrincipal user, CategoryCatalogService service, CancellationToken ct) => Results.Ok(await service.ListAsync(Actor(user), q, ct: ct)));
         group.MapGet("/tree", async (ClaimsPrincipal user, CategoryCatalogService service, CancellationToken ct) => Results.Ok(await service.ListAsync(Actor(user), ct: ct)));
         group.MapGet("/export", async (ClaimsPrincipal user, CategoryCatalogService service, CancellationToken ct) => Results.File(await service.ExportAsync(Actor(user), ct), "text/plain; charset=utf-8", "danh-muc-DRAFT.txt"));
+        group.MapGet("/{id}/history", async (string id, ClaimsPrincipal user, CategoryCatalogService service, CancellationToken ct) => Results.Ok(await service.HistoryAsync(Actor(user), id, ct)));
         group.MapGet("/{id}", async (string id, ClaimsPrincipal user, CategoryCatalogService service, CancellationToken ct) => Results.Ok(await service.DetailAsync(Actor(user), id, ct)));
         group.MapPost("/imports/preview", async (HttpContext context, CategoryCatalogService service, CategoryPreviewCache cache, CancellationToken ct) =>
         {

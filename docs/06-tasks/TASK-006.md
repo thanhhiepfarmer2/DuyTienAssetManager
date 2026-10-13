@@ -35,3 +35,7 @@ Local hoàn tất: build server exit 0, 0 warnings/0 errors; 46/46 test TASK-006
 Google live và browser: `NOT_RUN`; workbook gốc/hash/definition `NOT_RUN_SOURCE_ORIGINAL`. Không ghi dữ liệu thật, không yêu cầu secret hoặc thao tác UAT. Không coi rendered Razor/fake Google là live/browser pass. Backend workspace đã dừng đúng PID18664 để build và không restart UAT. Chưa DONE; TASK-007 vẫn TODO.
 
 Review sửa thêm trong lượt: lưu ledger ngay cả import no-op để chặn key reuse payload khác; kiểm journal/provenance trước append để không overwrite unknown rows; move giữa version không ghép hai assignment; search/TXT bỏ ancestor ẩn. Local giới hạn 10MB/1000 nút/1800KiB batch/20000 dòng mỗi bảng, lỗi trước write nếu vượt; không silently cắt dữ liệu.
+
+## Ngoại lệ phụ thuộc tiếp theo — 2026-10-13
+
+Người dùng cho phép bắt đầu local TASK-007 dù TASK-006 IN_REVIEW. TASK-006 giữ nguyên gate workbook gốc/Google live/browser chưa xác minh và evidence lịch sử; không chạy lại toàn bộ nghiệm thu. Xem TASK-007/PLAN-001/PROJECT-CONTEXT cho checkpoint hiện hành; không chuyển DONE vì task sau đã code.

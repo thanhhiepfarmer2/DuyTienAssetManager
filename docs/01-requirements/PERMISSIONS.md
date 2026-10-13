@@ -126,3 +126,11 @@ không cross-combine scope, revoke tức thời và source/destination của mov
 
 Chi tiết account/session/bootstrap/UI/test nằm tại
 [AUTH-DESIGN-PROPOSED](../02-architecture/AUTH-DESIGN-PROPOSED.md) (tên file lịch sử; nội dung đã `ACCEPTED`).
+
+## TASK-008 local — 2026-10-13
+
+Tree mutation dùng nguyên ma trận trên. UPDATE/MOVE/DELETE Category + READ tất cả node ảnh hưởng; Asset MOVE/UPDATE đủ ba chiều nguồn/đích trong cùng assignment, DELETE cho plan SOFT_DELETE. Kiểm trước count/diff và kiểm lại commit với hierarchy trước/sau; nhiều assignment không ghép scope. Chuyển thành root cần Category ALL, descendant theo ID/ParentId. Có Asset trong nhánh thì CatalogManager riêng không đủ, cần permission Asset tương ứng. Ngoài phạm vi404 không lộ totals/paths; history từng tree kiểm READ và che ancestor. Node ngừng dùng/Asset đã xóa dưới nhánh ngừng chỉ đưa vào plan bởi active Admin/ALL; không mở quyền ngầm hoặc UI phục hồi. Không đổi role/permission catalog hoặc auth policy.
+
+## TASK-009 local — 2026-10-13
+
+Không thay ma trận/policy auth. Ảnh cần ASSETS_READ + ASSET_FILES_DOWNLOAD/UPLOAD/DELETE đúng current Asset đủ OrgUnit+Location+Category trong cùng assignment; owner deleted/inactive scope bị chặn, kể cả biết opaque file ID. Tài liệu cần Category DRAFT/read và DOCUMENTS_READ/DOWNLOAD/MANAGE; draft/future version chỉ manager scoped, Viewer chỉ PUBLISHED_DEMO hiệu lực. File inherit owner, không nhận Drive ID/scope/URL client; gateway check lại current owner/slot/scopes trước Drive IO. Route parent trên Razor phải match file/version đã đăng ký, không thao tác nhầm entity. Role UI không thay service enforcement; counts/list filter scope trước response. Không mở quyền qua registry mới hoặc bypass guard TASK-008.

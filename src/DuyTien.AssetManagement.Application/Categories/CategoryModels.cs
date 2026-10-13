@@ -23,12 +23,13 @@ public sealed class CategoryCatalogState
     public List<CategoryNode> Categories { get; } = [];
     public List<CategoryTreeVersion> Versions { get; } = [];
     public List<CategoryImportOperation> Operations { get; } = [];
+    public List<TreeChangeOperation> TreeChanges { get; } = [];
     public CategoryNode[] ActiveNodes => Categories.Where(n => n.TreeVersionId == ActiveTreeVersionId).ToArray();
     public CategoryCatalogState Clone()
     {
         var result = new CategoryCatalogState { Revision = Revision, ActiveTreeVersionId = ActiveTreeVersionId };
         result.Categories.AddRange(Categories); result.Versions.AddRange(Versions);
-        result.Operations.AddRange(Operations); return result;
+        result.Operations.AddRange(Operations); result.TreeChanges.AddRange(TreeChanges); return result;
     }
 }
 public interface ICategoryCatalogStore

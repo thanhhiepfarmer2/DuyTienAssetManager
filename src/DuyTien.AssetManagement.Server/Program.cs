@@ -1,3 +1,7 @@
+using DuyTien.AssetManagement.Application.Media;
+using DuyTien.AssetManagement.Server.Media;
+using DuyTien.AssetManagement.Application.Assets;
+using DuyTien.AssetManagement.Server.Assets;
 using DuyTien.AssetManagement.Application.Categories;
 using DuyTien.AssetManagement.Server.Categories;
 using DuyTien.AssetManagement.Application.Authentication;
@@ -49,7 +53,18 @@ builder.Services.AddSingleton(serviceProvider =>
         serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleApi")));
 builder.Services.AddSingleton<GoogleSheetsDataStore>();
 builder.Services.AddSingleton<GoogleAuthSystemStore>();
-builder.Services.AddSingleton<ICategoryCatalogStore, GoogleCategoryCatalogStore>();
+builder.Services.AddSingleton<GoogleAssetCatalogStore>();
+builder.Services.AddSingleton<IAssetCatalogStore>(p => p.GetRequiredService<GoogleAssetCatalogStore>());
+builder.Services.AddSingleton<AssetCrudService>();
+builder.Services.AddSingleton<GoogleCategoryCatalogStore>();
+builder.Services.AddSingleton<ICategoryCatalogStore>(p => p.GetRequiredService<GoogleCategoryCatalogStore>());
+builder.Services.AddSingleton<ITreeMutationStore, GoogleTreeMutationStore>();
+builder.Services.AddSingleton<TreeMutationService>();
+builder.Services.Configure<MediaUploadOptions>(builder.Configuration.GetSection(MediaUploadOptions.SectionName));
+builder.Services.AddSingleton(p => p.GetRequiredService<IOptions<MediaUploadOptions>>().Value);
+builder.Services.AddSingleton<IMediaCatalogStore, GoogleMediaCatalogStore>();
+builder.Services.AddSingleton<IManagedMediaContentStore, GoogleManagedMediaContentStore>();
+builder.Services.AddSingleton<MediaLibraryService>();
 builder.Services.AddSingleton<CategoryCatalogService>();
 builder.Services.AddSingleton<CategoryPreviewCache>();
 builder.Services.AddSingleton<IAuthSystemStore>(serviceProvider =>
@@ -167,6 +182,9 @@ app.MapStaticAssets();
 app.MapRazorPages().WithStaticAssets();
 app.MapTask005AuthApi();
 app.MapTask006CategoryApi();
+app.MapTask007AssetApi();
+app.MapTask008TreeApi();
+app.MapTask009MediaApi();
 
 app.MapGet(
     "/api/system/status",

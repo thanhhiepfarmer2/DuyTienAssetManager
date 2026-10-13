@@ -18,7 +18,8 @@ public sealed class GoogleApiRequestExecutor(
     public async Task<HttpResponseMessage> SendAsync(
         Func<HttpRequestMessage> requestFactory,
         GoogleRequestSemantics semantics,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        bool acceptResumeIncomplete = false)
     {
         ArgumentNullException.ThrowIfNull(requestFactory);
         var maxAttempts = Math.Max(1, options.MaxRetryAttempts);
@@ -69,7 +70,7 @@ public sealed class GoogleApiRequestExecutor(
                     exception);
             }
 
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode || (acceptResumeIncomplete && request.Method == HttpMethod.Put && (int)response.StatusCode == 308))
             {
                 return response;
             }

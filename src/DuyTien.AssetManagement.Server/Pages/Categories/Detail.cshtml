@@ -7,3 +7,10 @@
 <h1>@n.Name <span class="badge bg-warning text-dark">DRAFT</span></h1>
 <dl><dt>Cấp / mã đoạn</dt><dd>F@n.FLevel / @n.SegmentCode</dd><dt>Đường dẫn được phép</dt><dd>@n.Path — @n.FullCode @if(n.PathIsPartial){<span>(không hiển thị tổ tiên ngoài phạm vi)</span>}</dd><dt>Định nghĩa / metadata</dt><dd style="white-space:pre-wrap">@(n.Definition.Length == 0 ? "Chưa có metadata nguồn." : n.Definition)</dd><dt>Nguồn cấu trúc</dt><dd>@n.SourceSheet, dòng @n.SourceRow, STT @n.SourceStt (chỉ tham chiếu nguồn)</dd><dt>ID hệ thống / version</dt><dd>@n.CategoryId / @n.Version</dd></dl>
 }
+
+@if (Model.Category is { } current && (User.IsInRole("Admin") || User.IsInRole("CatalogManager"))) { <a asp-page="Manage" asp-route-id="@current.CategoryId">Preview sửa/chuyển/ngừng nhánh</a> }
+
+@if (Model.History.Count > 0) {
+<h2 class="h5">Lịch sử mã/đường dẫn nháp (mapping ID được giữ)</h2>
+<div class="table-responsive"><table class="table"><thead><tr><th>Tên</th><th>Mã/đường dẫn được phép</th><th>Trạng thái</th></tr></thead><tbody>@foreach (var h in Model.History) { <tr><td>@h.Name</td><td>@h.FullCode — @h.Path @(h.PathIsPartial ? "(nhánh được phép)" : "")</td><td>@h.State</td></tr> }</tbody></table></div>
+}

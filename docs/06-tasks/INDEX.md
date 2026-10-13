@@ -8,9 +8,9 @@
 | TASK-004 | [PoC Sheets/Drive, writer và idempotency](TASK-004.md) | DONE | Live Google và manual tab/TXT/control-file có user-provided evidence; TASK-003 vẫn IN_REVIEW |
 | TASK-005 | [Đăng nhập, admin và phân quyền server/web](TASK-005.md) | IN_REVIEW | 173/173 live; 78/78 local và 14 boundary riêng; G2a/G2b PASS_MANUAL; idle 30ph thực PASS; UAT còn lại DEFERRED_BY_USER, W13 STOPPED_BY_USER; ngoại lệ cho phép TASK-006 local |
 | TASK-006 | [Import cây và xem/tìm danh mục](TASK-006.md) | IN_REVIEW | Ngoại lệ người dùng cho phép khi TASK-005 chưa DONE; build sạch, 46/46 local + 12/12 hồi quy; nguồn XLSX gốc/Google/browser NOT_RUN |
-| TASK-007 | [CRUD tài sản trên web](TASK-007.md) | TODO | TASK-006; required fields từng loại và rule code demo |
-| TASK-008 | [Sửa/chuyển/ngừng cây và di chuyển đối tượng](TASK-008.md) | TODO | TASK-007 |
-| TASK-009 | [Drive ảnh và biểu mẫu DOCX/PDF](TASK-009.md) | TODO | TASK-007; file mẫu và Drive target |
+| TASK-007 | [CRUD tài sản trên web](TASK-007.md) | IN_REVIEW | Ngoại lệ local 2026-10-13 khi TASK-006 IN_REVIEW; build sạch, 54/54 task +9/9 hồi quy; rule/nguồn/Google/browser còn gate |
+| TASK-008 | [Sửa/chuyển/ngừng cây và di chuyển đối tượng](TASK-008.md) | IN_REVIEW | Ngoại lệ local13/10 khi TASK-005/006/007 IN_REVIEW; build sạch,42/42 task +91/91 hồi quy; nguồn/rule/Google/browser chưa đạt |
+| TASK-009 | [Drive ảnh và biểu mẫu DOCX/PDF](TASK-009.md) | IN_REVIEW | Ngoại lệ13/10 khi TASK-005–008 IN_REVIEW; build sạch56/56 task+67/67 hồi quy; mẫu/Drive/live/browser còn gate, guard giữ |
 | TASK-010 | [Import Items và snapshot số lượng](TASK-010.md) | TODO | TASK-006; nguồn stock snapshot và ngưỡng |
 | TASK-011 | [Báo cáo tài sản và tồn hết/sắp hết](TASK-011.md) | TODO | TASK-007, TASK-010 |
 | TASK-012 | [App Android: nhập liệu và chụp ảnh](TASK-012.md) | TODO | TASK-005, TASK-007, TASK-009; Android device/API endpoint |

@@ -1,5 +1,43 @@
 # Bối cảnh dự án
 
+## Checkpoint hiện hành TASK-009 — 2026-10-13
+
+TASK-009 IN_REVIEW: phần local ảnh web/metadata/primary/soft-delete, registry và version DOCX/PDF, same-version publish PUBLISHED_DEMO có confirm/UTC effective date, scoped gateway, durable PENDING/FAILED/AVAILABLE/retry/reconcile/retention trên Sheets/Drive đã triển khai API/Razor/Google adapters. Build0warnings/errors exit0;56/56 task +67/67 hồi quy exit0,0failed/skipped; fixture tổng hợp/fake Google/Kestrel HTTP, không Google live/browser. [Report](07-testing/TEST-REPORT-TASK-009.md), [thiết kế](02-architecture/MEDIA-DESIGN-TASK-009.md).
+
+DRAFT/DEMO không tự chính thức, mẫu nguồn/Drive target/workbook/rule/Org-Location/retention còn NOT_RUN/OPEN/TBD. Guard TASK-008 nguyên vẹn, khi Files/Documents/Versions có mặt tree mutation fail-closed, chưa đối soát impact module mới; không bypass/rename để mở. TASK-003 IN_REVIEW, TASK-004 DONE, TASK-005/006/007/008 IN_REVIEW, hoãn TASK-005 DEFERRED_BY_USER giữ nguyên; TASK-010–014 TODO. Ngoại lệ TASK-009 mới thay hạn chế không làm TASK-009 ở checkpoint trước, giữ bằng chứng lịch sử.
+
+Worktree TASK-007/008 đầu lượt giữ; HEADc643fcb không đổi, không commit/push/deploy/real writes, secret UAT hoặc init/bootstrap/provision/live UAT. Không yêu cầu thao tác thủ công hoặc tự triển khai TASK-010. Các đoạn bên dưới là checkpoint lịch sử, INDEX/đoạn hiện hành này là trạng thái hiện tại.
+
+## Ngoại lệ phụ thuộc TASK-009 — 2026-10-13
+
+Người dùng cho phép hoàn tất phần local TASK-009 dù TASK-005/006/007/008 IN_REVIEW; không đóng gate trước, giữ DEFERRED_BY_USER. Không Google live/UAT thủ công/dữ liệu thật/commit/push/deploy/TASK-010. Guard metadata TASK-008 giữ nguyên, không bypass; tab Files/Documents làm tree mutation fail-closed cho đến khi có thiết kế đối soát module được giao riêng. Rule/workbook/Org-Location OPEN/TBD; file mẫu thật và Drive target chưa xác minh, fixture giả chỉ cho local.
+
+
+## Checkpoint TASK-008 trước TASK-009 — 2026-10-13
+
+TASK-008 IN_REVIEW: phần local sửa tên/mã nháp/definition, move cây con tới F10, archive với preview/plan/confirm, bulk Asset scope nguồn/đích, history/mapping và TXT theo snapshot mới đã triển khai backend/API/Razor/Google joint adapter. Publish kỹ thuật giữ DRAFT, node ngừng DRAFT_INACTIVE, Asset DRAFT_DEMO; ID/code/counter/alias giữ nguyên. Build cuối0warnings/errors exit0;42/42 task +91/91 hồi quy liên quan exit0, failed/skipped0; fixture giả/Google stub/Kestrel compiled Razor HTTP, không Google live/browser.
+
+[Report TASK-008](07-testing/TEST-REPORT-TASK-008.md), [thiết kế](02-architecture/TREE-MUTATION-DESIGN-TASK-008.md). Google live/browser/source workbook/Org-Location/rule/fields công ty còn NOT_RUN/OPEN/TBD; không phê duyệt DRAFT hoặc gate trước. TASK-003 IN_REVIEW, TASK-004 DONE, TASK-005/006/007 IN_REVIEW, hoãn TASK-005 DEFERRED_BY_USER giữ nguyên; TASK-009–014 TODO. Ngoại lệ mới cho TASK-008 thay giới hạn không làm TASK-008 ở checkpoint TASK-007, không sửa bằng chứng lịch sử.
+
+Git HEAD c643fcb không đổi, worktree giữ33 thay đổi đầu lượt TASK-007 và thêm TASK-008 chưa commit; không commit/push/deploy. Probe backend0/W13 runner0 exit0, không stop/start process tồn tại hoặc dùng credential UAT, không ghi Google/dữ liệu thật. Các checkpoint bên dưới là lịch sử; trạng thái hiện hành theo đoạn này/INDEX. Không giao UAT thủ công hoặc tự tiếp tục TASK-009.
+
+## Ngoại lệ phụ thuộc TASK-008 — 2026-10-13
+
+Người dùng cho phép hoàn tất phần local TASK-008 dù TASK-005/006/007 còn IN_REVIEW. Các gate hoãn TASK-005 và nguồn/workbook/Google/browser TASK-006/007 giữ nguyên; rule mã/fields/Org-Location công ty OPEN/TBD. Ngoại lệ không phê duyệt DRAFT, không cho ghi dữ liệu thật/commit/push/deploy/TASK-009. Publish kỹ thuật là đổi pointer nguyên tử sang snapshot DRAFT đầy đủ, không công bố mã chính thức.
+
+
+## Checkpoint TASK-007 trước TASK-008 — 2026-10-13
+
+TASK-007 IN_REVIEW: phần local CRUD một loại MACHINE giả đã thực hiện, state DRAFT_DEMO, code test có rule riêng, alias/soft-delete/restore/search/filter/paging/Version409, scope server TASK-005 và Categories DRAFT TASK-006. Backend/API/Razor và Google atomic/reconcile adapter đã build sạch exit0; 54/54 test task +9/9 hồi quy local pass exit0, failed/skipped0. [Báo cáo](07-testing/TEST-REPORT-TASK-007.md), [thiết kế](02-architecture/ASSET-DEMO-DESIGN-TASK-007.md).
+Rule/trường nghiệp vụ công ty và source Org/Location chưa xác minh/phê duyệt; Google live/browser NOT_RUN, không lấy HTTP stub/render thay evidence thật. TASK-005 IN_REVIEW, hoãn giữ DEFERRED_BY_USER; TASK-006 IN_REVIEW, workbook gốc/Google/browser vẫn chưa xác minh. TASK-003 IN_REVIEW, TASK-004 DONE; TASK-008–014 TODO.
+Git đã có checkpoint c643fcb lưu/push ở lượt10/10; lượt13/10 này không commit/push/deploy, worktree chứa thay đổi TASK-007. Probe cuối backend0 và W13 runner0 exit0; không stop/start process hay nhập secret UAT, không ghi Google/dữ liệu thật. Các đoạn bên dưới là checkpoint lịch sử, không thay trạng thái hiện hành này.
+
+
+## Ngoại lệ phụ thuộc TASK-007 — 2026-10-13
+
+Người dùng cho phép triển khai đầy đủ phần local TASK-007 dù TASK-006 chưa DONE. TASK-005 giữ IN_REVIEW và DEFERRED_BY_USER; TASK-006 giữ IN_REVIEW, workbook gốc/Google live/browser chưa xác minh. Ngoại lệ chỉ cho bắt đầu local, không đóng gate và không cho phép ghi dữ liệu thật, commit/push/deploy hoặc làm TASK-008. Rule mã/trường nghiệp vụ công ty chưa chốt: dùng fixture giả có nhãn cho phần độc lập, không tự phê duyệt rule hay DRAFT.
+
+
 ## Kết quả local TASK-006 — 2026-10-10
 
 TASK-006 `IN_REVIEW`: preview/validation/idempotent import/version diff DRAFT, tree/detail/tìm/TXT và permission/scope server, Google business adapter/API/Razor đã triển khai. Build sạch exit 0; 46/46 test task + 12/12 hồi quy liên quan pass, failed/skipped 0, exit 0. Staging đúng 665/15/98/552/39. Workbook XLSX gốc không có trong repository; metadata gốc/hash chưa tái xác minh. Google live/browser TASK-006 NOT_RUN, không chứng nhận từ fake/render HTML. [Báo cáo](07-testing/TEST-REPORT-TASK-006.md).

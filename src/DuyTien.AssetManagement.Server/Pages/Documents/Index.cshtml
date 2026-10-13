@@ -1,0 +1,15 @@
+@page
+@model DuyTien.AssetManagement.Server.Pages.Documents.IndexModel
+@{ViewData["Title"]="Hồ sơ và biểu mẫu demo";}
+<h1>Hồ sơ và biểu mẫu demo</h1><p class="alert alert-warning">DRAFT_DEMO — mẫu giả/nháp không phải văn bản công ty đã ban hành. DOCX và PDF thuộc cùng một phiên bản.</p>
+@if(Model.Error is not null){<div class="alert alert-danger" role="alert">@Model.Error</div>}
+<form method="get"><label asp-for="Q">Tìm tên/mã nghiệp vụ</label><input asp-for="Q" maxlength="200" class="form-control"/><button class="btn btn-secondary mt-2">Tìm</button></form>
+@if(Model.Items.Count==0){<p role="status">Chưa có tài liệu có thể xem trong phạm vi/ngày hiệu lực.</p>}
+<div class="table-responsive"><table class="table"><thead><tr><th>Tên</th><th>Mã nghiệp vụ</th><th>Danh mục</th><th>Trạng thái</th></tr></thead><tbody>@foreach(var d in Model.Items){<tr><td><a asp-page="Detail" asp-route-id="@d.DocumentId">@d.Name</a></td><td>@d.BusinessCode</td><td>@d.CategoryName</td><td>@d.DataState</td></tr>}</tbody></table></div>
+@if(Model.CanManage)
+{
+<h2 class="h4">Đăng ký metadata tài liệu nháp</h2><form method="post"><div asp-validation-summary="All" class="text-danger" role="alert"></div><input asp-for="RequestKey" type="hidden"/>
+<label asp-for="Name">Tên</label><input asp-for="Name" required maxlength="300" class="form-control"/><label asp-for="BusinessCode">Mã nghiệp vụ (chưa áp đặt rule công ty)</label><input asp-for="BusinessCode" required maxlength="100" class="form-control"/>
+<label asp-for="CategoryId">Danh mục DRAFT trong phạm vi</label><select asp-for="CategoryId" required class="form-select"><option value="">Chọn danh mục</option>@if(!string.IsNullOrEmpty(Model.CategoryId)&&!Model.Choices.Nodes.Any(n=>n.CategoryId==Model.CategoryId)){<option value="@Model.CategoryId">Giữ lựa chọn đã nhập; cần tải lại</option>}@foreach(var n in Model.Choices.Nodes){<option value="@n.CategoryId">@n.Path — @n.FullCode</option>}</select>
+<label asp-for="Description">Mô tả</label><textarea asp-for="Description" maxlength="2000" class="form-control"></textarea><button type="submit" asp-page-handler="Create" class="btn btn-primary mt-2">Tạo registry nháp</button></form>
+}

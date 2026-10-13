@@ -1,5 +1,14 @@
 # Schema logic đề xuất cho Google Sheets
 
+## TASK-007 local subset — 2026-10-13
+
+ASSET_DEMO_V1 dùng business spreadsheet, tách system auth. Headers authoritative local trong GoogleAssetCatalogStore, không apply trên Google trong lượt. Sáu bảng ghi: AssetSchemaVersions(SchemaVersion/Revision), Assets(23 cột theo AssetRecord), IdCounters(Key/LastAllocated), LegacyAliases(AliasId/Namespace/OldCode/AssetId/IsActive), AssetOperations(op/key/actor/hash/action/entity/before/after/aliases/counter/reason/time), AssetAuditEvents(before/after/alias snapshot/actor/reason/time). CodeRules(CodeRuleId/CategoryRootId/Prefix/CCC/Status/ApprovedForDemo/Version), OrgUnits(Id/ParentId/Name/State/Version), Locations(Id/ParentId/OrgUnitId/Name/State/Version) chỉ đọc, không seed/update nguồn trong CRUD.
+
+First explicit write mới tạo sáu tab nếu tất cả vắng; partial/header/journal lạ dừng, không ghi đè dữ liệu chưa xác định. CodeRules chỉ DEMO/ApprovedForDemo=true có CCC đúng root mới allocate; fixture true không là approval thật. Prefix+CCC counter không reset/reuse; ID/code/IssuedCCC/CodeRuleId bất biến. Legacy alias ngừng dùng vẫn giữ mapping/search/reservation.
+
+Journal/audit riêng để không thay CATEGORY_V1/schema/Operations/AuditEvents TASK-006. Một atomic batch giữ counter/entity/aliases/operation/audit; lost response read-reconcile, key payload khác409, version stale409. Rebuild state theo ID hỗ trợ sort Assets/counters/aliases; không cho reorder/mất operation history. Chặn trên5000 dòng/bảng,45000 ký tự/ô,1800KiB batch trước write; không cắt dữ liệu hoặc ghi PARTIAL. Actual Google constraints/throughput/restart/ACL chưa nghiệm thu: NOT_RUN_GOOGLE. Xem TEST-REPORT-TASK-007 và ASSET-DEMO-DESIGN-TASK-007.
+
+
 ## TASK-006 local subset — 2026-10-10
 
 Implementation subset theo phạm vi người dùng: Categories + TreeVersions + ImportJobs/ImportRows + Operations + AuditEvents + SchemaVersions, cùng business spreadsheet khác system. Header thực tế là `GoogleCategoryCatalogStore.Headers`; không triển khai các bảng còn lại chỉ vì được PROPOSED ở dưới. Schema marker CATEGORY_V1 chứa pointer DRAFT hiệu lực demo và Revision (số operation commit/no-op), khác SchemaVersion auth.
@@ -79,3 +88,17 @@ phải bảo vệ cả spreadsheet; app user không có quyền Google trực ti
 Mọi operation thay Counter/Asset/Audit/Operation liên quan đặt trong cùng spreadsheet nghiệp vụ để batchUpdate có atomic commit. Mọi mutation user/role/scope/session/audit liên quan đặt trong một batch của spreadsheet hệ thống khi cần nguyên tử, đặc biệt last-admin protection. System và nghiệp vụ khác file không có transaction chung; state/reconciliation là bắt buộc khi flow cắt qua hai file.
 Row locator được rebuild từ Id sau sort/delete/maintenance. No client writes; Version+single writer giữ consistency trong giả định demo. Không bảo đảm CAS chỉ bằng một cột Version.
 Các tab có thể tạo dần theo Task, không yêu cầu tạo 30 tab và nghiệp vụ chưa dùng ngay ở bước đầu.
+
+## TASK-008 local — 2026-10-13
+
+CATEGORY_V1 và bảy header TASK-006 giữ tương thích. Khi explicit tree-change commit đầu tiên, thêm hai tab trong cùng atomic batch, không auto init ở startup: TreeChanges (17 cột: OperationId/IdempotencyKey/Actor/RequestHash/Kind/BeforeTreeVersionId/TreeVersionId/ExpectedTreeRevision/ExpectedAssetRevision/Reason/CompletedAt/PreviewHash/RequestJson/CategoryIdsJson/AssetIdsJson/DiffRef/ResultJson) và TreeChangeDetails (9 cột: OperationId/CategoryId/Name/BeforePath/AfterPath/BeforeLevel/AfterLevel/BeforeState/AfterState). DiffRef=DETAIL_ROWS, mỗi diff một dòng, audit giữ link/count/result để không vượt cell khi cây lớn. Cặp tab thiếu một/header lạ/journal lạ bị chặn, không overwrite.
+
+TreeVersions luôn DRAFT; Category DRAFT_INACTIVE là node đã ngừng, vẫn giữ ID/provenance/lịch sử; API thường chỉ trả DRAFT. Category revision bằng số import operation + tree-change; Asset revision tăng theo từng Asset operation. Sửa/move/archive append complete snapshot rồi đổi pointer cùng batch với Assets/MOVE hoặc DELETE, AssetOperations/AssetAuditEvents; ID/code/alias/counter không tái cấp. MappingVersion TASK008_TREE_V1 kiểm digest của complete stored nodes. MOVE_ASSETS chỉ thêm ledger, giữ treeVersion nếu cây không đổi. Giới hạn combined1800KiB/45000chars-cell, tree1000/table20000, asset-table5000; không PARTIAL/chunk tự động. Chưa apply/verify Google live. [Thiết kế](../02-architecture/TREE-MUTATION-DESIGN-TASK-008.md), [report](../07-testing/TEST-REPORT-TASK-008.md).
+
+## TASK-009 local — 2026-10-13
+
+MEDIA_V1 subset trong business spreadsheet khác system: MediaSchemaVersions(SchemaVersion/Revision); Files(FileId/RecordJson), Documents(DocumentId/RecordJson), DocumentVersions(VersionId/RecordJson), MediaOperations(OperationId/RecordJson), MediaAuditEvents(OperationId/Actor/Action/Reason/Timestamp). Typed JSON lưu metadata, không binary/base64. Headers actual GoogleMediaCatalogStore; không overwrite tab Files/Documents của schema khác. Chỉ explicit mutation mới tạo cả6tab nếu tất cả vắng; partial/header/range/materialized/journal/audit khác dừng.
+
+ManagedFile chứa owner immutable ASSET hoặc DOCUMENT_VERSION, kind PHOTO/DOCX/PDF, safe name/MIME/size/file checksum/DriveFileId, PENDING/AVAILABLE/FAILED, soft-delete/primary/description/version, UploadOperationId và timestamps/actor. Document DRAFT_DEMO có tên/business code/category/description/currentPublished pointer/version; DocumentVersion DRAFT/PUBLISHED_DEMO có label/effectiveOn/pair FileIds/version. Published version immutable, old files và mã/Asset IDs không thay. File SHA/request digest không là password hash, chỉ backend registry; DTO/error không trả checksum/Drive ID/session URI.
+
+Mỗi event append journal/audit và materialized snapshots trong một atomic batch; read replay journal kiểm mọi rows/refs/versions/primary/counterpart, cho sort materialized theo ID nhưng không reorder history. Cap5000rows/tab/45000chars-cell/1800KiB batch; vượt cap không write hoặc cắt dữ liệu. Upload pending persist trước Drive create tại pre-generatedID; chỉ commit AVAILABLE sau Drive metadata+bytes verified. Drive/Sheets không transaction chung; pending/failed có operation để reconcile/retry, không hard-delete. Chưa apply schema Google. Guard TASK-008 giữ nguyên, có Files/Documents/Versions vẫn block tree mutation, không bypass bằng đổi tab/resource. [Thiết kế](../02-architecture/MEDIA-DESIGN-TASK-009.md).

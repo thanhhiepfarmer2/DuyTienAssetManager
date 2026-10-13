@@ -418,3 +418,51 @@ Razor `/Categories`, `/Categories/Detail/{id}`, `/Categories/Import` có antifor
 API bearer: GET `/api/categories?q=...`, `/tree`, `/{id}`, `/export`; POST `/api/categories/imports/preview` multipart trường `file`; POST `/imports/commit` JSON `{previewId, confirmDuplicateNames}`. Preview gắn actor/TTL 15 phút (không đổi chính sách phiên auth), commit retry trong TTL dùng ledger key server. Restart trước commit cần upload/preview lại; retry file đã commit không tạo bản sao. Không auto import staging/startup.
 
 Format TASK-006: từng csproj Application/Infrastructure.Google/Server/ArchitectureTests, `dotnet format <csproj> --no-restore --include <absolute paths các file mới TASK-006> --verbosity minimal`; bốn lệnh exit0. Include Application/Categories; adapter GoogleCategoryCatalogStore.cs; Server/Categories và Pages/Categories; bốn Category* test files. Không format toàn repo hoặc auth/user file đang có. `node --check .\src\DuyTien.AssetManagement.Server\wwwroot\js\category-import.js` kiểm syntax JS, không chứng minh browser. Không tiếp tục runner W13 hoặc secret UAT theo chỉ đạo dừng hiện hành.
+
+## TASK-007 local — 2026-10-13
+
+Không dùng secret UAT hoặc Google resources trong test local. Kiểm đúng backend workspace trước build, build/test tuần tự:
+
+```powershell
+dotnet build .\src\DuyTien.AssetManagement.Server\DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal
+dotnet test .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~AssetCrud|FullyQualifiedName~GoogleAssetCatalog"
+dotnet test .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-build --no-restore --nologo -v:minimal --filter "FullyQualifiedName~CategoryHttpRazorTests|FullyQualifiedName~ScopeAuthorizationTests"
+node --check .\src\DuyTien.AssetManagement.Server\wwwroot\js\asset-form.js
+git diff --check
+```
+
+Không chạy lại toàn bộ nghiệm thu TASK-005/006; không chạy runner W13. Fake store/Google HTTP stub và rendered Razor không là Google live/browser UAT.
+
+TASK-007 kết quả13/10: build0warnings/errors exit0; filter task54passed/0failed/0skipped exit0; filter regression9/9 exit0; node/diff0. Format thực tế dùng Python subprocess argv tuần tự `dotnet format <project> --no-restore --include <absolute paths> --verbosity minimal`: Application Assets/*.cs; Infrastructure GoogleAssetCatalogStore.cs; Server Assets/*.cs và Pages/Assets/*.cs; test AssetCrud*.cs và GoogleAssetCatalogTests.cs, từng command exit0. API/Razor routes/body/headers theo API-SCOPE/ASSET-DEMO-DESIGN-TASK-007. Không chạy các lệnh Google init/live/PoC/UAT trong lượt local này.
+
+## TASK-008 local — 2026-10-13
+
+Build/test tuần tự, fixture giả/HTTP stub, không secret UAT hoặc Google live:
+
+```powershell
+dotnet build .\src\DuyTien.AssetManagement.Server\DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal
+dotnet test .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~TreeMutation"
+dotnet test .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-build --no-restore --nologo -v:minimal --filter "FullyQualifiedName~CategoryCatalogTests|FullyQualifiedName~CategoryHttpRazorTests|FullyQualifiedName~GoogleCategoryCatalogStoreTests|FullyQualifiedName~AssetCrudTests|FullyQualifiedName~AssetCrudHttpRazorTests|FullyQualifiedName~GoogleAssetCatalogTests|FullyQualifiedName~ScopeAuthorizationTests"
+node --check .\src\DuyTien.AssetManagement.Server\wwwroot\js\tree-change.js
+git diff --check
+```
+
+Chỉ hồi quy code category/asset bị đổi để hỗ trợ tree mutation, không chạy full nghiệm thu TASK-005/006 hoặc W13. Google live/browser NOT_RUN nếu chưa chạy.
+
+TASK-008 kết quả13/10: build cuối exit0/0warnings/0errors; filter TreeMutation42passed/0failed/0skipped exit0; hồi quy91/91 exit0, không full TASK-005/006; node syntax/diff0. Format theo subprocess argv `dotnet format <csproj> --no-restore --include <absolute paths> --verbosity minimal` từng Application/Infrastructure.Google/Server/tests tuần tự exit0; danh sách file chính xác tại TEST-REPORT-TASK-008. Guard joint metadata thêm sau hồi quy không thay lớp hồi quy, test TASK-008 và build đã chạy lại; scoped history và UI refresh lỗi sau commit có test cuối42/42. HTTP stub/rendered Razor không là Google/browser.
+
+## TASK-009 local — 2026-10-13
+
+Fixture giả, HTTP stub/Kestrel, không credential UAT hoặc Google live; build/test tuần tự:
+
+```powershell
+dotnet build .\src\DuyTien.AssetManagement.Server\DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal
+dotnet test .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~ManagedMedia"
+dotnet test .\tests\DuyTien.AssetManagement.ArchitectureTests\DuyTien.AssetManagement.ArchitectureTests.csproj --no-build --no-restore --nologo -v:minimal --filter "FullyQualifiedName~TreeMutation|FullyQualifiedName~AssetCrudHttpRazorTests|FullyQualifiedName~CategoryHttpRazorTests|FullyQualifiedName~ScopeAuthorizationTests|FullyQualifiedName~GoogleAdapterHttpTests|FullyQualifiedName~SafeGoogleHttpClientLoggingTests"
+node --check .\src\DuyTien.AssetManagement.Server\wwwroot\js\media-upload.js
+git diff --check
+```
+
+Hồi quy hẹp cho integration/API/guard, không full nghiệm thu trước, không runner W13/init/bootstrap/PoC/provisioning. Google live/browser chỉ pass khi quan sát thật; chưa chạy thì NOT_RUN.
+
+TASK-009 actual13/10: build cuối0warnings/errors exit0; ManagedMedia56passed/0failed/0skipped exit0; hồi quy67/67 exit0, fake HttpMessageHandler kể cả GoogleAdapterHttpTests, không Google live. node syntax/diff0. Format tuần tự `dotnet format <csproj> --no-restore --include <absolute paths> --verbosity minimal`, Application/Infrastructure.Google/Server/tests từng command0, include danh sách chính xác ở Test Report. Không format guard metadata hoặc chạy full UAT/PoC/init/bootstrap trước.

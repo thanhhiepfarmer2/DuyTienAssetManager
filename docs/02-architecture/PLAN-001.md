@@ -1,5 +1,20 @@
 # PLAN-001 — Demo quản lý tài sản dựa trên Google Sheets/Drive
 
+## Ngoại lệ phụ thuộc TASK-009 — 2026-10-13
+
+Người dùng cho phép hoàn tất phần local TASK-009 dù TASK-005/006/007/008 IN_REVIEW; không đóng gate trước, giữ DEFERRED_BY_USER. Không Google live/UAT thủ công/dữ liệu thật/commit/push/deploy/TASK-010. Guard metadata TASK-008 giữ nguyên, không bypass; tab Files/Documents làm tree mutation fail-closed cho đến khi có thiết kế đối soát module được giao riêng. Rule/workbook/Org-Location OPEN/TBD; file mẫu thật và Drive target chưa xác minh, fixture giả chỉ cho local.
+
+
+## Ngoại lệ phụ thuộc TASK-008 — 2026-10-13
+
+Người dùng cho phép hoàn tất phần local TASK-008 dù TASK-005/006/007 còn IN_REVIEW. Các gate hoãn TASK-005 và nguồn/workbook/Google/browser TASK-006/007 giữ nguyên; rule mã/fields/Org-Location công ty OPEN/TBD. Ngoại lệ không phê duyệt DRAFT, không cho ghi dữ liệu thật/commit/push/deploy/TASK-009. Publish kỹ thuật là đổi pointer nguyên tử sang snapshot DRAFT đầy đủ, không công bố mã chính thức.
+
+
+## Ngoại lệ phụ thuộc TASK-007 — 2026-10-13
+
+Người dùng cho phép triển khai đầy đủ phần local TASK-007 dù TASK-006 chưa DONE. TASK-005 giữ IN_REVIEW và DEFERRED_BY_USER; TASK-006 giữ IN_REVIEW, workbook gốc/Google live/browser chưa xác minh. Ngoại lệ chỉ cho bắt đầu local, không đóng gate và không cho phép ghi dữ liệu thật, commit/push/deploy hoặc làm TASK-008. Rule mã/trường nghiệp vụ công ty chưa chốt: dùng fixture giả có nhãn cho phần độc lập, không tự phê duyệt rule hay DRAFT.
+
+
 ## Ngoại lệ đã được người dùng cho phép — 2026-10-10
 
 Người dùng dừng nghiệm thu TASK-005 và cho phép triển khai local TASK-006 dù TASK-005 chưa DONE (2026-10-10).
@@ -24,9 +39,9 @@ TASK-005 giữ `IN_REVIEW`: G2a/G2b PASS_MANUAL; G2c và browser còn mở DEFER
 | 3 | [TASK-004](../06-tasks/TASK-004.md) | DONE | Local 31 tests pass; live Google và manual resource/control-file có user-provided evidence | TASK-003 vẫn IN_REVIEW nhưng không chặn checkpoint TASK-004 |
 | 4 | [TASK-005](../06-tasks/TASK-005.md) | IN_REVIEW | [Auth design](AUTH-DESIGN-PROPOSED.md), backend/API + Razor login/admin/roles/scope | Local 78/78 và 14 boundary riêng; Google/HTTP 173/173; idle30ph thực PASS; nghiệm thu còn lại DEFERRED_BY_USER/W13 STOPPED_BY_USER |
 | 5 | [TASK-006](../06-tasks/TASK-006.md) | IN_REVIEW | Local preview/import/tree/detail/search/TXT + Google adapter/API/Razor; build sạch, 46 tests + 12 hồi quy pass | Ngoại lệ bắt đầu khi TASK-005 IN_REVIEW; workbook gốc/Google live/browser còn NOT_RUN |
-| 6 | [TASK-007](../06-tasks/TASK-007.md) | TODO | Lát web + API CRUD tài sản có test | TASK-006; fields + rule mã demo |
-| 7 | [TASK-008](../06-tasks/TASK-008.md) | TODO | Move/delete cây và đối tượng an toàn | TASK-007 |
-| 8 | [TASK-009](../06-tasks/TASK-009.md) | TODO | Ảnh và DOCX/PDF trên Drive | TASK-007; Drive/file mẫu |
+| 6 | [TASK-007](../06-tasks/TASK-007.md) | IN_REVIEW | Local CRUD máy giả + API/Razor/Google adapter, build sạch/54 tests +9 hồi quy | Ngoại lệ 2026-10-13; rule/fields/source/Google/browser chưa đạt |
+| 7 | [TASK-008](../06-tasks/TASK-008.md) | IN_REVIEW | Local API/Razor/Google joint adapter cho sửa/move/archive cây và bulk Asset; build sạch42+91 test pass | Ngoại lệ13/10 khi TASK-005/006/007 IN_REVIEW; Google/browser/source/rule còn gate |
+| 8 | [TASK-009](../06-tasks/TASK-009.md) | IN_REVIEW | Local ảnh/API/Razor, registry DOCX/PDF/gateway/reconcile/retention; build sạch56+67 tests | Ngoại lệ13/10 khi TASK-005–008 IN_REVIEW; mẫu/Drive/live/browser chưa đạt; guard giữ |
 | 9 | [TASK-010](../06-tasks/TASK-010.md) | TODO | Items và snapshot số lượng | TASK-006; nguồn stock |
 | 10 | [TASK-011](../06-tasks/TASK-011.md) | TODO | R01–R04 có scope/asOf/unit | TASK-007, TASK-010 |
 | 11 | [TASK-012](../06-tasks/TASK-012.md) | TODO | App Android nhập liệu/chụp ảnh | TASK-005/007/009; thiết bị |

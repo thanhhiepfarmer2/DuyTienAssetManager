@@ -1,0 +1,157 @@
+{
+  "task": "TASK-009",
+  "date": "2026-10-13",
+  "status": "IN_REVIEW",
+  "workingDirectory": "D:\\Dev\\QuanLyTaiSan_DuyTien",
+  "source": "AI_RUN_OBSERVED_LOCAL",
+  "data": "SYNTHETIC_FORMAT_FIXTURES_AND_FAKE_HTTP",
+  "realGoogleWrites": false,
+  "realBrowserUat": false,
+  "guardMetadataModified": false,
+  "newDependencies": false,
+  "commands": [
+    {
+      "command": "dotnet build .\\src\\DuyTien.AssetManagement.Server\\DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal",
+      "exitCode": 0,
+      "warnings": 0,
+      "errors": 0
+    },
+    {
+      "command": "dotnet test .\\tests\\DuyTien.AssetManagement.ArchitectureTests\\DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter \"FullyQualifiedName~ManagedMedia\"",
+      "exitCode": 0,
+      "passed": 56,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "dotnet test .\\tests\\DuyTien.AssetManagement.ArchitectureTests\\DuyTien.AssetManagement.ArchitectureTests.csproj --no-build --no-restore --nologo -v:minimal --filter \"FullyQualifiedName~TreeMutation|FullyQualifiedName~AssetCrudHttpRazorTests|FullyQualifiedName~CategoryHttpRazorTests|FullyQualifiedName~ScopeAuthorizationTests|FullyQualifiedName~GoogleAdapterHttpTests|FullyQualifiedName~SafeGoogleHttpClientLoggingTests\"",
+      "exitCode": 0,
+      "passed": 67,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node --check .\\src\\DuyTien.AssetManagement.Server\\wwwroot\\js\\media-upload.js",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "checkpoint": "BEFORE_REPORT_SYNC",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "checkpoint": "AFTER_REPORT_SYNC",
+      "exitCode": 0
+    }
+  ],
+  "history": [
+    {
+      "phase": "first backend build",
+      "exitCode": 1,
+      "warnings": 5,
+      "errors": 1,
+      "reason": "record Range member name conflict, null throw flow warnings"
+    },
+    {
+      "phase": "test compile",
+      "exitCode": 1,
+      "reason": "fixture used nonexistent auth State property; tests not run"
+    },
+    {
+      "passed": 8,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "passed": 37,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "passed": 37,
+      "failed": 7,
+      "exitCode": 1,
+      "reason": "DELETE body binding prevented HTTP endpoint startup"
+    },
+    {
+      "passed": 44,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "phase": "resumable test compile",
+      "exitCode": 1,
+      "reason": "using declaration embedded in else; tests not run"
+    },
+    {
+      "passed": 48,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "passed": 51,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "passed": 55,
+      "failed": 0,
+      "exitCode": 0
+    },
+    {
+      "passed": 56,
+      "failed": 0,
+      "exitCode": 0,
+      "reason": "Current published pair uses durable publish order when timestamps equal and rows sorted."
+    }
+  ],
+  "format": "Four related projects sequentially exit0, file includes in report",
+  "initialBackendProbe": {
+    "count": 0,
+    "exitCode": 0
+  },
+  "observedGitHead": "c643fcb",
+  "commitPushDeploy": false,
+  "gates": {
+    "google": "NOT_RUN_GOOGLE",
+    "browser": "NOT_RUN_BROWSER",
+    "originalTemplatesAndDriveTarget": "NOT_VERIFIED_SOURCE_TARGET",
+    "companyRulesWorkbookOrgLocationRetention": "OPEN_TBD"
+  },
+  "limitations": [
+    "Tree metadata guard preserved: Files/Documents/DocumentVersions continue to block tree mutation pending separately scoped impact support.",
+    "No antivirus/full PDF sanitizer, no MAUI/camera/real template conversion.",
+    "Resumable session URL held only in request memory; restart retries/reconciles durable pre-generated file ID."
+  ],
+  "finalSequentialVerification": {
+    "priorYieldedSessionsClosed": true,
+    "buildExitCode": 0,
+    "warnings": 0,
+    "errors": 0,
+    "testExitCode": 0,
+    "passed": 56,
+    "failed": 0,
+    "skipped": 0
+  },
+  "sdk": "10.0.400",
+  "sdkCommandExitCode": 0,
+  "documentCheck": {
+    "source": "AI_RUN_OBSERVED_LOCAL",
+    "command": "PowerShell UTF8 here-string to python -B -, read-only doc/status/links/guard/credential-pattern checker",
+    "exitCode": 0,
+    "localLinksChecked": 86,
+    "filesPatternScanned": 88,
+    "issues": 0
+  },
+  "finalProcessProbe": {
+    "backendCount": 0,
+    "oldUatRunnerCount": 0,
+    "exitCode": 0
+  },
+  "preservedHistoryProbe": {
+    "command": "git diff --quiet -- docs/06-tasks/TASK-003.md docs/06-tasks/TASK-004.md docs/06-tasks/TASK-005.md docs/07-testing/UAT-CHECKLIST-TASK-005.md docs/07-testing/TEST-REPORT-TASK-005.md docs/06-tasks/TASK-010.md",
+    "exitCode": 0
+  },
+  "gitHeadCommandExitCode": 0
+}

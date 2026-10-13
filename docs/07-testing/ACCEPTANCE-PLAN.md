@@ -126,3 +126,15 @@ Chưa xác nhận reset thành công; TASK-005 vẫn IN_REVIEW.
 ## AC-01/AC-02/AC-07 — checkpoint TASK-006 local 2026-10-10
 
 46/46 test task +12/12 hồi quy liên quan pass, AI local exit0; source staging đúng665/15/98/552/39, metadata/parser/validation/diff/idempotency/atomic/scope/TXT/API/rendered Razor/antiforgery có test. Fake Google và render HTML không thay live/browser. Workbook gốc metadata/hash NOT_RUN_SOURCE_ORIGINAL; Google schema/import/restart NOT_RUN_GOOGLE; browser tương tác/layout/loading NOT_RUN_BROWSER. TASK-006 IN_REVIEW; chi tiết TEST-REPORT-TASK-006. Không giao thao tác thủ công trong lượt theo quyết định người dùng.
+
+## AC-05/AC-06/AC-08 — TASK-007 local 2026-10-13
+
+Ngoại lệ người dùng cho phép local khi TASK-006 IN_REVIEW; TASK-005 hoãn giữ nguyên. 54/54 task +9/9 regression local exit0, build sạch0warnings/errors, fake persistence/Google HTTP stub và Kestrel/Razor HTTP. AC-05 concurrency/key/reconcile, AC-06 ID/code/lifecycle/alias và AC-08 fields/version/permission/form HTTP có local evidence tại TEST-REPORT-TASK-007. Actual browser UAT/layout/loading, Google resource/schema/CRUD/restart/quota và rule/fields/Org-Location source chưa đạt; không đánh dấu PASS môi trường thật. TASK-007 IN_REVIEW; không giao manual checklist/secret.
+
+## AC-06/AC-07 — TASK-008 local 2026-10-13
+
+Ngoại lệ người dùng cho local dù TASK-005/006/007 IN_REVIEW; hoãn cũ giữ nguyên.42/42 task và91/91 regression local exit0, build sạch0warning/error: IDs/code/mapping, subtree cycle/F10/F11, preview/plan/confirm, same-assignment source/target, partial-tree prevention, import bypass guard, atomic joint fake Google/reconciliation/digest, TXT Unicode và Kestrel compiled Razor HTTP. Synthetic665-node không thay workbook/baseline công ty. Google real resource/schema/write/restart/quota NOT_RUN_GOOGLE; browser interaction/layout/loading NOT_RUN_BROWSER; rule/fields/source Org-Location OPEN/TBD, workbook gốc chưa xác minh. [Report](TEST-REPORT-TASK-008.md) và [artifact](TASK-008-LOCAL-EVIDENCE.json) ghi expected/actual/source/lệnh/exit và lịch sử failures. TASK-008 IN_REVIEW, không DONE và không giao UAT thủ công trong lượt.
+
+## AC-10/AC-13 — TASK-009 local 2026-10-13
+
+Ngoại lệ người dùng cho local dù TASK-005–008 IN_REVIEW, giữ nghiệm thu hoãn.56/56 task+67/67 regression exit0; build0warning/error. Exact DOCX/PDF same-version gateway/pair missing/published demo/future date/current owner scope, type/byte/CSRF/413/409/503, pending before Drive/same-ID retry/reconcile, resumable large/lost/partial/foreign URI and guard metadata có PASS_LOCAL/STUB/HTTP ở TEST-REPORT-TASK-009. Compiled Razor/JS syntax không browser UAT; fake transport không Google live. Source mẫu/Drive target/actual ACL/quota/restart/retention/source rules còn NOT_RUN/OPEN_TBD; không đóng AC môi trường thật. TASK-009 IN_REVIEW, task trước/DEFERRED_BY_USER giữ nguyên, không giao manual UAT mới.

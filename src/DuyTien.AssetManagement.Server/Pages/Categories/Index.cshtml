@@ -6,7 +6,7 @@
 @if (Model.Error is not null) { <div role="alert" class="alert alert-danger">@Model.Error</div> }
 <form method="get" class="d-flex gap-2 mb-3"><label class="visually-hidden" for="Q">Từ khóa tên/mã/định nghĩa</label><input id="Q" name="Q" value="@Model.Q" maxlength="200" class="form-control" placeholder="Tìm tên, mã, định nghĩa (có hoặc không dấu)"/><button class="btn btn-primary">Tìm</button><a asp-page="Index" class="btn btn-outline-secondary">Xem cây</a></form>
 @if (User.IsInRole("Admin") || User.IsInRole("CatalogManager")) {
-<p><a asp-page="Import">Nạp/preview cây</a> · <a asp-page-handler="Export">Xuất TXT UTF-8 trong phạm vi</a></p>
+<p><a asp-page="Manage">Sửa/chuyển/ngừng cây</a> · <a asp-page="Import">Nạp/preview cây</a> · <a asp-page-handler="Export">Xuất TXT UTF-8 trong phạm vi</a></p>
 }
 <p>@Model.Catalog.Total nút được phép xem. Chỉ đường dẫn trong phạm vi được hiển thị.</p>
 @if (Model.Catalog.Nodes.Count == 0 && Model.Error is null) { <p role="status">Chưa có danh mục trong phạm vi hoặc không tìm thấy kết quả.</p> }

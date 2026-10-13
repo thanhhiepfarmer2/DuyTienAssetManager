@@ -181,3 +181,21 @@ Chưa xác nhận reset thành công; TASK-005 vẫn IN_REVIEW.
 ## Checkpoint hiện hành 2026-10-10
 
 TASK-005 UAT còn lại dừng theo người dùng: runnerW13 PID18964 không còn; credential UatTask005:AdminPassword và bootstrap absent đã kiểm chỉ xuấtboolean, không yêu cầu nhập lại. Các đoạn pending/17-10 phía trên là lịch sử trước quyết định dừng. TASK-006 dùng GoogleWorkspace:SpreadsheetId cho business, khác SystemSpreadsheetId; OAuth Desktop/drive.file/lease giữ nguyên. Không tạo config secret mới, không auto init/import ở startup. Chưa ghi schema/data TASK-006 vào Google thật; testfake không phải cấu hình chạy ứng dụng. Backend workspace đã dừng để build.
+
+## TASK-007 local
+
+Không thêm credential hoặc scope OAuth; dùng GoogleWorkspace business SpreadsheetId khác SystemSpreadsheetId, drive.file/executor và process lease hiện có. Không startup init/seed. Rule/OrgUnits/Locations phải có header/nguồn hợp lệ trong business Sheets; thiếu thì create bị chặn. Code rule DEMO/ApprovedForDemo và required fields công ty vẫn chưa phê duyệt, fixture trong tests không là config production. Không bật SQL/SQLite/in-memory adapter ở runtime. Không yêu cầu credential UAT.
+
+Sáu tab AssetSchemaVersions/Assets/IdCounters/LegacyAliases/AssetOperations/AssetAuditEvents chỉ tạo ở explicit CRUD write, chưa apply/verify trên Google. Headers actual theo SHEETS-SCHEMA và GoogleAssetCatalogStore; dữ liệu cũ/header khác dừng để migration có phạm vi riêng. Không đổi password min8 hay policy phiên.
+
+## TASK-008 local — 2026-10-13
+
+Không thêm secret/config/scope; dùng business SpreadsheetId khác SystemSpreadsheetId, OAuth Desktop/drive.file/process lease/shared writer hiện có. Hai tab TreeChanges/TreeChangeDetails chỉ tạo ở explicit mutation đã preview/confirm, chưa apply trên Google trong lượt. Không init/bootstrap/provision lại. CodeRules/OrgUnits/Locations chỉ đọc, không tự seed hoặc phê duyệt; source/rule công ty OPEN/TBD. Guard từ chối tab module chưa hỗ trợ và schema/journal không xác định. Không dùng credential UAT, đổi policy phiên/password hoặc thêm fake persistence production.
+
+## TASK-009 local — 2026-10-13
+
+Dùng business GoogleWorkspace:SpreadsheetId khác SystemSpreadsheetId và DriveFolderId My Drive operator/app qua provisioning/Picker hiện có; chưa kiểm target thật trong lượt. Không thêm credential/OAuth scope, không init/bootstrap/provision hoặc seed startup. Runtime DI GoogleMediaCatalogStore/GoogleManagedMediaContentStore; fake chỉ trong tests.
+
+MediaUpload:MaxPhotoBytes mặc định10485760 (10MiB), MaxDocumentBytes26214400 (25MiB), configurable1–25MiB kỹ thuật subset; chưa là policy vận hành được phê duyệt. Request cap26MiB gồm multipart; labels UI theo config. Bytes/type validate server. File>5MiB resumable + explicit PUT308/status/range, nhỏ multipart; session URI chỉ request memory và endpoint authority validation, không secret/client/log/config repo. Retry/reconcile giữ pre-generated Drive ID qua durable registry, không ghi đè file.
+
+Registry6tab MEDIA_V1 chỉ tạo trong explicit write, không Google apply trong lượt. Guard metadata TASK-008 nguyên vẹn: registry mới làm tree mutation fail-closed, cần tác vụ đối soát module riêng trước khi mở lại. Không rename tab/đổi spreadsheet để tránh guard. Mẫu nguồn/retention-cleanup/rule/workbook/Org-Location còn OPEN/TBD/chưa xác minh; không hard-delete Drive hoặc đổi password/session policy.

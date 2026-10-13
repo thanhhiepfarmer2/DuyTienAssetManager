@@ -1,0 +1,14 @@
+@page
+@model DuyTien.AssetManagement.Server.Pages.Assets.CreateModel
+@{ ViewData["Title"] = "Tạo máy demo"; }
+<h1>Tạo máy demo</h1>
+<p class="alert alert-warning">DRAFT_DEMO — dữ liệu và mã test chưa được phê duyệt làm dữ liệu công ty. Rule cấp mã phải được xác lập riêng.</p>
+@if (Model.Error is not null) { <div class="alert alert-danger" role="alert">@Model.Error <a asp-page="Create">Tải lại danh mục</a></div> }
+@if (Model.Form.Choices.Categories.Count == 0 || Model.Form.Choices.OrgUnits.Count == 0 || Model.Form.Choices.Locations.Count == 0) { <p role="status">Chưa có danh mục/đơn vị/địa điểm hiệu lực trong phạm vi. Không tự tạo dữ liệu nguồn.</p> }
+<form method="post" data-asset-form>
+    <input type="hidden" asp-for="RequestKey" /><input type="hidden" asp-for="TreeVersionId" />
+    <partial name="_AssetFields" for="Form" />
+    <button class="btn btn-primary mt-3" type="submit">Tạo tài sản nháp</button> <a asp-page="Index">Quay lại</a>
+    <p class="mt-2" data-save-status role="status" aria-live="polite"></p>
+</form>
+@section Scripts { <script src="~/js/asset-form.js" asp-append-version="true"></script> }

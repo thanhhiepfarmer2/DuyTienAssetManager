@@ -26,7 +26,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Quyền riêng tư</a>
                         </li>
-                        @if (User.Identity?.IsAuthenticated == true) { <li class="nav-item"><a class="nav-link text-dark" asp-page="/Categories/Index">Danh mục</a></li> }
+                        @if (User.Identity?.IsAuthenticated == true) { <li class="nav-item"><a class="nav-link text-dark" asp-page="/Categories/Index">Danh mục</a></li><li class="nav-item"><a class="nav-link text-dark" asp-page="/Assets/Index">Tài sản nháp</a></li><li class="nav-item"><a class="nav-link text-dark" asp-page="/Documents/Index">Hồ sơ/biểu mẫu demo</a></li> }
                         @if (User.IsInRole("Admin"))
                         {
                             <li class="nav-item"><a class="nav-link text-dark" asp-page="/Admin/Users/Index">Tài khoản</a></li>

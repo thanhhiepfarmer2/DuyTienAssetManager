@@ -1,0 +1,6 @@
+@page "{id?}"
+@model DuyTien.AssetManagement.Server.Pages.Assets.MoveModel
+@{ ViewData["Title"] = "Chuyển tài sản hàng loạt"; }
+<h1>Chuyển tài sản hàng loạt</h1>
+<partial name="_TreeChangePanel" model="Model" />
+@section Scripts { <script src="~/js/tree-change.js" asp-append-version="true"></script> }

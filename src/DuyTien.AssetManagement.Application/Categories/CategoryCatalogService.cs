@@ -8,10 +8,11 @@ using DuyTien.AssetManagement.Application.Concurrency;
 namespace DuyTien.AssetManagement.Application.Categories;
 
 public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, IAuthSystemStore authStore,
-    ISingleWriterCoordinator writer, TimeProvider clock)
+    ISingleWriterCoordinator writer, TimeProvider clock, DuyTien.AssetManagement.Application.Assets.IAssetCatalogStore? assetStore = null)
 {
     private readonly ScopeAuthorizationService authorization = new();
-    public async Task<CategoryPreview> PreviewAsync(string actor, CategoryDocument document, CancellationToken ct = default)
+    public Task<CategoryPreview> PreviewAsync(string actor, CategoryDocument document, CancellationToken ct = default) => writer.ExecuteAsync(t => PreviewCore(actor, document, t), ct);
+    private async Task<CategoryPreview> PreviewCore(string actor, CategoryDocument document, CancellationToken ct)
     {
         var auth = await authStore.ReadAsync(s => s.Clone(), ct).ConfigureAwait(false);
         RequirePermission(auth, actor, "CATEGORIES_IMPORT");
@@ -44,6 +45,17 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
         var candidate = state.Clone();
         var versionId = existing?.TreeVersionId ?? (alreadyImported ? state.ActiveTreeVersionId! : "TREE-" + Guid.NewGuid().ToString("N"));
         var draft = alreadyImported ? [] : BuildNodes(state, document.Rows, versionId);
+        if (!alreadyImported && assetStore is not null)
+        {
+            var assets = await assetStore.ReadAsync(token).ConfigureAwait(false);
+            foreach (var asset in assets.Assets)
+            {
+                var before = state.ActiveNodes.SingleOrDefault(n => n.CategoryId == asset.CategoryId);
+                var after = draft.SingleOrDefault(n => n.CategoryId == asset.CategoryId);
+                if (before is null || after is null || before.State != after.State || !Ancestors(state.ActiveNodes, before).SequenceEqual(Ancestors(draft, after), StringComparer.Ordinal))
+                    throw new CategoryConflictException("Import thay cấu trúc đang có Asset; dùng preview/plan TASK-008 để xử lý nguyên tử.");
+            }
+        }
         var ids = draft.ToDictionary(n => n.CategoryId, n => n.CategoryId.StartsWith("NEW:", StringComparison.Ordinal)
             ? "CAT-" + Guid.NewGuid().ToString("N") : n.CategoryId, StringComparer.Ordinal);
         draft = draft.Select(n => n with { CategoryId = ids[n.CategoryId], ParentId = n.ParentId is null ? null : ids[n.ParentId] }).ToArray();
@@ -54,7 +66,8 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
         await store.CommitAsync(candidate, state.Revision, token).ConfigureAwait(false);
         return new CategoryImportResult(versionId, candidate.Revision, alreadyImported, document.Rows.Count);
     }, ct);
-    public async Task<CategoryList> ListAsync(string actor, string? search = null, bool export = false, CancellationToken ct = default)
+    public Task<CategoryList> ListAsync(string actor, string? search = null, bool export = false, CancellationToken ct = default) => writer.ExecuteAsync(t => ListCore(actor, search, export, t), ct);
+    private async Task<CategoryList> ListCore(string actor, string? search, bool export, CancellationToken ct)
     {
         if (search?.Length > 200) throw new CategoryValidationException("Từ khóa không vượt 200 ký tự.");
         var auth = await authStore.ReadAsync(s => s.Clone(), ct).ConfigureAwait(false);
@@ -62,7 +75,7 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
         RequirePermission(auth, actor, permission);
         var state = await store.ReadAsync(ct).ConfigureAwait(false);
         var nodes = state.ActiveNodes; var hierarchy = Hierarchies(nodes);
-        var visible = nodes.Where(n => Allowed(auth, actor, permission, n.CategoryId, hierarchy)).ToDictionary(n => n.CategoryId, StringComparer.Ordinal);
+        var visible = nodes.Where(n => n.State == "DRAFT" && Allowed(auth, actor, permission, n.CategoryId, hierarchy)).ToDictionary(n => n.CategoryId, StringComparer.Ordinal);
         var views = Ordered(nodes).Where(n => visible.ContainsKey(n.CategoryId)).Select(n => View(n, visible)).ToArray();
         var query = Normalize(search ?? "");
         if (query.Length > 0) views = views.Where(v => Normalize(v.Name + " " + v.SegmentCode + " " + v.FullCode + " " + v.Definition).Contains(query, StringComparison.Ordinal)).ToArray();
@@ -73,7 +86,7 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
     public async Task<byte[]> ExportAsync(string actor, CancellationToken ct = default)
     {
         var list = await ListAsync(actor, export: true, ct: ct).ConfigureAwait(false);
-        var text = new StringBuilder("Cây danh mục DRAFT — chỉ các nhánh được phép\n");
+        var text = new StringBuilder("Cây danh mục DRAFT — chỉ các nhánh được phép\nSTT nguồn | Tên | Mã đoạn | Mã đường dẫn hiện tại | Đường dẫn được phép | Trạng thái\n");
         foreach (var n in list.Nodes)
             text.Append(' ', n.VisibleDepth * 2).Append(n.PathIsPartial ? "[nhánh được phép] " : "")
                 .Append(n.SourceStt).Append(" | ").Append(n.Name).Append(" | ").Append(n.SegmentCode)
@@ -142,7 +155,7 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
     }
     private static CategoryNode[] BuildNodes(CategoryCatalogState state, IReadOnlyList<CategoryInput> rows, string versionId)
     {
-        var known = state.Categories.GroupBy(n => n.SourceKey, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last().CategoryId, StringComparer.Ordinal);
+        var known = state.Categories.SelectMany(n => new[] { new KeyValuePair<string,string>(n.SourceKey,n.CategoryId), new KeyValuePair<string,string>(CategoryImportReader.MappingVersion + ":" + n.SegmentCode,n.CategoryId) }).GroupBy(p => p.Key,StringComparer.Ordinal).ToDictionary(g => g.Key,g => g.Last().Value,StringComparer.Ordinal);
         var byStt = rows.ToDictionary(r => r.SourceStt, StringComparer.Ordinal); var mapped = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var r in rows)
         {
@@ -158,7 +171,7 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
             while (parent is not null) { var p = byStt[parent]; parts.Insert(0, p.SegmentCode); parent = p.ParentSourceStt; }
             var old = state.ActiveNodes.SingleOrDefault(n => n.CategoryId == mapped[r.SourceStt]);
             var result = new CategoryNode(mapped[r.SourceStt], versionId, r.ParentSourceStt is null ? null : mapped[r.ParentSourceStt], r.Level, order, r.Name, r.SegmentCode,
-                string.Join('.', parts), r.Definition, "DRAFT", old?.Version ?? 1, SourceKey(r), r.SourceSheet, r.SourceRow, r.SourceStt);
+                string.Join('.', parts), r.Definition, old?.State ?? "DRAFT", old?.Version ?? 1, SourceKey(r), r.SourceSheet, r.SourceRow, r.SourceStt);
             return old is not null && !SameData(old, result) ? result with { Version = old.Version + 1 } : result;
         }).ToArray();
     }
@@ -180,7 +193,12 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
         return warnings;
     }
     private static bool SameData(CategoryNode a, CategoryNode b) => a.ParentId == b.ParentId && a.Name == b.Name && a.SegmentCode == b.SegmentCode && a.FullCode == b.FullCode &&
-        a.Definition == b.Definition && a.FLevel == b.FLevel && a.DisplayOrder == b.DisplayOrder && a.SourceStt == b.SourceStt && a.SourceRow == b.SourceRow && a.SourceSheet == b.SourceSheet && a.SourceKey == b.SourceKey;
+        a.Definition == b.Definition && a.FLevel == b.FLevel && a.DisplayOrder == b.DisplayOrder && a.SourceStt == b.SourceStt && a.SourceRow == b.SourceRow && a.SourceSheet == b.SourceSheet && a.SourceKey == b.SourceKey && a.State == b.State;
+    private static IEnumerable<string> Ancestors(CategoryNode[] nodes, CategoryNode start)
+    {
+        var byId = nodes.ToDictionary(n => n.CategoryId, StringComparer.Ordinal); var parent = start.ParentId;
+        while (parent is not null) { yield return parent; parent = byId[parent].ParentId; }
+    }
     private static string SourceKey(CategoryInput r) => CategoryImportReader.MappingVersion + ":" + r.SegmentCode;
     private static ScopeHierarchySet Hierarchies(IEnumerable<CategoryNode> nodes) => new(ScopeHierarchy.Create(AuthScopeType.OrgUnit, []), ScopeHierarchy.Create(AuthScopeType.Location, []),
         ScopeHierarchy.Create(AuthScopeType.CategorySubtree, nodes.Select(n => new ScopeNode(n.CategoryId, n.ParentId))));
