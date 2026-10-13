@@ -162,3 +162,19 @@ Theo ngoại lệ người dùng, làm local FR-03/FR-04 (sửa/move/ngừng câ
 Người dùng cho phép local FR-05/FR-06 dù TASK-005–008 IN_REVIEW, giữ hoãn trước. Ảnh web, registry/versions, cặp DOCX/PDF, scoped gateway và durable upload operation/reconcile/retention đã triển khai local. DRAFT_DEMO/PUBLISHED_DEMO là trạng thái demo có confirm, không ban hành mẫu công ty; file nguồn thật chưa có trong repo. Không chốt format business code, rule Asset/nguồn đơn vị/địa điểm/workbook gốc vẫn OPEN/TBD.
 
 Giới hạn10MiB ảnh/25MiB document là config kỹ thuật demo theo đề xuất, chưa policy vận hành. PNG/JPEG subset, DOCX không macro/embedded OLE/external relationship, PDF signature/trailer validation; chưa antivirus/PDF sanitizer, không tự convert/native Docs. Dữ liệu thiếu không ghép version khác để làm counterpart. File Drive giữ khi soft-delete/cancel/Asset delete/archive; cleanup/retention thời hạn công ty chưa xác lập. Không camera/mobile/TASK-010. Local tests không đóng AC Google/browser, guard tree metadata giữ nguyên. [Thiết kế](../02-architecture/MEDIA-DESIGN-TASK-009.md).
+
+## Lát local FR-07 TASK-010 — 2026-10-13
+
+Theo ngoại lệ người dùng, local khiTASK-005–009 IN_REVIEW. Items dùng mapping20ordinal giữ code/hai mô tả/conversion/commercial/BOM reference, duplicate decision có lý do/identity/audit, Category DRAFT và QUARANTINED không global; không tự tạo Asset/ObjectCode. Snapshot nhập riêng có unit/asOf/source/actor/min nullable, quantity chưa có UNKNOWN không0; stockTracked cần tường minh và không cho dịch vụ/đơn vị thiếu. Không phê duyệt nguồn/rule/ngưỡng/Org-Location, fixture GIẢ chỉ test. [Thiết kế TASK-010](../02-architecture/INVENTORY-DESIGN-TASK-010.md). Local pass không đóng gate workbook/Google/browser, không triển khai báo cáo TASK-011.
+
+## Lát local FR-08 TASK-011 — 2026-10-13
+
+Người dùng cho phép local khi TASK-007/010 IN_REVIEW, gates/task trước giữ. Chỉ R01–R04: Assets unique count và Category subtree scoped, Item snapshots0/low/UNKNOWN/nontracked/missing-min/source rõ, sum riêng exact unit, filters/paging/readAsOf/per-snapshotAsOf. Nguồn/rule/ngưỡng/OrgLocation chưa chốt vẫn OPEN/TBD, DRAFT/demo không phê duyệt. CSV UTF8BOM được chọn trong Task, source/action scopes kiểm cùng assignment trước read/export; không R05–R15/stale-policy/MAUI. [Thiết kế](../02-architecture/REPORT-DESIGN-TASK-011.md), [Test Report](../07-testing/TEST-REPORT-TASK-011.md).
+
+## TASK-012 local — 2026-10-13
+
+Ngoại lệ user cho Android local khi TASK-005/007/009 IN_REVIEW, gates/task trước giữ. MAUI online-first dùng cùng backend: login/SecureStorage/rotation/logout/revoke, scoped Asset list/form/version/idempotency DRAFT_DEMO, camera/pick/preview/upload/retry. Không offline DB/rule mới/Google credential trong app hoặc tự phê duyệt DRAFT. AC-04/08/09 local42tests và Android compile có bằng chứng; device/UI/camera/OS permission/SecureStorage/TLS/Google NOT_RUN, không iOS. [Thiết kế](../02-architecture/MOBILE-ANDROID-DESIGN-TASK-012.md), [Report](../07-testing/TEST-REPORT-TASK-012.md).
+
+## Quyết định ưu tiên — 2026-10-14
+
+Người dùng chọn Web trước, Android sau, iOS DEFERRED_BY_USER vì thiếu môi trường/thiết bị. Không hủy kiến trúc mobile hoặc xóa code; gate mobile không chặn hoàn thiện Web. Cho phép tích hợp registry đã có vào tree mutation theo [thiết kế Web](../02-architecture/WEB-COMPLETION-DESIGN-TASK-014.md), không bypass guard/đổi scope/rule chính thức. Các gate hoãn trước giữ; không chạy Google thật/dữ liệu thật/UAT thủ công/timeout mới hoặc commit/push/deploy.

@@ -1,0 +1,82 @@
+{
+  "task": "TASK-014",
+  "phase": "WEB",
+  "date": "2026-10-14",
+  "timezone": "Asia/Saigon",
+  "source": "AI_RUN_OBSERVED",
+  "status": "IN_REVIEW",
+  "workingDirectory": "D:\\Dev\\QuanLyTaiSan_DuyTien",
+  "head": "463896d82629847ebd41866eb3e0cb97becfc2f2",
+  "build": {
+    "exit": 0,
+    "warnings": 0,
+    "errors": 0,
+    "elapsed": "00:00:04.17"
+  },
+  "tests": {
+    "exit": 0,
+    "passed": 126,
+    "failed": 0,
+    "skipped": 0,
+    "total": 126,
+    "elapsed": "15s",
+    "new": 41,
+    "related": 85,
+    "adapters": "synthetic Google HTTP / Kestrel compiled Razor / in-memory auth-content"
+  },
+  "browser": {
+    "status": "NOT_RUN_BROWSER",
+    "providers": 0,
+    "iab": "not available",
+    "chrome": "not available"
+  },
+  "runtime": {
+    "launcherPid": 13756,
+    "backendPid": 23376,
+    "instances": 1,
+    "url": "https://localhost:7008",
+    "listening": true,
+    "http": {
+      "status": 307,
+      "redirect": "https://localhost:7008/"
+    },
+    "https": {
+      "status": "BLOCKED_TLS_TRUST",
+      "certificateValid": true,
+      "chainValid": false,
+      "chainStatus": "UntrustedRoot",
+      "noBypass": true
+    },
+    "serverExitCodeObserved": null
+  },
+  "mobile": "DEFERRED_BY_USER",
+  "google": "NOT_RUN_DEFERRED_BY_USER",
+  "schemaApplied": false,
+  "realDataWrites": false,
+  "gitAction": "none",
+  "verification": {
+    "source": "AI_RUN_OBSERVED",
+    "files": 115,
+    "localMarkdownLinks": 164,
+    "invalidUtf8": 0,
+    "invalidJson": 0,
+    "missingLinks": 0,
+    "statusIssues": 0,
+    "unexpectedArtifactPaths": 0,
+    "diffCheckExit": 0,
+    "indexEmptyExit": 0,
+    "headUnchanged": true,
+    "baselineFiles": 85,
+    "baselineIdentical": 67,
+    "baselineChangedInWebScope": 18,
+    "baselineMissing": 0,
+    "protectedMobileReportsEvidenceChanged": 0,
+    "newModifiedPathsBeyondBaseline": 30,
+    "runtimeRechecked": true
+  },
+  "sdk": {
+    "version": "10.0.400",
+    "command": "dotnet --version",
+    "exit": 0
+  }
+}

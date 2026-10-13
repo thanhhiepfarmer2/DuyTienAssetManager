@@ -1,6 +1,61 @@
 # Bối cảnh dự án
 
-## Checkpoint hiện hành TASK-009 — 2026-10-13
+## Lưu checkpoint Git — 2026-10-14
+
+Người dùng yêu cầu lưu toàn bộ dự án lên Git, cho phép commit/push checkpoint local TASK-010–012 và pha Web TASK-014 lên origin/main đã cấu hình. Giữ TASK-003 IN_REVIEW, TASK-004 DONE, TASK-005–012/014 IN_REVIEW; Android tạm hoãn, iOS TASK-013 TODO/execution DEFERRED_BY_USER. Các gate chưa chạy/đã hoãn không chuyển PASS hoặc DONE.
+
+Không thay code, không chạy lại build/test đã đạt cho thao tác lưu này. Danh sách được kiểm trước stage; secret, user-secrets, token, artifacts và dữ liệu thật không thuộc checkpoint. Hash/kết quả push xác minh bằng Git CLI sau commit và báo ở cuối lượt; trạng thái chưa commit/HEAD 463896d trong các checkpoint bên dưới là bằng chứng lịch sử trước thao tác lưu này.
+
+
+## Checkpoint Web hiện hành — 2026-10-14
+
+TASK-014 pha Web hoàn tất local, giữ IN_REVIEW. Menu/Home/Help và các luồng TASK-005–011 đã được nối. Tree mutation đối soát schema, owner, ledger và scope của bốn registry, so revision và commit một batch. RELOCATE Item/Document bảo toàn ID/mã/stock/file bytes; schema thiếu/lạ, job dở và Item soft-delete chưa được duyệt vẫn bị chặn. Form snapshot nạp giá trị/version hiện hành, giữ payload/key/version khi lỗi và parse decimal theo wire invariant. Media ghi delta đúng dòng khi sheet bị reorder; public status chỉ kiểm cấu hình, không tự probe Google.
+
+Build exit 0, 0 warnings/errors, 4.17 s; 126/126 checks đã chọn pass, 0 failed/skipped, exit 0. [Report](07-testing/TEST-REPORT-TASK-014-WEB.md), [hướng dẫn](WEB-USER-GUIDE.md), [vận hành](WEB-OPERATIONS.md).
+
+Một backend PID 23376 lắng nghe tại https://localhost:7008 và HTTP 5211; HTTP trả 307 đến HTTPS. Client probe HTTPS bị BLOCKED_TLS_TRUST (chain UntrustedRoot), chưa thay trust/bypass. IAB/Chrome unavailable nên NOT_RUN_BROWSER. Google/schema mới, nguồn/rule/OrgLocation/ngưỡng và backup/restore chưa đạt gate.
+
+Gate mobile không chặn Web. TASK-012 IN_REVIEW giữ local 42 tests/build, phát triển/runtime DEFERRED_BY_USER; TASK-013 TODO, execution DEFERRED_BY_USER. TASK-003 IN_REVIEW, TASK-004 DONE, TASK-005–011 IN_REVIEW; gates/DEFERRED_BY_USER/STOPPED_BY_USER cũ giữ nguyên. Chưa tự chuyển Android/iOS, không Google live/dữ liệu thật/deploy/commit/push; HEAD main463896d giữ nguyên cùng worktree trước lượt.
+
+## Ưu tiên hiện hành — 2026-10-14
+
+Chỉ đạo mới: Web trước (TASK-014 pha Web) → Android sau → iOS DEFERRED_BY_USER do thiếu môi trường/thiết bị. TASK-012 IN_REVIEW giữ local/build42tests, phát triển/runtime UAT DEFERRED_BY_USER; không xóa code/bằng chứng. Gate mobile không chặn Web; nguồn/rule/Google/timeout/UAT đã hoãn vẫn giữ. Worktree85paths TASK-010/011/012 đầu lượt được bảo vệ, mainHEAD463896d; không commit/push/deploy/Google live/real writes. [Thiết kế Web](02-architecture/WEB-COMPLETION-DESIGN-TASK-014.md).
+
+## Checkpoint TASK-012 trước ưu tiên Web — 2026-10-13
+
+TASK-012 IN_REVIEW: Android MAUI hiện có đã có login/forced-password/SecureStorage/rotation/logout/revoke, scoped Asset list/search/filter/page/asOf/detail/create/edit DRAFT_DEMO và camera/pick/preview/upload/retry/reconcile. Client giữ payload/version/tree/key/ảnh RAM khi mạng/503 chưa xác nhận,409 cần reload rõ. HTTPS endpoint cấu hình, không Google credential/direct calls/SQL/offline store. Android build exit0,0warning/error;42/42 mobile tests exit0,0failed/skipped qua client cùng source + Kestrel API/fake stores. [Report](07-testing/TEST-REPORT-TASK-012.md), [thiết kế](02-architecture/MOBILE-ANDROID-DESIGN-TASK-012.md).
+
+SDK10.0.400, MAUI10.0.20/10.0.100, Android36/JDK21. adb không thiết bị; cài/chạy/UI/camera/permission/SecureStorage OS/TLS/Google thật NOT_RUN. Không giả build là runtime, không iOS TASK-013. Nguồn/rule/OrgLocation OPEN/TBD, DRAFT/demo không chính thức. TASK-003 IN_REVIEW, TASK-004 DONE; TASK-005–011 IN_REVIEW/gates hoãn giữ; TASK-013/014 TODO. TASK-010/011/012 chưa commit, HEAD main463896d/index giữ, không deploy/Google live/real writes/commit/push. Các checkpoint tiếp theo là lịch sử.
+
+## Ngoại lệ phụ thuộc TASK-012 — 2026-10-13
+
+Người dùng cho phép triển khai local Android TASK-012 dù TASK-005/007/009 IN_REVIEW. Giữ trạng thái TASK-003 IN_REVIEW, TASK-004 DONE, TASK-005–011 IN_REVIEW và gates DEFERRED_BY_USER/STOPPED_BY_USER. Giữ56file TASK-010/011 chưa commit, HEAD main463896d. Không Google live/dữ liệu thật/deploy/commit/push/TASK-013; không yêu cầu secret/thiết bị/UAT mới. Chỉ local được phép; nguồn/rule/OrgLocation OPEN/TBD, DRAFT/demo không phê duyệt. [Thiết kế Android](02-architecture/MOBILE-ANDROID-DESIGN-TASK-012.md).
+
+## Checkpoint TASK-011 trước TASK-012 — 2026-10-13
+
+TASK-011 IN_REVIEW: local R01/R02 Assets-only/filtered/tree-F direct/subtree/unique counts; R03/R04 snapshot0/low/UNKNOWN/nonstock/tracking-unconfirmed/missing-min/source/invalid sections, exact-unit nullable summaries; shared read snapshot/current auth scopes trước counts/aggregate/page/CSV. API bearer/Razor filter/dropdowns/paging/asOf/unit/DRAFT/error/loading và CSV UTF8BOM toàn filter có EXPORT scopes đã triển khai. Build0warnings/errors exit0; filterReport78/78 và hồi quy36/36 exit0,0failed/skipped; Kestrel compiled Razor HTTP/fakeGoogle/synthetic20744 GIẢ, không Google live/browser. [Report](07-testing/TEST-REPORT-TASK-011.md), [thiết kế](02-architecture/REPORT-DESIGN-TASK-011.md).
+
+Min/source thiếu được hiển thị, không min/tồn0 ngầm hoặc BOM/warehouse→stock/location; không cộng units/ancestor levels hoặc Assets+Items. Source/rule/workbook/OrgLocation/ngưỡng OPEN/TBD, Google live/browser NOT_RUN, DRAFT/demo không official. Metadata tree guard và auth/session/passwordmin8 giữ; read-only reports không schema/business write hoặc bypass guard. TASK-003 IN_REVIEW, TASK-004 DONE; TASK-005–010 IN_REVIEW, DEFERRED_BY_USER/STOPPED_BY_USER giữ. TASK-012–014 TODO; không tự triển khai.
+
+Đầu lượt39file TASK-010 chưa commit giữ. HEAD main463896d không đổi; TASK-010/TASK-011 thay đổi chưa commit, không stage/commit/push/deploy/Google live/real writes/secret mới/UAT thủ công. Các checkpoint bên dưới là lịch sử, đoạn này/INDEX là trạng thái hiện hành.
+
+## Ngoại lệ phụ thuộc TASK-011 — 2026-10-13
+
+Người dùng cho phép hoàn tất local TASK-011 dù TASK-007/010 IN_REVIEW; TASK-005–010 giữ trạng thái/gates/DEFERRED_BY_USER/STOPPED_BY_USER và lịch sử. Worktree39file TASK-010 đầu lượt giữ, HEAD463896d/main; không commit/push/deploy/Google live/dữ liệu thật/secret mới/TASK-012. Local pass không thay nguồn/rule/ngưỡng/OrgLocation/browser/Google chưa xác minh. Guard metadata/single-writer/.NET10/Sheets/Drive/drive.file/passwordmin8/session policy giữ.
+
+## Checkpoint TASK-010 trước TASK-011 — 2026-10-13
+
+Checkpoint local TASK-007–009 đã commit/push main463896d82629847ebd41866eb3e0cb97becfc2f2, exit0, origin/main hash khớp. Trước code TASK-010worktree sạch. Quyền Git chỉ checkpoint đó; TASK-010 chưa commit.
+
+TASK-010 IN_REVIEW: local reader XLSX/JSON20ordinal, giữ hai mô tả/code text/zero-mask, explicit mapping/quarantine và duplicate MERGE/SPLIT/audit; staging durable, byte-budget chunk/PARTIAL/retry/version/idempotency; snapshot riêng UNKNOWN/asOf/unit/source/min và scope server; Google atomic delta/journal/replay adapters + API/Razor trực tiếp chọn nhóm/mã trùng/địa điểm đã triển khai. Build cuối0warnings/errors exit0;66/66 suite task exit0, sau đổi UI kiểm riêng8/8HTTPRazor exit0;46/46hồi quy liên quan exit0,0failed/skipped. Synthetic20744 GIẢ không là dữ liệu công ty, fake Google/Kestrel HTTP không là live/browser. [Report](07-testing/TEST-REPORT-TASK-010.md), [thiết kế](02-architecture/INVENTORY-DESIGN-TASK-010.md).
+
+Workbook VTHH gốc/hash/header/codeformats20744/20743/typecounts/CĐKEM839-840 chưa đối chiếu; stock/rule/OrgLocation/ngưỡng OPEN/TBD, Google live/browser NOT_RUN. Guard TASK-008 nguyên vẹn: registry Items/StockBalances/Files/Documents chưa đối soát thì tree mutation fail-closed; full category import có Item cũng không được đi vòng đổi cấu trúc. DRAFT_DEMO/quarantine/DRAFT không official, không quantity thiếu→0. TASK-003 IN_REVIEW, TASK-004 DONE; TASK-005–009 IN_REVIEW, hoãn giữ DEFERRED_BY_USER/STOPPED_BY_USER; TASK-011–014 TODO. Không real writes/live UAT/secret mới/SQL/deploy hoặc commit phầnTASK-010. Các checkpoint bên dưới giữ lịch sử; đoạn này/INDEX là trạng thái hiện tại.
+
+## Ngoại lệ TASK-010 trước TASK-011 — 2026-10-13
+
+Cho phép local TASK-010 dù TASK-005–009 IN_REVIEW; gate cũ/hoãn/bằng chứng giữ nguyên, không phê duyệt DRAFT. Checkpoint TASK-007–009 đã commit/push main 463896d (exit0, remote khớp); quyền commit/push chỉ trước TASK-010. Phần TASK-010 để chưa commit; không live/browser UAT/secret mới/ghi dữ liệu thật/deploy/TASK-011. Guard metadata giữ: tree mutation chặn khi registry mới chưa đối soát. Workbook/rule/nguồn đơn vị/địa điểm/stock/ngưỡng vẫn OPEN/TBD; dùng fixture giả có nhãn.
+
+## Checkpoint TASK-009 trước TASK-010 — 2026-10-13
 
 TASK-009 IN_REVIEW: phần local ảnh web/metadata/primary/soft-delete, registry và version DOCX/PDF, same-version publish PUBLISHED_DEMO có confirm/UTC effective date, scoped gateway, durable PENDING/FAILED/AVAILABLE/retry/reconcile/retention trên Sheets/Drive đã triển khai API/Razor/Google adapters. Build0warnings/errors exit0;56/56 task +67/67 hồi quy exit0,0failed/skipped; fixture tổng hợp/fake Google/Kestrel HTTP, không Google live/browser. [Report](07-testing/TEST-REPORT-TASK-009.md), [thiết kế](02-architecture/MEDIA-DESIGN-TASK-009.md).
 

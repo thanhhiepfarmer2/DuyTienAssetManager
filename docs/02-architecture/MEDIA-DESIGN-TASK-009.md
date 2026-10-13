@@ -1,5 +1,7 @@
 # TASK-009 — Registry ảnh và phiên bản biểu mẫu local
 
+> Cập nhật14/10/2026: hạn chếguardhiện diệnregistry trongthiết kế13/10 bên dưới là lịch sử; [TASK-014 pha Web](WEB-COMPLETION-DESIGN-TASK-014.md) bổsungfullschema/owner/journal/scope/CAS4registryvàjointbatch, khôngbypassguard. Googlelive/schema/sourcegatecũ chưaPASS.
+
 Ngày13/10/2026, implementation local; TASK-009 IN_REVIEW. Scope FR-05/FR-06, AC-10/13; tái sử dụng .NET10, Sheets/Drive drive.file, shared writer/process lease, current auth/scopes. Không SQL/SQLite/mẫu công ty/Google live; không sửa guard TASK-008.
 
 Files/Documents/DocumentVersions + MediaOperations/MediaSchemaVersions/MediaAuditEvents là subset mới cùng business spreadsheet khác system. Unknown/partial schema dừng, không overwrite. Guard tree TASK-008 vẫn chặn Files/Documents vì chưa hỗ trợ tác động các module đó; flow upload/gateway dùng category/asset read stores và registry riêng, không gọi/bỏ qua tree mutation. Không mở TASK-010 hoặc tự retrofit tree mutation.

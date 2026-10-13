@@ -31,4 +31,8 @@
   <ItemGroup>
     <None Include="..\..\docs\03-database\category-candidates.json" Link="Fixtures\category-candidates.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+  <ItemGroup>
+    <!-- Execute exactly the platform independent MAUI client, not a copied fake implementation. -->
+    <Compile Include="..\..\src\DuyTien.AssetManagement.Mobile\Client\*.cs" Link="MobileClient\%(Filename)%(Extension)" />
+  </ItemGroup>
 </Project>

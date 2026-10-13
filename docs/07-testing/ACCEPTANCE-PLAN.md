@@ -138,3 +138,23 @@ Ngoại lệ người dùng cho local dù TASK-005/006/007 IN_REVIEW; hoãn cũ 
 ## AC-10/AC-13 — TASK-009 local 2026-10-13
 
 Ngoại lệ người dùng cho local dù TASK-005–008 IN_REVIEW, giữ nghiệm thu hoãn.56/56 task+67/67 regression exit0; build0warning/error. Exact DOCX/PDF same-version gateway/pair missing/published demo/future date/current owner scope, type/byte/CSRF/413/409/503, pending before Drive/same-ID retry/reconcile, resumable large/lost/partial/foreign URI and guard metadata có PASS_LOCAL/STUB/HTTP ở TEST-REPORT-TASK-009. Compiled Razor/JS syntax không browser UAT; fake transport không Google live. Source mẫu/Drive target/actual ACL/quota/restart/retention/source rules còn NOT_RUN/OPEN_TBD; không đóng AC môi trường thật. TASK-009 IN_REVIEW, task trước/DEFERRED_BY_USER giữ nguyên, không giao manual UAT mới.
+
+## TASK-010 local checkpoint — 2026-10-13
+
+AC-11/12 local: reader/mapping20ordinal/leadingzero/hai mô tả; duplicate decision MERGE/SPLIT có reason; DRAFT/quarantine/scope, 20744synthetic/chunk/staging/restart/retry/no duplicates, no Item→Asset/BOM→stock; nullable quantities/asOf/unit/source/min/version và server authorization. FakeGoogle kiểm atomic/progress/journal/audit/reconcile/tamper/guard; Kestrel API+compiled Razor kiểm bearer/CSRF/validation/error/empty/retention. [Report](TEST-REPORT-TASK-010.md).
+
+NOT_RUN_GOOGLE: schema/ACL/grant/restart/quota/throughput/cell limits thật. NOT_RUN_BROWSER: DOM/file retention/loading/layout/browser UAT. NOT_VERIFIED_SOURCE_ORIGINAL: workbook VTHH/hash/20headers/codeformats20744/20743/types/CĐKEM839-840; stock/min/OrgLocation/company rules OPEN/TBD. Fixture GIẢ không là nguồn authoritative. Ngoại lệ người dùng cho local khi TASK-005–009 IN_REVIEW, không đóng gate/DEFERRED_BY_USER, không TASK-011 tự động.
+
+## TASK-011 local — 2026-10-13
+
+[Report](TEST-REPORT-TASK-011.md) ánh xạ R01–R04/AC-04/12: scope trước source filter/count/ancestor aggregation/page/export; riêng Assets vs Items; 0/low/UNKNOWN/nonstock/threshold/source thiếu, unit separation; scoped CSV/no formula/zero inference; fakeGoogle read-only/guard/schema/restart và Kestrel API/Razor defaults/filter/paging/error/access/export. FilterReport78/78 và hồi quy36/36 exit0, build0warnings/errors; synthetic20744 GIẢ không workbook/baseline công ty. Đây là local evidence, không Google/browser pass.
+
+NOT_RUN_GOOGLE cho actual permission/read/quota/coherent source/throughput/export/restart; NOT_RUN_BROWSER cho DOM/filter/loading/layout/CSV mở trong browser/spreadsheet reader/UAT. Workbook/stock/ngưỡng/rule/OrgLocation còn NOT_VERIFIED/OPEN/TBD; không policy stale/threshold tự đặt. Ngoại lệ user cho local khi TASK-007/010 IN_REVIEW, giữ task/gates/DEFERRED_BY_USER/STOPPED_BY_USER cũ, TASK-011 IN_REVIEW, không tựTask012.
+
+## AC-04/08/09 — TASK-012 local 2026-10-13
+
+[Report](TEST-REPORT-TASK-012.md): Android build exit0,0warning/error;42/42 mobile client/contract/biên tests exit0,0failed/skipped. Reuse existing Auth/Asset/Media API, scope/Viewer deny/hidden files, min8/forced password/rotation/revoke, form/version/key giữ, uncertain commit/upload retry không duplicate, fake permission/cancel/size/PNGJPEG/reconcile. AI chạy trực tiếp, store/HTTP/content/picker GIẢ, thời gian giả cho rotation; không user-run/manual/Google/OS proof. Acceptance cài/chạy device/real camera/picker/OS permission/network/SecureStorage/TLS/Drive metadata còn NOT_RUN; Task IN_REVIEW. Ngoại lệ user cho local khi TASK-005/007/009 IN_REVIEW, giữ hoãn/history/task trước, không giao UAT mới hoặc TASK-013.
+
+## TASK-014 phân pha —2026-10-14
+
+Weblocal IN_REVIEW: build0warning/error/exit0,126/126 selectedchecks (41new+85related) exit0,0failed/skipped. KhôngfullgateUATcũ. BrowserNOT_RUNkhôngprovider; HTTPSruntimeBLOCKED_TLS_TRUST(UntrustedRoot), HTTPredirect307mộtbackend23376. Google/schema/source/backup-restorevẫnNOT_RUN/hoãn, Android/iOSDEFERRED_BY_USERkhôngchặnWeb. [Report](TEST-REPORT-TASK-014-WEB.md). KhôngtựPASS/DONEhoặctựchuyểnAndroid.

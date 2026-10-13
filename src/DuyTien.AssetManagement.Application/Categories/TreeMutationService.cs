@@ -5,7 +5,7 @@ using DuyTien.AssetManagement.Application.Authentication;
 using DuyTien.AssetManagement.Application.Concurrency;
 namespace DuyTien.AssetManagement.Application.Categories;
 
-public sealed class TreeMutationService(ITreeMutationStore store, IAuthSystemStore authStore,
+public sealed partial class TreeMutationService(ITreeMutationStore store, IAuthSystemStore authStore,
     ISingleWriterCoordinator writer, TimeProvider clock)
 {
     private readonly ScopeAuthorizationService policy = new();
@@ -55,15 +55,21 @@ public sealed class TreeMutationService(ITreeMutationStore store, IAuthSystemSto
             assets.Revision++;
         }
         cats.Revision++;
-        var result = new TreeMutationResult(version, cats.Revision, assets.Revision, plan.Preview.Categories.Count, plan.ChangedAssets.Length);
+        var registries = ApplyRegistry(current, plan.Registry, opId, actor, requestHash, request.Reason, now);
+        var result = new TreeMutationResult(version, cats.Revision, assets.Revision, plan.Preview.Categories.Count, plan.ChangedAssets.Length,
+            ChangedItemCount: plan.Registry.ChangedItems.Length, ChangedDocumentCount: plan.Registry.ChangedDocuments.Length,
+            RegistryImpactCount: plan.Registry.Impacts.Length, RegistryReconciled: true);
         cats.TreeChanges.Add(new(opId, key, actor, requestHash, request.Kind, current.Categories.ActiveTreeVersionId!, version,
             expectedTreeRevision, expectedAssetRevision, request.Reason, now, previewHash, request,
-            plan.AffectedCategoryIds, plan.AffectedAssets.Select(a => a.AssetId).ToArray(), plan.Preview.Categories.ToArray(), result));
-        await store.CommitAsync(new(cats, assets), expectedTreeRevision, expectedAssetRevision, token);
+            plan.AffectedCategoryIds, plan.AffectedAssets.Select(a => a.AssetId).ToArray(), plan.Preview.Categories.ToArray(), result, new(current.Inventory?.Revision ?? 0, current.Media?.Revision ?? 0), plan.Registry.Impacts));
+        var candidate = new TreeMutationSnapshot(cats, assets, registries.Inventory, registries.Media);
+        TreeRegistryIntegrity.Validate(candidate);
+        await store.CommitAsync(candidate, expectedTreeRevision, expectedAssetRevision, token);
         return result;
     }, ct);
     private Plan Prepare(AuthSystemState auth, string actor, TreeMutationSnapshot s, TreeMutationRequest request)
     {
+        TreeRegistryIntegrity.Validate(s);
         var old = s.Categories.ActiveNodes;
         var existingIssues = CategoryTreeShape.Validate(old); if (existingIssues.Count > 0) throw new CategoryValidationException("Cây hiện có không hợp lệ; cần đối soát trước thay đổi.");
         var byId = old.ToDictionary(n => n.CategoryId, StringComparer.Ordinal); var before = Hierarchies(s.Assets, old);
@@ -153,11 +159,14 @@ public sealed class TreeMutationService(ITreeMutationStore store, IAuthSystemSto
             return new TreeAssetImpact(a.AssetId, a.ObjectCode, a.Name, a.Version, byId[a.CategoryId].Name, byId[after.CategoryId].Name,
                 s.Assets.Locations.Single(l => l.Id == a.LocationId).Name, s.Assets.Locations.Single(l => l.Id == after.LocationId).Name, after.IsDeleted);
         }).ToArray();
-        var hash = Digest(new { actor, request, s.Categories.Revision, AssetRevision = s.Assets.Revision, Nodes = s.Categories.Categories, s.Categories.ActiveTreeVersionId, s.Assets.Assets, s.Assets.Aliases, s.Assets.Counters, s.Assets.Rules, s.Assets.OrgUnits, s.Assets.Locations });
-        return new(new(s.Categories.Revision, s.Assets.Revision, hash, s.Categories.ActiveTreeVersionId!, impacts, assetImpacts, changedAssets.Count, issues.Distinct(StringComparer.Ordinal).ToArray(), affected.Count, affectedAssets.Length), rebuilt, changedAssets.ToArray(), affected.Order(StringComparer.Ordinal).ToArray(), affectedAssets);
+        var registry = PrepareRegistry(auth, actor, s, request, rebuilt, affected, affectedAssets, changedAssets, issues);
+        var hash = Digest(new { actor, request, s.Inventory, s.Media, s.Categories.Revision, AssetRevision = s.Assets.Revision, Nodes = s.Categories.Categories, s.Categories.ActiveTreeVersionId, s.Assets.Assets, s.Assets.Aliases, s.Assets.Counters, s.Assets.Rules, s.Assets.OrgUnits, s.Assets.Locations });
+        return new(new(s.Categories.Revision, s.Assets.Revision, hash, s.Categories.ActiveTreeVersionId!, impacts, assetImpacts, changedAssets.Count, issues.Distinct(StringComparer.Ordinal).ToArray(), affected.Count, affectedAssets.Length, Registry: registry.Impacts), rebuilt, changedAssets.ToArray(), affected.Order(StringComparer.Ordinal).ToArray(), affectedAssets, registry);
     }
     private void RecheckReplay(AuthSystemState auth, string actor, TreeMutationSnapshot s, TreeChangeOperation op)
     {
+        TreeRegistryIntegrity.Validate(s);
+        RecheckRegistryReplay(auth, actor, s, op);
         var hierarchy = Hierarchies(s.Assets, s.Categories.ActiveNodes); var nodes = s.Categories.ActiveNodes.ToDictionary(n => n.CategoryId, StringComparer.Ordinal);
         foreach (var id in op.CategoryIds) if (!nodes.ContainsKey(id) || !Allowed(auth, actor, Permission(op.Kind), CategoryScope(id), hierarchy)) throw new CategoryNotFoundException();
         foreach (var id in op.AssetIds)
@@ -230,5 +239,5 @@ public sealed class TreeMutationService(ITreeMutationStore store, IAuthSystemSto
     }
     private static void Text(string? s, int max, string label) { if (string.IsNullOrWhiteSpace(s) || s.Length > max || s.Any(char.IsControl)) throw new CategoryValidationException(label + ": bắt buộc, tối đa" + max + " ký tự, không ký tự điều khiển."); }
     private static string Digest<T>(T value) => Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(value, Json)));
-    private sealed record Plan(TreeMutationPreview Preview, CategoryNode[] Nodes, AssetRecord[] ChangedAssets, string[] AffectedCategoryIds, AssetRecord[] AffectedAssets);
+    private sealed record Plan(TreeMutationPreview Preview, CategoryNode[] Nodes, AssetRecord[] ChangedAssets, string[] AffectedCategoryIds, AssetRecord[] AffectedAssets, RegistryPlan Registry);
 }

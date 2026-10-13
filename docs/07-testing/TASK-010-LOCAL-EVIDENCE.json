@@ -1,0 +1,185 @@
+{
+  "task": "TASK-010",
+  "date": "2026-10-13",
+  "status": "IN_REVIEW",
+  "source": "AI_RUN_OBSERVED_LOCAL",
+  "workingDirectory": "D:\\Dev\\QuanLyTaiSan_DuyTien",
+  "sdk": "10.0.400",
+  "gitCheckpoint": {
+    "branch": "main",
+    "remote": "origin",
+    "commit": "463896d82629847ebd41866eb3e0cb97becfc2f2",
+    "files": 88,
+    "insertions": 4751,
+    "deletions": 85,
+    "commitExitCode": 0,
+    "pushExitCode": 0,
+    "remoteHashVerified": true,
+    "postCheckpointWorktreeClean": true,
+    "task010Committed": false
+  },
+  "checks": [
+    {
+      "command": "dotnet build server --no-restore --nologo -v:minimal",
+      "exactCommandSource": "docs/COMMANDS.md",
+      "exitCode": 0,
+      "warnings": 0,
+      "errors": 0,
+      "elapsedSeconds": 2.99
+    },
+    {
+      "filter": "FullyQualifiedName~Inventory",
+      "exitCode": 0,
+      "passed": 66,
+      "failed": 0,
+      "skipped": 0,
+      "elapsedSeconds": 61,
+      "beforeFinalUi": true
+    },
+    {
+      "filter": "FullyQualifiedName~InventoryHttpRazorTests",
+      "exitCode": 0,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "elapsedSeconds": 2,
+      "afterFinalUi": true
+    },
+    {
+      "filter": "FullyQualifiedName~CategoryCatalogTests|FullyQualifiedName~GoogleCategoryCatalogStoreTests|FullyQualifiedName~ScopeAuthorizationTests|FullyQualifiedName~GoogleTreeMutationTests",
+      "exitCode": 0,
+      "passed": 46,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node --check src/DuyTien.AssetManagement.Server/wwwroot/js/inventory-form.js",
+      "exitCode": 0
+    },
+    {
+      "command": "dotnet format whitespace each scoped project/file (COMMANDS)",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "observedHistory": [
+    {
+      "stage": "test compile quote",
+      "exitCode": 1,
+      "testsExecuted": false
+    },
+    {
+      "total": 58,
+      "passed": 53,
+      "failed": 5,
+      "skipped": 0,
+      "exitCode": 1
+    },
+    {
+      "total": 58,
+      "passed": 58,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "total": 63,
+      "passed": 62,
+      "failed": 1,
+      "skipped": 0,
+      "exitCode": 1
+    },
+    {
+      "stage": "test compile CategoryPreview contract",
+      "exitCode": 1,
+      "testsExecuted": false
+    },
+    {
+      "total": 65,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "total": 66,
+      "passed": 66,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0,
+      "scope": "final UI filter"
+    }
+  ],
+  "fixture": "GIẢ synthetic20744 rows; not company data, not original workbook verification",
+  "realGoogleCallsOrWrites": 0,
+  "realDataWrites": 0,
+  "realBrowserUat": false,
+  "authPoliciesChanged": false,
+  "metadataGuardModified": false,
+  "sourceGate": "NOT_VERIFIED_SOURCE_ORIGINAL: VTHH20744/20743/20464-276-4/CDKEM839-840/headers/formats/hash",
+  "gates": [
+    "OPEN_TBD_STOCK_SOURCE_MINIMUM_ORG_LOCATION_RULES",
+    "NOT_RUN_GOOGLE",
+    "NOT_RUN_BROWSER"
+  ],
+  "task005DeferredPreserved": true,
+  "task003": "IN_REVIEW",
+  "task004": "DONE",
+  "task005To009": "IN_REVIEW",
+  "task011": "TODO",
+  "deploy": false,
+  "singleWriter": "existing coordinator/process lease; no second real backend",
+  "finalProcessProbe": {
+    "exitCode": 0,
+    "matchedBackendCount": 0,
+    "matchedW13RunnerCount": 0
+  },
+  "limitations": [
+    "SourceHashDeclared not original authority attestation",
+    "Backend bounded registry read/replay throughput/quota not verified on Google",
+    "Unknown numeric code formats rejected before write",
+    "Metadata tree guard still fail-closed for new registries",
+    "No unit conversion/stock ledger or TASK-011 reports"
+  ],
+  "documentGitFinalCheck": {
+    "changedUncommittedFiles": 39,
+    "localDocLinksChecked": 90,
+    "head": "463896d82629847ebd41866eb3e0cb97becfc2f2",
+    "checks": [
+      {
+        "name": "diff_check",
+        "exitCode": 0
+      },
+      {
+        "name": "index_empty",
+        "exitCode": 0
+      },
+      {
+        "name": "preserved_history_auth_guard",
+        "exitCode": 0
+      }
+    ],
+    "issues": [],
+    "exitCode": 0
+  },
+  "checkerHistory": [
+    {
+      "exitCode": 1,
+      "cause": "checker expected plain Status, TASK-006 uses Markdown backticks; task/history unchanged"
+    },
+    {
+      "exitCode": 0,
+      "cause": "normalize Markdown Status and verify"
+    }
+  ]
+}

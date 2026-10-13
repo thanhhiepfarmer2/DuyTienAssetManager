@@ -11,11 +11,11 @@
 | TASK-007 | [CRUD tài sản trên web](TASK-007.md) | IN_REVIEW | Ngoại lệ local 2026-10-13 khi TASK-006 IN_REVIEW; build sạch, 54/54 task +9/9 hồi quy; rule/nguồn/Google/browser còn gate |
 | TASK-008 | [Sửa/chuyển/ngừng cây và di chuyển đối tượng](TASK-008.md) | IN_REVIEW | Ngoại lệ local13/10 khi TASK-005/006/007 IN_REVIEW; build sạch,42/42 task +91/91 hồi quy; nguồn/rule/Google/browser chưa đạt |
 | TASK-009 | [Drive ảnh và biểu mẫu DOCX/PDF](TASK-009.md) | IN_REVIEW | Ngoại lệ13/10 khi TASK-005–008 IN_REVIEW; build sạch56/56 task+67/67 hồi quy; mẫu/Drive/live/browser còn gate, guard giữ |
-| TASK-010 | [Import Items và snapshot số lượng](TASK-010.md) | TODO | TASK-006; nguồn stock snapshot và ngưỡng |
-| TASK-011 | [Báo cáo tài sản và tồn hết/sắp hết](TASK-011.md) | TODO | TASK-007, TASK-010 |
-| TASK-012 | [App Android: nhập liệu và chụp ảnh](TASK-012.md) | TODO | TASK-005, TASK-007, TASK-009; Android device/API endpoint |
-| TASK-013 | [App iOS: nhập liệu và chụp ảnh](TASK-013.md) | TODO | TASK-012; Mac/Xcode/signing/device |
-| TASK-014 | [Nghiệm thu, backup/restore và hướng dẫn](TASK-014.md) | TODO | TASK-008, TASK-009, TASK-011, TASK-012, TASK-013 |
+| TASK-010 | [Import Items và snapshot số lượng](TASK-010.md) | IN_REVIEW | Ngoại lệ13/10 khi TASK-005–009 IN_REVIEW; build sạch66/66 task+8/8 UI cuối+46/46 hồi quy; nguồn/stock/ngưỡng/Google/browser còn gate; trước code463896d đã push |
+| TASK-011 | [Báo cáo tài sản và tồn hết/sắp hết](TASK-011.md) | IN_REVIEW | Ngoại lệ13/10 local khi TASK-007/010 IN_REVIEW; build sạch78/78 report+36/36 hồi quy; nguồn/stock/ngưỡng/Google/browser chưa đạt |
+| TASK-012 | [App Android: nhập liệu và chụp ảnh](TASK-012.md) | IN_REVIEW | Ngoại lệ13/10 local khi TASK-005/007/009 IN_REVIEW; Android build sạch,42/42 tests; device/UI/camera/OS storage/TLS/Google NOT_RUN; phát triển/runtime DEFERRED_BY_USER14/10 tới sau Web |
+| TASK-013 | [App iOS: nhập liệu và chụp ảnh](TASK-013.md) | TODO | DEFERRED_BY_USER14/10: iOS thiếu môi trường/thiết bị; không chặn Web |
+| TASK-014 | [Nghiệm thu, backup/restore và hướng dẫn](TASK-014.md) | IN_REVIEW | Pha Web: build sạch, 126/126 checks local; HTTPS runtime BLOCKED_TLS_TRUST, browser/Google/source/restore chưa đạt gate; Android sau, iOS DEFERRED_BY_USER, không chặn Web |
 
 TASK-003 mới tạo scaffold và chốt kiến trúc; không có nghĩa TASK-004–TASK-014 đã
 được triển khai. AI cập nhật trạng thái bảng cùng trạng thái trong từng Task.

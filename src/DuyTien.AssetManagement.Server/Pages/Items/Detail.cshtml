@@ -1,0 +1,7 @@
+@page "{id}"
+@model DuyTien.AssetManagement.Server.Pages.Items.DetailModel
+@{ViewData["Title"]="Chi tiết Item";}
+<h1>Chi tiết Item nháp</h1>
+@if(Model.Error is not null){<div class="alert alert-danger" role="alert">@Model.Error</div>}
+@if(Model.Item is {} item){<p>@item.Name · @item.State · Version @item.Version · ID @item.ItemId</p><p>Category @item.CategoryId; tracking @(item.StockTracked?.ToString()??"chưa xác nhận"). Không có snapshot: UNKNOWN.</p><a asp-page="/Stock/Index" asp-route-ItemId="@item.ItemId" asp-route-Unit="@item.PrimaryUnit">Nhập snapshot riêng</a><dl>@for(var col=0;col<20;col++){<dt>Cột @(col+1): @DuyTien.AssetManagement.Application.Inventory.ItemImportReader.Headers[col]</dt><dd>@item.Cells[col]</dd>}</dl>}
+<a asp-page="Index">Danh sách Items</a>

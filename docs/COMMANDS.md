@@ -7,7 +7,7 @@ Solution dùng SDK được pin trong `global.json`:
 
 - .NET SDK 10.0.400; runtime 10.0.11; MSBuild 18.9.6.
 - MAUI workload 10.0.20/10.0.100.
-- Hiện có Git worktree: `main`, remote `origin`, HEAD `b324c74` kiểm tra ngày
+- Checkpoint Git lịch sử2026-10-09: `main`, remote `origin`, HEAD `b324c74` kiểm tra ngày
   2026-10-09; không commit/push/deploy trong lượt này.
 - Không cần Google credential để build/test local. Live integration TASK-004 dùng
   lệnh riêng; user-run evidence và manual user confirmation đã đủ để `DONE`.
@@ -466,3 +466,149 @@ git diff --check
 Hồi quy hẹp cho integration/API/guard, không full nghiệm thu trước, không runner W13/init/bootstrap/PoC/provisioning. Google live/browser chỉ pass khi quan sát thật; chưa chạy thì NOT_RUN.
 
 TASK-009 actual13/10: build cuối0warnings/errors exit0; ManagedMedia56passed/0failed/0skipped exit0; hồi quy67/67 exit0, fake HttpMessageHandler kể cả GoogleAdapterHttpTests, không Google live. node syntax/diff0. Format tuần tự `dotnet format <csproj> --no-restore --include <absolute paths> --verbosity minimal`, Application/Infrastructure.Google/Server/tests từng command0, include danh sách chính xác ở Test Report. Không format guard metadata hoặc chạy full UAT/PoC/init/bootstrap trước.
+
+## TASK-010 local — 2026-10-13
+
+Working directory `D:\Dev\QuanLyTaiSan_DuyTien`. Chạy tuần tự, chờ exit build trước test; không dùng Google thật/credential UAT. Test prefix Inventory dùng fixture GIẢ, fake Google HTTP và Kestrel Razor HTTP, không chứng minh browser/live. Lệnh được ghi trước chạy:
+
+```powershell
+dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~Inventory"
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~CategoryCatalogTests|FullyQualifiedName~GoogleCategoryCatalogStoreTests|FullyQualifiedName~ScopeAuthorizationTests|FullyQualifiedName~GoogleTreeMutationTests"
+node --check src/DuyTien.AssetManagement.Server/wwwroot/js/inventory-form.js
+git diff --check
+```
+
+Không chạy lại toàn bộ TASK-005/006 UAT. Start import có staging durable; mỗi thao tác chunk tối đa100 Item, giữ key/progress nếu503 và đọc job trước retry. Không dùng init/bootstrap hoặc tắt metadata guard. Schema INVENTORY_V1 chỉ tạo trong explicit write, chưa apply Google trong task local.
+
+Format code TASK-010 (từng project, không build/test song song; lệnh thực tế trước chạy):
+
+```powershell
+dotnet format whitespace src/DuyTien.AssetManagement.Application/DuyTien.AssetManagement.Application.csproj --no-restore --include src/DuyTien.AssetManagement.Application/Inventory src/DuyTien.AssetManagement.Application/Categories/CategoryCatalogService.cs
+dotnet format whitespace src/DuyTien.AssetManagement.Infrastructure.Google/DuyTien.AssetManagement.Infrastructure.Google.csproj --no-restore --include src/DuyTien.AssetManagement.Infrastructure.Google/Adapters/GoogleInventoryStore.cs
+dotnet format whitespace src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --include src/DuyTien.AssetManagement.Server/Inventory src/DuyTien.AssetManagement.Server/Pages/Items src/DuyTien.AssetManagement.Server/Pages/Stock src/DuyTien.AssetManagement.Server/Program.cs
+dotnet format whitespace tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --include tests/DuyTien.AssetManagement.ArchitectureTests/InventoryTests.cs tests/DuyTien.AssetManagement.ArchitectureTests/InventoryReaderTests.cs tests/DuyTien.AssetManagement.ArchitectureTests/InventoryGoogleTests.cs tests/DuyTien.AssetManagement.ArchitectureTests/InventoryHttpRazorTests.cs
+```
+
+Bổ sung UI cuối: `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~InventoryHttpRazorTests"` kiểm riêng sau UI change; không lặp test core/Google20744 khi không sửa lớp đó.
+
+Format bổ sung với paths file cụ thể (không suy diễn directory include đã format toàn bộ):
+
+```powershell
+dotnet format whitespace src/DuyTien.AssetManagement.Application/DuyTien.AssetManagement.Application.csproj --no-restore --include src\DuyTien.AssetManagement.Application\Inventory\InventoryIntegrity.cs src\DuyTien.AssetManagement.Application\Inventory\InventoryModels.cs src\DuyTien.AssetManagement.Application\Inventory\InventoryService.cs src\DuyTien.AssetManagement.Application\Inventory\ItemImportReader.cs src\DuyTien.AssetManagement.Application\Inventory\StockService.cs src/DuyTien.AssetManagement.Application/Categories/CategoryCatalogService.cs
+dotnet format whitespace src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --include src/DuyTien.AssetManagement.Server/Pages/Items/Import.cshtml.cs
+dotnet format whitespace tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --include tests/DuyTien.AssetManagement.ArchitectureTests/InventoryHttpRazorTests.cs
+```
+
+## TASK-011 local — 2026-10-13
+
+Working directory `D:\Dev\QuanLyTaiSan_DuyTien`. Lệnh ghi trước chạy, build/test tuần tự và chờ exit trước lệnh kế dùng chung output. Fake nguồn GIẢ/Kestrel compiled Razor HTTP/fakeGoogle không chứng minh browser/live. Không toàn bộ nghiệm thu task trước hoặc secret mới.
+
+```powershell
+dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~Report"
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~AssetCrudHttpRazorTests|FullyQualifiedName~InventoryHttpRazorTests|FullyQualifiedName~ScopeAuthorizationTests|FullyQualifiedName~GoogleTreeMutationTests"
+node --check src/DuyTien.AssetManagement.Server/wwwroot/js/report-filter.js
+git diff --check
+```
+
+GET API /api/reports/assets, assets-by-category, stock-empty, stock-low (bearer); thêm /export CSV với REPORTS_EXPORT. Razor /Reports và ?handler=Export cùng filter. Export toàn selected scoped rows, không trang hiện tại; READ/EXPORT scopes kiểm lại mỗi request. SOURCE/threshold/UNKNOWN sections trong R03/R04, không thêm R12/stale-policy. Không schema/data write mới, không stop/init/provision/Google UAT.
+
+TASK-011 format code (chỉ file report và hooks mới, không sửa source TASK-010; ghi trước chạy):
+
+```powershell
+dotnet format whitespace src/DuyTien.AssetManagement.Application/DuyTien.AssetManagement.Application.csproj --no-restore --include src/DuyTien.AssetManagement.Application/Reports/ReportModels.cs src/DuyTien.AssetManagement.Application/Reports/ReportService.cs src/DuyTien.AssetManagement.Application/Reports/AssetReports.cs src/DuyTien.AssetManagement.Application/Reports/StockReports.cs src/DuyTien.AssetManagement.Application/Reports/ReportCsvExport.cs
+dotnet format whitespace src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --include src/DuyTien.AssetManagement.Server/Reports/ReportWeb.cs src/DuyTien.AssetManagement.Server/Pages/Reports/Index.cshtml.cs src/DuyTien.AssetManagement.Server/Program.cs
+dotnet format whitespace tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --include tests/DuyTien.AssetManagement.ArchitectureTests/ReportTests.cs tests/DuyTien.AssetManagement.ArchitectureTests/ReportHttpRazorTests.cs tests/DuyTien.AssetManagement.ArchitectureTests/ReportGoogleReadTests.cs
+```
+
+## TASK-012 — Android local (2026-10-13)
+
+Chạy tuần tự để tránh shared output. SDK/workload probe: `dotnet --version`, `dotnet workload list`.
+
+```powershell
+dotnet restore src/DuyTien.AssetManagement.Mobile/DuyTien.AssetManagement.Mobile.csproj --nologo
+dotnet build src/DuyTien.AssetManagement.Mobile/DuyTien.AssetManagement.Mobile.csproj -f net10.0-android --no-restore --nologo -v:minimal
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~Mobile"
+git diff --check
+```
+
+Không cài/chạy/Google live bằng các lệnh này. Test client link cùng source, fake storage/media/network không chứng minh OS runtime. Không chạy iOS/TASK-013.
+
+TASK-012 thực tế: restore chuẩn exit0; Android build cuối exit0,0warning/error,9.15s; mobile filter42/42,0failed/skipped,exit0. SDK10.0.400/workloadMAUI10.0.20/10.0.100, target36/build-tools36/JDK21. adb rỗng, không cài/chạy hoặc Google live. HEAD hiện tại main463896d, không commit/push.
+
+Format whitespace thực tế (exit0 từng lệnh):
+
+```powershell
+dotnet format whitespace src/DuyTien.AssetManagement.Mobile/DuyTien.AssetManagement.Mobile.csproj --no-restore --include src/DuyTien.AssetManagement.Mobile/Client/MobileContracts.cs src/DuyTien.AssetManagement.Mobile/Client/MobileSession.cs src/DuyTien.AssetManagement.Mobile/Client/MobileAssets.cs src/DuyTien.AssetManagement.Mobile/Client/MobilePhotos.cs src/DuyTien.AssetManagement.Mobile/Services/MauiSecretStore.cs src/DuyTien.AssetManagement.Mobile/Services/MauiPhotoPicker.cs src/DuyTien.AssetManagement.Mobile/Services/MobileRuntime.cs src/DuyTien.AssetManagement.Mobile/Pages/MobilePage.cs src/DuyTien.AssetManagement.Mobile/Pages/AssetListPage.cs src/DuyTien.AssetManagement.Mobile/Pages/AssetDetailPage.cs src/DuyTien.AssetManagement.Mobile/Pages/AssetEditPage.cs src/DuyTien.AssetManagement.Mobile/Pages/PhotoPage.cs src/DuyTien.AssetManagement.Mobile/MainPage.xaml.cs src/DuyTien.AssetManagement.Mobile/App.xaml.cs src/DuyTien.AssetManagement.Mobile/AppShell.xaml.cs src/DuyTien.AssetManagement.Mobile/MauiProgram.cs
+dotnet format whitespace tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --include tests/DuyTien.AssetManagement.ArchitectureTests/MobileSessionTests.cs tests/DuyTien.AssetManagement.ArchitectureTests/MobileContractTests.cs tests/DuyTien.AssetManagement.ArchitectureTests/MobilePhotoTests.cs
+dotnet format whitespace src/DuyTien.AssetManagement.Mobile/DuyTien.AssetManagement.Mobile.csproj --no-restore --include src/DuyTien.AssetManagement.Mobile/Services/MobileRuntime.cs src/DuyTien.AssetManagement.Mobile/Pages/AssetListPage.cs src/DuyTien.AssetManagement.Mobile/Pages/AssetDetailPage.cs
+```
+
+## TASK-014 pha Web — 2026-10-14
+
+Chạy build/test tuần tự; không mobile hoặc full nghiệm thu đã hoãn.
+
+```powershell
+dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebIntegration|FullyQualifiedName~TreeRegistry"
+git diff --check
+```
+
+Fixture HTTP/Kestrel/Google fake không đóng gate Google; browser qua cua_repl nếu có provider. Không khởi động backend thứ hai dùng cùng Google resources.
+
+### TASK-014 web run hiện hành — không implicit Google probe
+
+Public /api/system/status giờ config-only và State=WEB_DEMO_LOCAL, không lifecycle task, liveVerified=false. Không dùng curl -k/skip TLS trong lượt14/10; các smoke -k phía trên là lịch sử.
+
+```powershell
+dotnet run --project src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-build --no-restore --launch-profile https
+```
+
+Nếu chạy nền Windows dùng Start-Process -WindowStyle Hidden, kiểm tra port7008/5211 và process lease trước; giữ PID đã tạo, không kill theo tên. Probe HTTPS bằng HttpClient kiểm chứng chỉ mặc định chỉ trang public/Help/status config-only; không login/Google/gate hoãn. Runtime proof không thay browser/nguồn/Google migration.
+
+### TASK-014 — kiểm tra cuối thực tế
+
+Build/test tuần tự, không chạy lại mobile hoặc toàn bộ UAT task trước. Final test exit 0, 126/126 passed, 0 failed/skipped; các filter checkpoint trước không cộng thành test độc lập.
+
+```powershell
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~GoogleTreeMutationTests|FullyQualifiedName~TreeMutationTests|FullyQualifiedName~GoogleCategoryCatalogStoreTests|FullyQualifiedName~InventoryGoogleTests|FullyQualifiedName~ManagedMediaGoogleTests|FullyQualifiedName~InventoryHttpRazorTests"
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebIntegration|FullyQualifiedName~TreeRegistry|FullyQualifiedName~GoogleTreeMutationTests|FullyQualifiedName~TreeMutationTests|FullyQualifiedName~GoogleCategoryCatalogStoreTests|FullyQualifiedName~InventoryGoogleTests|FullyQualifiedName~ManagedMediaGoogleTests|FullyQualifiedName~InventoryHttpRazorTests"
+node --check src/DuyTien.AssetManagement.Server/wwwroot/js/site.js
+```
+
+Exact include paths của bốn lệnh format whitespace đã chạy (exit 0 từng project):
+
+```powershell
+dotnet format whitespace src/DuyTien.AssetManagement.Application/DuyTien.AssetManagement.Application.csproj --no-restore --include src/DuyTien.AssetManagement.Application/Categories/TreeMutationModels.cs src/DuyTien.AssetManagement.Application/Categories/TreeMutationService.cs src/DuyTien.AssetManagement.Application/Categories/TreeMutationRegistry.cs src/DuyTien.AssetManagement.Application/Categories/TreeRegistryIntegrity.cs src/DuyTien.AssetManagement.Application/Categories/CategoryCatalogService.cs src/DuyTien.AssetManagement.Application/Inventory/InventoryIntegrity.cs src/DuyTien.AssetManagement.Application/Inventory/StockService.cs src/DuyTien.AssetManagement.Application/Media/MediaCatalogIntegrity.cs
+dotnet format whitespace src/DuyTien.AssetManagement.Infrastructure.Google/DuyTien.AssetManagement.Infrastructure.Google.csproj --no-restore --include src/DuyTien.AssetManagement.Infrastructure.Google/Adapters/GoogleTreeMutationStore.cs src/DuyTien.AssetManagement.Infrastructure.Google/Adapters/GoogleCategoryCatalogStore.cs src/DuyTien.AssetManagement.Infrastructure.Google/Adapters/GoogleInventoryStore.cs src/DuyTien.AssetManagement.Infrastructure.Google/Adapters/GoogleMediaCatalogStore.cs
+dotnet format whitespace src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --include src/DuyTien.AssetManagement.Server/Program.cs src/DuyTien.AssetManagement.Server/SystemStatusEndpoints.cs src/DuyTien.AssetManagement.Server/Inventory/InvariantNullableDecimalBinder.cs src/DuyTien.AssetManagement.Server/Pages/Stock/Index.cshtml.cs src/DuyTien.AssetManagement.Server/Pages/Help/Index.cshtml.cs
+dotnet format whitespace tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --include tests/DuyTien.AssetManagement.ArchitectureTests/WebIntegrationTests.cs tests/DuyTien.AssetManagement.ArchitectureTests/TreeRegistryTests.cs
+```
+
+Probe TLS/runtime chỉ đọc, không trust/bypass chứng chỉ. `dotnet dev-certs https --check` đã exit 0, nhưng X509Chain.Build báo UntrustedRoot. Command dưới đây đã exit 0 vì script ghi nhận lỗi; ba HTTPS requests vẫn NOT_VERIFIED, HTTP root trả 307. Không dùng kết quả này làm browser/Google PASS.
+
+```powershell
+Add-Type -AssemblyName System.Net.Http
+$taskWebHandler = [System.Net.Http.HttpClientHandler]::new()
+$taskWebHandler.AllowAutoRedirect = $false
+$taskWebHandler.UseCookies = $false
+$taskWebClient = [System.Net.Http.HttpClient]::new($taskWebHandler)
+$taskWebClient.Timeout = [TimeSpan]::FromSeconds(8)
+$taskWebProbe = @()
+try {
+  foreach ($taskWebUrl in @('https://localhost:7008/','https://localhost:7008/Help','https://localhost:7008/api/system/status','http://localhost:5211/')) {
+    try {
+      $taskWebResponse = $taskWebClient.GetAsync($taskWebUrl).GetAwaiter().GetResult()
+      try { $taskWebProbe += [pscustomobject]@{ Url=$taskWebUrl; Status=[int]$taskWebResponse.StatusCode; Redirect=[string]$taskWebResponse.Headers.Location } }
+      finally { $taskWebResponse.Dispose() }
+    } catch {
+      $taskWebFailure = $_.Exception
+      $taskWebFailureTypes = @()
+      while ($null -ne $taskWebFailure) { $taskWebFailureTypes += $taskWebFailure.GetType().Name; $taskWebFailure = $taskWebFailure.InnerException }
+      $taskWebProbe += [pscustomobject]@{ Url=$taskWebUrl; Status='NOT_VERIFIED'; ExceptionTypes=$taskWebFailureTypes }
+    }
+  }
+} finally { $taskWebClient.Dispose(); $taskWebHandler.Dispose() }
+$taskWebProbe | ConvertTo-Json -Depth 5 -Compress
+```

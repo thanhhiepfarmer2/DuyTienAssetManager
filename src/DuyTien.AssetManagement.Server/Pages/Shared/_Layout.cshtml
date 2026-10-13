@@ -1,70 +1,56 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Duy Tiến</title>
-    <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/DuyTien.AssetManagement.Server.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <a class="visually-hidden-focusable" href="#main-content">Đến nội dung chính</a>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-3" aria-label="Điều hướng chính">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">Duy Tiến</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Trang chủ</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Quyền riêng tư</a>
-                        </li>
-                        @if (User.Identity?.IsAuthenticated == true) { <li class="nav-item"><a class="nav-link text-dark" asp-page="/Categories/Index">Danh mục</a></li><li class="nav-item"><a class="nav-link text-dark" asp-page="/Assets/Index">Tài sản nháp</a></li><li class="nav-item"><a class="nav-link text-dark" asp-page="/Documents/Index">Hồ sơ/biểu mẫu demo</a></li> }
-                        @if (User.IsInRole("Admin"))
+                <a class="navbar-brand" asp-page="/Index">Duy Tiến</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false" aria-label="Mở menu"><span class="navbar-toggler-icon"></span></button>
+                <div id="main-navigation" class="navbar-collapse collapse">
+                    <ul class="navbar-nav me-auto flex-wrap">
+                        <li class="nav-item"><a class="nav-link" asp-page="/Index">Trang chủ</a></li>
+                        @if (User.Identity?.IsAuthenticated == true)
                         {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Admin/Users/Index">Tài khoản</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Admin/Authorization">Phân quyền</a></li>
-                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Admin/SecurityEvents">Bảo mật</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Categories/Index">Danh mục</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Assets/Index">Tài sản</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Documents/Index">Hồ sơ/biểu mẫu</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Items/Index">Items</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Stock/Index">Snapshot</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Reports/Index">Báo cáo</a></li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Quản trị</a>
+                                    <ul class="dropdown-menu"><li><a class="dropdown-item" asp-page="/Admin/Users/Index">Tài khoản</a></li><li><a class="dropdown-item" asp-page="/Admin/Authorization">Phân quyền</a></li><li><a class="dropdown-item" asp-page="/Admin/SecurityEvents">Bảo mật / audit</a></li></ul>
+                                </li>
+                            }
                         }
+                        <li class="nav-item"><a class="nav-link" asp-page="/Help/Index">Hướng dẫn</a></li>
                     </ul>
                     <ul class="navbar-nav">
                         @if (User.Identity?.IsAuthenticated == true)
                         {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Account/ChangePassword">Đổi mật khẩu</a></li>
-                            <li class="nav-item"><form method="post" asp-page="/Account/Logout"><button type="submit" class="btn btn-link nav-link text-dark">Đăng xuất</button></form></li>
+                            <li class="nav-item"><a class="nav-link" asp-page="/Account/ChangePassword">Đổi mật khẩu</a></li>
+                            <li class="nav-item"><form method="post" asp-page="/Account/Logout"><button type="submit" class="btn btn-link nav-link">Đăng xuất</button></form></li>
                         }
-                        else
-                        {
-                            <li class="nav-item"><a class="nav-link text-dark" asp-page="/Account/Login">Đăng nhập</a></li>
-                        }
+                        else { <li class="nav-item"><a class="nav-link" asp-page="/Account/Login">Đăng nhập</a></li> }
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Công ty TNHH Duy Tiến
-        </div>
-    </footer>
-
+    <div class="container"><main id="main-content" class="pb-4">@RenderBody()</main></div>
+    <footer class="border-top text-muted mt-4 py-3"><div class="container">Duy Tiến · Demo DRAFT · <a asp-page="/Privacy">Dữ liệu và quyền riêng tư</a></div></footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

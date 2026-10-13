@@ -1,0 +1,173 @@
+{
+  "task": "TASK-011",
+  "date": "2026-10-13",
+  "status": "IN_REVIEW",
+  "source": "AI_RUN_OBSERVED_LOCAL",
+  "workingDirectory": "D:\\Dev\\QuanLyTaiSan_DuyTien",
+  "sdk": "10.0.400",
+  "gitHead": "463896d82629847ebd41866eb3e0cb97becfc2f2",
+  "initialWorktreeFiles": 39,
+  "gitMutations": false,
+  "fixture": "GIẢ memory/fakeGoogle/KestrelHTTP/synthetic20744; not company/original source",
+  "reports": [
+    "R01",
+    "R02",
+    "R03",
+    "R04"
+  ],
+  "exportFormat": "CSV UTF8BOM RFC4180 bounded32MiB/guarded text; no XLSX/PDF",
+  "checks": [
+    {
+      "command": "dotnet build server --no-restore --nologo -v:minimal",
+      "exactCommandSource": "docs/COMMANDS.md",
+      "exitCode": 0,
+      "warnings": 0,
+      "errors": 0,
+      "elapsedSeconds": 3.79
+    },
+    {
+      "filter": "FullyQualifiedName~Report",
+      "exitCode": 0,
+      "passed": 78,
+      "failed": 0,
+      "skipped": 0,
+      "elapsedSeconds": 3
+    },
+    {
+      "filter": "FullyQualifiedName~AssetCrudHttpRazorTests|FullyQualifiedName~InventoryHttpRazorTests|FullyQualifiedName~ScopeAuthorizationTests|FullyQualifiedName~GoogleTreeMutationTests",
+      "exitCode": 0,
+      "passed": 36,
+      "failed": 0,
+      "skipped": 0,
+      "elapsedSeconds": 2
+    },
+    {
+      "command": "dotnet format whitespace scoped3projects/file paths (COMMANDS)",
+      "exitCode": 0
+    },
+    {
+      "command": "node --check src/DuyTien.AssetManagement.Server/wwwroot/js/report-filter.js",
+      "exitCode": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "history": [
+    {
+      "total": 49,
+      "passed": 49,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "total": 61,
+      "passed": 58,
+      "failed": 3,
+      "skipped": 0,
+      "exitCode": 1,
+      "cause": "Razor implicitRequired Code/Section defaults"
+    },
+    {
+      "total": 62,
+      "passed": 62,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "total": 68,
+      "passed": 68,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "total": 75,
+      "passed": 75,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    },
+    {
+      "total": 78,
+      "passed": 78,
+      "failed": 0,
+      "skipped": 0,
+      "exitCode": 0
+    }
+  ],
+  "realGoogleCallsOrWrites": 0,
+  "realDataWrites": 0,
+  "realBrowserUat": false,
+  "authPoliciesChanged": false,
+  "metadataGuardModified": false,
+  "newSchemaOrDependencies": false,
+  "sourceGate": "NOT_VERIFIED_SOURCE_ORIGINAL/businessstock/minimum/OrgLocation/rules remainOPEN_TBD",
+  "gates": [
+    "NOT_RUN_GOOGLE",
+    "NOT_RUN_BROWSER_UAT",
+    "OPEN_TBD_SOURCE_MINIMUM_RULES"
+  ],
+  "task005DeferredPreserved": true,
+  "task003": "IN_REVIEW",
+  "task004": "DONE",
+  "task005To010": "IN_REVIEW",
+  "task012": "TODO",
+  "deployCommitPush": false,
+  "finalProcessProbe": {
+    "exitCode": 0,
+    "matchedBackendCount": 0,
+    "matchedW13RunnerCount": 0
+  },
+  "limitations": [
+    "Current snapshots datefilter not historical valuation",
+    "Backend source read/replay throughput/quota not verified live",
+    "CSV reader/real browser not tested",
+    "Missing-minimum checks overlap OUT/UNKNOWN; not a summed partition",
+    "Catalog item without permitted snapshot has no inventedlocation; geo/timefilters actual snapshotsonly",
+    "Invalid scopes excluded evenAdmin; no recovery flow through reports"
+  ],
+  "finalDocumentGitPreservationCheck": {
+    "changedUncommittedFiles": 56,
+    "linksChecked": 103,
+    "checks": [
+      {
+        "name": "diff_check",
+        "exitCode": 0
+      },
+      {
+        "name": "index_empty",
+        "exitCode": 0
+      },
+      {
+        "name": "preserved_history_auth_guard_active_script",
+        "exitCode": 0
+      }
+    ],
+    "head": "463896d82629847ebd41866eb3e0cb97becfc2f2",
+    "issues": [],
+    "preservation": {
+      "baselineFiles": 39,
+      "changedSharedFiles": [
+        "docs/01-requirements/PERMISSIONS.md",
+        "docs/01-requirements/REQ-001-asset-digitization.md",
+        "docs/02-architecture/PLAN-001.md",
+        "docs/03-database/SHEETS-SCHEMA.md",
+        "docs/04-api/API-SCOPE.md",
+        "docs/05-ui-ux/SCREEN-LIST.md",
+        "docs/06-tasks/INDEX.md",
+        "docs/07-testing/ACCEPTANCE-PLAN.md",
+        "docs/COMMANDS.md",
+        "docs/PROJECT-CONTEXT.md",
+        "src/DuyTien.AssetManagement.Server/Pages/Shared/_Layout.cshtml",
+        "src/DuyTien.AssetManagement.Server/Program.cs"
+      ],
+      "unchangedFiles": 27,
+      "unexpected": []
+    },
+    "exitCode": 0
+  }
+}

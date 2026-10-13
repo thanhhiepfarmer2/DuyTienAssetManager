@@ -1,7 +1,7 @@
 @model DuyTien.AssetManagement.Server.Categories.TreeChangePageModel
 <p class="alert alert-warning">DRAFT — preview và xác nhận trước khi thay đổi. Mã/ID đã cấp được giữ; publish snapshot không phê duyệt nghiệp vụ.</p>
 @if (Model.Error is not null) { <div class="alert alert-danger" role="alert">@Model.Error</div> }
-@if (Model.Result is { } result) { <div class="alert alert-success" role="status">Đã xác nhận commit snapshot DRAFT đầy đủ. @result.ChangedCategoryCount danh mục thay đổi, @result.ChangedAssetCount tài sản cập nhật. @(result.Replayed ? "Retry: dùng kết quả đã lưu, không ghi lần hai." : "")</div> }
+@if (Model.Result is { } result) { <div class="alert alert-success" role="status">Đã xác nhận commit snapshot DRAFT đầy đủ. @result.ChangedCategoryCount danh mục thay đổi, @result.ChangedAssetCount tài sản, @result.ChangedItemCount Item, @result.ChangedDocumentCount hồ sơ cập nhật; @result.RegistryImpactCount reference registry đã đối soát. @(result.Replayed ? "Retry: dùng kết quả đã lưu, không ghi lần hai." : "")</div> }
 @if (Model.AssetMove) { <form method="get" class="mb-3"><label for="Q">Tìm mã/tên/alias/serial để chọn tài sản</label><input id="Q" name="Q" value="@Model.Q" maxlength="200" class="form-control"/><button class="btn btn-secondary mt-2">Tìm</button></form> }
 <form method="post" data-tree-change>
     <div asp-validation-summary="All" role="alert" class="text-danger"></div>
@@ -23,7 +23,7 @@
         <label asp-for="Form.Kind">Thao tác</label><select asp-for="Form.Kind" class="form-select"><option value="EDIT_CATEGORY">Sửa tên/mã nháp/định nghĩa</option><option value="MOVE_CATEGORY">Chuyển cả cây con</option><option value="ARCHIVE_CATEGORY">Ngừng dùng nhánh</option></select>
         <label asp-for="Form.CategoryId" class="form-label mt-2">Danh mục nguồn</label><select asp-for="Form.CategoryId" class="form-select" required>@if (!string.IsNullOrWhiteSpace(Model.Form.CategoryId) && !Model.Choices.Nodes.Select(x => x.CategoryId).Contains(Model.Form.CategoryId)) { <option value="@Model.Form.CategoryId">Giữ giá trị đã nhập; cần tải lại dữ liệu chọn</option> }<option value="">Chọn nguồn</option>@foreach (var x in Model.Choices.Nodes) { <option value="@x.CategoryId" data-name="@x.Name" data-code="@x.SegmentCode" data-definition="@x.Definition">@x.Path — @x.FullCode</option> }</select>
         <div data-kind="EDIT_CATEGORY"><label asp-for="Form.Name" class="form-label mt-2">Tên</label><input asp-for="Form.Name" class="form-control" maxlength="300"/><label asp-for="Form.SegmentCode">Mã đoạn nháp (3 ký tự)</label><input asp-for="Form.SegmentCode" class="form-control" maxlength="3"/><label asp-for="Form.Definition">Định nghĩa</label><textarea asp-for="Form.Definition" class="form-control" maxlength="4000"></textarea></div>
-        <div data-kind="ARCHIVE_CATEGORY"><label asp-for="Form.DeletePlan" class="form-label mt-2">Phương án khi nhánh có dữ liệu</label><select asp-for="Form.DeletePlan" class="form-select"><option value="EMPTY_ONLY">Chỉ ngừng danh mục rỗng</option><option value="RELOCATE">Chuyển tài sản sang đích, ngừng cả nhánh</option><option value="SOFT_DELETE">Xóa mềm tài sản, ngừng cả nhánh</option></select></div>
+        <div data-kind="ARCHIVE_CATEGORY"><label asp-for="Form.DeletePlan" class="form-label mt-2">Phương án khi nhánh có dữ liệu</label><select asp-for="Form.DeletePlan" class="form-select"><option value="EMPTY_ONLY">Chỉ ngừng danh mục rỗng</option><option value="RELOCATE">Chuyển Asset/Item/hồ sơ sang đích, ngừng cả nhánh</option><option value="SOFT_DELETE">Xóa mềm Asset/hồ sơ; nhánh có Item cần RELOCATE</option></select></div>
     }
     <label asp-for="Form.DestinationCategoryId" class="form-label mt-2">Danh mục đích / cha mới</label><select asp-for="Form.DestinationCategoryId" class="form-select">@if (!string.IsNullOrWhiteSpace(Model.Form.DestinationCategoryId) && !Model.Choices.Nodes.Select(x => x.CategoryId).Contains(Model.Form.DestinationCategoryId)) { <option value="@Model.Form.DestinationCategoryId">Giữ giá trị đã nhập; cần tải lại dữ liệu chọn</option> }<option value="">Không chọn (MOVE_CATEGORY: chuyển thành gốc, cần ALL)</option>@foreach (var x in Model.Choices.Nodes) { <option value="@x.CategoryId">@x.Path — @x.FullCode</option> }</select>
     <label asp-for="Form.Reason" class="form-label mt-2">Lý do</label><input asp-for="Form.Reason" class="form-control" required maxlength="500"/>
@@ -41,3 +41,9 @@
     <p data-tree-status role="status" aria-live="polite"></p>
 </form>
 <p><a asp-page="/Categories/Index">Xem cây/TXT theo snapshot hiện tại</a> · <a asp-page="/Assets/Index">Tra cứu tài sản theo phân loại hiện tại</a></p>
+
+@if (Model.Preview?.Registry is { Count: > 0 } registry)
+{
+    <h2 class="h5">Registry/owner được phép — snapshot/file giữ dữ liệu và ID</h2>
+    <div class="table-responsive"><table class="table"><thead><tr><th>Loại</th><th>Tên / ID</th><th>Version</th><th>Category trước → sau</th><th>Tác động</th></tr></thead><tbody>@foreach (var impact in registry) { <tr><td>@impact.Kind</td><td>@impact.Name / @impact.Id</td><td>@impact.ExpectedVersion</td><td>@impact.BeforeCategoryId → @impact.AfterCategoryId</td><td>@(impact.WillBeDeleted ? "Owner ngừng/xóa mềm; file vật lý giữ" : "Giữ ID/bytes/snapshot, scope theo owner")</td></tr> }</tbody></table></div>
+}

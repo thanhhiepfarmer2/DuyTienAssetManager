@@ -1,11 +1,20 @@
 @page
 @model IndexModel
-@{
-    ViewData["Title"] = "Mã số hóa tài sản";
+@{ ViewData["Title"] = "Quản lý tài sản"; }
+<h1>Quản lý tài sản Duy Tiến</h1>
+<p class="lead">Tra cứu, nhập liệu và quản lý hồ sơ theo phạm vi được giao.</p>
+<p class="alert alert-warning">DRAFT / DRAFT_DEMO — cây, dữ liệu và rule demo chưa là dữ liệu chính thức. Nguồn công ty/đơn vị/địa điểm/ngưỡng còn chưa xác minh. Web được ưu tiên; Android tiếp sau, iOS đang hoãn.</p>
+@if (User.Identity?.IsAuthenticated != true)
+{
+    <p><a class="btn btn-primary" asp-page="/Account/Login">Đăng nhập</a> <a class="btn btn-outline-secondary" asp-page="/Help/Index">Hướng dẫn web</a></p>
+    <p>Mỗi tài khoản chỉ xem dữ liệu được server cho phép. Cấu hình backend sẵn sàng không chứng minh đã kết nối Google.</p>
 }
-
-<div class="text-center">
-    <h1 class="display-5">Mã số hóa tài sản Công ty TNHH Duy Tiến</h1>
-    <p class="lead">Khung Razor Pages và API dùng chung backend đã sẵn sàng.</p>
-    <p>Chức năng nghiệp vụ sẽ được bổ sung theo từng Task sau TASK-003.</p>
-</div>
+else
+{
+    <div class="row g-3">
+        <div class="col-md-6"><section class="card h-100"><div class="card-body"><h2 class="h5">Danh mục và tài sản</h2><p><a asp-page="/Categories/Index">Cây danh mục</a> → <a asp-page="/Assets/Index">Tài sản / tìm kiếm</a> → chi tiết, ảnh và phiên bản.</p>@if (User.IsInRole("Admin") || User.IsInRole("AssetEditor")) { <p><a asp-page="/Assets/Create">Tạo máy demo</a> · <a asp-page="/Assets/Move">Preview chuyển tài sản</a></p> }@if (User.IsInRole("Admin") || User.IsInRole("CatalogManager")) { <p><a asp-page="/Categories/Import">Import cây DRAFT</a> · <a asp-page="/Categories/Manage">Preview sửa/chuyển/ngừng cây</a></p> }</div></section></div>
+        <div class="col-md-6"><section class="card h-100"><div class="card-body"><h2 class="h5">Items và snapshot</h2><p><a asp-page="/Items/Index">Items</a> → chi tiết → <a asp-page="/Stock/Index">snapshot riêng</a>. Không coi Item là Asset hoặc BOM/kho là tồn.</p>@if (User.IsInRole("Admin") || User.IsInRole("CatalogManager")) { <p><a asp-page="/Items/Import">Import / tiếp tục job Items</a></p> }<p>Quantity chưa biết là UNKNOWN, minimum thiếu không tự đặt.</p></div></section></div>
+        <div class="col-md-6"><section class="card h-100"><div class="card-body"><h2 class="h5">Hồ sơ và báo cáo</h2><p><a asp-page="/Documents/Index">Biểu mẫu DOCX/PDF theo version</a> · <a asp-page="/Reports/Index">Báo cáo R01–R04 / CSV</a></p><p>File được tải qua gateway, kiểm quyền hiện tại; phiên bản demo phát hành có ngày hiệu lực.</p></div></section></div>
+        <div class="col-md-6"><section class="card h-100"><div class="card-body"><h2 class="h5">Sử dụng và xử lý lỗi</h2><p><a asp-page="/Help/Index">Luồng thao tác web và giới hạn</a></p><p>409: tải bản mới và kiểm nội dung. Mạng/503: giữ form/file/key, thử lại cùng yêu cầu; chưa xác nhận thành công. Không sửa trực tiếp Sheet để đi vòng ứng dụng.</p>@if (User.IsInRole("Admin")) { <p><a asp-page="/Admin/Users/Index">Tài khoản</a> · <a asp-page="/Admin/Authorization">Quyền / scope</a> · <a asp-page="/Admin/SecurityEvents">Audit bảo mật</a></p> }</div></section></div>
+    </div>
+}

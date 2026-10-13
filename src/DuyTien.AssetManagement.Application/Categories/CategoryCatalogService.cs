@@ -8,7 +8,7 @@ using DuyTien.AssetManagement.Application.Concurrency;
 namespace DuyTien.AssetManagement.Application.Categories;
 
 public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, IAuthSystemStore authStore,
-    ISingleWriterCoordinator writer, TimeProvider clock, DuyTien.AssetManagement.Application.Assets.IAssetCatalogStore? assetStore = null)
+    ISingleWriterCoordinator writer, TimeProvider clock, DuyTien.AssetManagement.Application.Assets.IAssetCatalogStore? assetStore = null, DuyTien.AssetManagement.Application.Inventory.IInventoryStore? inventoryStore = null, ITreeMutationStore? registryStore = null)
 {
     private readonly ScopeAuthorizationService authorization = new();
     public Task<CategoryPreview> PreviewAsync(string actor, CategoryDocument document, CancellationToken ct = default) => writer.ExecuteAsync(t => PreviewCore(actor, document, t), ct);
@@ -16,7 +16,9 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
     {
         var auth = await authStore.ReadAsync(s => s.Clone(), ct).ConfigureAwait(false);
         RequirePermission(auth, actor, "CATEGORIES_IMPORT");
-        var state = await store.ReadAsync(ct).ConfigureAwait(false);
+        var registry = registryStore is null ? null : await registryStore.ReadAsync(ct).ConfigureAwait(false);
+        if (registry is not null) TreeRegistryIntegrity.Validate(registry);
+        var state = registry?.Categories ?? await store.ReadAsync(ct).ConfigureAwait(false);
         return Prepare(auth, actor, state, document);
     }
     public Task<CategoryImportResult> ImportAsync(string actor, CategoryDocument document, long expectedRevision,
@@ -26,7 +28,9 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
             throw new CategoryValidationException("Idempotency key phải dài 1–100 ký tự.");
         var auth = await authStore.ReadAsync(s => s.Clone(), token).ConfigureAwait(false);
         RequirePermission(auth, actor, "CATEGORIES_IMPORT");
-        var state = await store.ReadAsync(token).ConfigureAwait(false);
+        var registry = registryStore is null ? null : await registryStore.ReadAsync(token).ConfigureAwait(false);
+        if (registry is not null) TreeRegistryIntegrity.Validate(registry);
+        var state = registry?.Categories ?? await store.ReadAsync(token).ConfigureAwait(false);
         var prepared = Prepare(auth, actor, state, document);
         if (!prepared.CanCommit) throw new CategoryValidationException("Preview có lỗi; chưa thể import.");
         var previous = state.Operations.SingleOrDefault(o => o.ActorUserId == actor && o.IdempotencyKey == idempotencyKey);
@@ -56,6 +60,29 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
                     throw new CategoryConflictException("Import thay cấu trúc đang có Asset; dùng preview/plan TASK-008 để xử lý nguyên tử.");
             }
         }
+        if (!alreadyImported && inventoryStore is not null)
+        {
+            var inventory = await inventoryStore.ReadAsync(token).ConfigureAwait(false);
+            foreach (var item in inventory.Items.Where(i => i.CategoryId.Length > 0))
+            {
+                var before = state.ActiveNodes.SingleOrDefault(n => n.CategoryId == item.CategoryId);
+                var after = draft.SingleOrDefault(n => n.CategoryId == item.CategoryId);
+                if (before is null || after is null || before.State != after.State || !Ancestors(state.ActiveNodes, before).SequenceEqual(Ancestors(draft, after), StringComparer.Ordinal))
+                    throw new CategoryConflictException("Import thay cấu trúc đang có Item; chưa đối soát registry TASK-008, không thể bỏ qua guard.");
+            }
+        }
+        if (!alreadyImported && registry?.Media is { } media)
+        {
+            foreach (var doc in media.Documents)
+            {
+                var before = state.ActiveNodes.SingleOrDefault(n => n.CategoryId == doc.CategoryId);
+                var after = draft.SingleOrDefault(n => n.CategoryId == doc.CategoryId);
+                if (before is null || after is null || before.State != after.State || !Ancestors(state.ActiveNodes, before).SequenceEqual(Ancestors(draft, after), StringComparer.Ordinal))
+                    throw new CategoryConflictException("Import thay cấu trúc có hồ sơ/phiên bản/file; dùng plan registry nguyên tử, không bỏ qua guard.");
+            }
+        }
+        if (!alreadyImported && registry?.Inventory?.Jobs.Any(j => j.State != "COMPLETE") == true)
+            throw new CategoryConflictException("Hoàn tất import Items đang dở trước đổi tree version.");
         var ids = draft.ToDictionary(n => n.CategoryId, n => n.CategoryId.StartsWith("NEW:", StringComparison.Ordinal)
             ? "CAT-" + Guid.NewGuid().ToString("N") : n.CategoryId, StringComparer.Ordinal);
         draft = draft.Select(n => n with { CategoryId = ids[n.CategoryId], ParentId = n.ParentId is null ? null : ids[n.ParentId] }).ToArray();
@@ -155,7 +182,7 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
     }
     private static CategoryNode[] BuildNodes(CategoryCatalogState state, IReadOnlyList<CategoryInput> rows, string versionId)
     {
-        var known = state.Categories.SelectMany(n => new[] { new KeyValuePair<string,string>(n.SourceKey,n.CategoryId), new KeyValuePair<string,string>(CategoryImportReader.MappingVersion + ":" + n.SegmentCode,n.CategoryId) }).GroupBy(p => p.Key,StringComparer.Ordinal).ToDictionary(g => g.Key,g => g.Last().Value,StringComparer.Ordinal);
+        var known = state.Categories.SelectMany(n => new[] { new KeyValuePair<string, string>(n.SourceKey, n.CategoryId), new KeyValuePair<string, string>(CategoryImportReader.MappingVersion + ":" + n.SegmentCode, n.CategoryId) }).GroupBy(p => p.Key, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last().Value, StringComparer.Ordinal);
         var byStt = rows.ToDictionary(r => r.SourceStt, StringComparer.Ordinal); var mapped = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var r in rows)
         {
@@ -225,7 +252,7 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
             n.Definition, n.State, n.Version, n.SourceSheet, n.SourceRow, n.SourceStt);
     }
     private static string Normalize(string value) => string.Concat(value.Normalize(NormalizationForm.FormD)
-        .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)).Replace('đ','d').Replace('Đ','D').ToUpperInvariant().Normalize(NormalizationForm.FormC);
+        .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)).Replace('đ', 'd').Replace('Đ', 'D').ToUpperInvariant().Normalize(NormalizationForm.FormC);
     private static string DocumentHash(CategoryDocument doc) => Hash(JsonSerializer.Serialize(new { doc.SourceHash, doc.MappingVersion, doc.Rows }));
     private static string Hash(string value) => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
     [GeneratedRegex("^[A-Z][A-Z0-9]{2}$", RegexOptions.CultureInvariant)] private static partial Regex CodePattern();

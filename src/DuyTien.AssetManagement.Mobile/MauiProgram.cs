@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using DuyTien.AssetManagement.Mobile.Services;
 
 namespace DuyTien.AssetManagement.Mobile;
 
@@ -19,6 +20,8 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
+        builder.Services.AddSingleton<MobileRuntime>();
+        builder.Services.AddSingleton<MainPage>();
         return builder.Build();
     }
 }

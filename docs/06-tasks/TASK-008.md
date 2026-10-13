@@ -46,3 +46,7 @@ AI chạy/quan sát trực tiếp ở D:\Dev\QuanLyTaiSan_DuyTien: build server 
 Phần local đầy đủ, TASK-008 IN_REVIEW. Self-review theo AC, scope/data state, snapshot atomic/retry và failure retention; không có independent review mới. Đã sửa import bỏ qua move, diff vượt cell và mất ID form khi read lỗi. Giữ DRAFT/DRAFT_INACTIVE/DRAFT_DEMO, rule/fields/source Org-Location OPEN/TBD. Không sửa password min8/session policy, init/bootstrap/provision, ghi Google/dữ liệu thật hoặc làm TASK-009; không commit/push/deploy.
 
 TASK-003 IN_REVIEW, TASK-004 DONE, TASK-005/006/007 IN_REVIEW; hoãn cũ DEFERRED_BY_USER và bằng chứng lịch sử nguyên vẹn. Bước tiếp theo trong phạm vi task là giải quyết Google/browser và source/rule gates khi được cho phép; không tự giao UAT thủ công hoặc bắt đầu TASK-009.
+
+## Tích hợp chéo pha Web14/10/2026
+
+Status IN_REVIEW/Google/browser/sourcegates vàlịch sửgiữ. Guardđãđược mởrộngbằng đốisoátfullregistry trongTASK-014Web, khôngbypasshoặcgiảempty: [thiết kế](../02-architecture/WEB-COMPLETION-DESIGN-TASK-014.md), [evidence](../07-testing/TEST-REPORT-TASK-014-WEB.md). KhôngchuyểnTasknàyDONEtừlocalchecks mới.

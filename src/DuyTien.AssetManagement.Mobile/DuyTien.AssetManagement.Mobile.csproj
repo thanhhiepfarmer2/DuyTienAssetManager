@@ -33,5 +33,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DuyTien.AssetManagement.Application\DuyTien.AssetManagement.Application.csproj" />
+  </ItemGroup>
 </Project>
 

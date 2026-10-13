@@ -1,0 +1,16 @@
+# Hướng dẫn web demo Duy Tiến
+
+Checkpoint 2026-10-14. Chức năng local đã có bằng chứng tự động; browser, Google thật và nguồn/rule còn chưa nghiệm thu. Đây là hướng dẫn sử dụng, không phải yêu cầu người dùng thực hiện UAT. Web được ưu tiên; mobile tạm hoãn.
+
+1. Đăng nhập bằng tài khoản ứng dụng và đổi mật khẩu khi được yêu cầu. Mật khẩu tối thiểu 8 ký tự. Viewer tra cứu; AssetEditor quản lý tài sản/ảnh; CatalogManager quản lý cây/Items/snapshot; DocumentManager quản lý hồ sơ; Admin quản trị. Mỗi hành động còn phụ thuộc assignment và scope được server kiểm tra.
+2. Trang chủ và menu nối Danh mục, Tài sản, Hồ sơ, Items, Snapshot, R01–R04 và Quản trị. Chi tiết danh mục liên kết đến tài sản, Items và báo cáo trong nhánh; chi tiết tài sản liên kết đến ảnh, danh mục và R01. Liên kết không thay thế kiểm quyền.
+3. Import cây theo luồng file → preview/diff/tên nhiều mã → xác nhận DRAFT. Workbook và rule chưa xác minh giữ OPEN/TBD. Full import không được làm mất danh mục đang có owner hoặc thay cấu trúc/trạng thái của nhánh đó; dùng preview sửa/chuyển/ngừng để đối soát registry.
+4. Tạo/sửa tài sản demo bằng các choices trong phạm vi được cấp. ID và mã do server cấp hoặc bảo toàn. Khi 409, tải bản đã lưu hoặc preview mới và kiểm lại nội dung trước yêu cầu mới. Khi 503/mất mạng, giữ payload, version và key để retry/đối soát cùng yêu cầu.
+5. Ảnh tài sản dùng PNG/JPEG; hồ sơ dùng DOCX/PDF cùng DocumentVersion. Chỉ AVAILABLE xác nhận upload thành công; PENDING/FAILED cần retry/đối soát fileId. Bản PUBLISHED_DEMO có nội dung bất biến và ngày hiệu lực UTC. JavaScript giữ File khi lỗi; sau reload hoặc khi không có JavaScript, chọn lại đúng bytes cũ và giữ key/version. Không xóa file Drive vật lý để xử lý lỗi.
+6. Import Items theo mapping/quyết định mã trùng → preview → staging/job → tiếp tục các chunk đến COMPLETE. Hoàn tất job trước khi tạo tree version mới. Item là bản ghi danh mục, không phải từng Asset. Nhập snapshot riêng từ chi tiết Item với unit/asOf/source tường minh; quantity rỗng là UNKNOWN, minimum rỗng là chưa có ngưỡng. Form cập nhật nạp giá trị/version hiện hành và giữ nội dung đã gửi khi lỗi. Không suy tồn từ BOM/kho hoặc gán unknown thành 0.
+7. Sửa/chuyển/ngừng cây luôn có preview owner/registry/scope trước commit. RELOCATE giữ ID, mã, 20 cells nguồn, stock và bytes; thay phân loại với version/audit. EMPTY_ONLY kiểm cả lịch sử. SOFT_DELETE không tự xóa Item khi chưa có semantics được duyệt; nhánh có Item cần RELOCATE. Schema không rõ/thiếu, owner mồ côi, job dở hoặc batch quá lớn cần đối soát, không xóa tab hay bypass guard.
+8. R01/R02 đếm Assets riêng; R03/R04 phân biệt tồn 0, thấp, UNKNOWN, không theo dõi tồn và thiếu ngưỡng/nguồn. Bộ lọc, phân trang, tổng và CSV áp dụng scope trước tính toán. Không cộng số lượng khác đơn vị. asOf thể hiện snapshot hiện hành, không phải truy vấn lịch sử/định giá.
+
+Trang `/Help` có hướng dẫn trong web. 403 báo thiếu quyền; 404 có thể là ngoài phạm vi; 422 báo validation; 409 báo phiên bản cũ; 503 báo dịch vụ chưa xác nhận kết quả. Việc ẩn nút không chứng minh quyền. Không gửi password/token/cookie vào chat hoặc audit.
+
+Giới hạn hiện tại nằm trong [Test Report](07-testing/TEST-REPORT-TASK-014-WEB.md). HTTPS client probe bị BLOCKED_TLS_TRUST (UntrustedRoot); browser, Google/schema thật, nguồn và backup/restore chưa đạt gate.

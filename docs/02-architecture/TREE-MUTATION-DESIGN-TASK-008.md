@@ -1,5 +1,7 @@
 # TASK-008 — Thiết kế thay đổi cây nháp và bulk Asset local
 
+> Cập nhật14/10/2026: hạn chếguardhiện diệnregistry trongthiết kế13/10 bên dưới là lịch sử; [TASK-014 pha Web](WEB-COMPLETION-DESIGN-TASK-014.md) bổsungfullschema/owner/journal/scope/CAS4registryvàjointbatch, khôngbypassguard. Googlelive/schema/sourcegatecũ chưaPASS.
+
 Ngày: 2026-10-13. Implementation local; TASK-008 IN_REVIEW. Nguồn: REQ-001 FR-02/FR-03/FR-04, AC-06/AC-07, PERMISSIONS và ngoại lệ phụ thuộc do người dùng cho phép. Không thay ADR-001, auth/password/session policy hoặc rule nghiệp vụ công ty.
 
 ## Trạng thái và phạm vi

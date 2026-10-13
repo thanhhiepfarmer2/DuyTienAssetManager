@@ -25,3 +25,7 @@ NOT_RUN — gói tài liệu chưa thực thi Task trên máy người dùng. Tr
 
 ## Checkpoint / Review
 Chưa thực hiện. Ghi phần đã làm, findings/self-review/independent review, phần chưa xác minh và cách tiếp tục. Không chuyển DONE nếu test bắt buộc chưa chạy hoặc fail.
+
+## Lịch thực hiện — 2026-10-14
+
+Execution: **DEFERRED_BY_USER**. Người dùng thay chỉ đạo triển khai iOS bằng ưu tiên Web → Android → iOS hoãn do môi trường/thiết bị chưa sẵn sàng. Không công việc iOS đang chạy được quan sát ở đầu lượt; target/code/scaffold hiện hữu giữ, không DONE/xóa. Compile TASK-003 lịch sử không runtime iOS PASS. Chưa chốt phân phối nội bộ: PROPOSED/TBD, không ký/upload/phát hành.

@@ -1,3 +1,7 @@
+using DuyTien.AssetManagement.Application.Reports;
+using DuyTien.AssetManagement.Server.Reports;
+using DuyTien.AssetManagement.Application.Inventory;
+using DuyTien.AssetManagement.Server.Inventory;
 using DuyTien.AssetManagement.Application.Media;
 using DuyTien.AssetManagement.Server.Media;
 using DuyTien.AssetManagement.Application.Assets;
@@ -56,13 +60,18 @@ builder.Services.AddSingleton<GoogleAuthSystemStore>();
 builder.Services.AddSingleton<GoogleAssetCatalogStore>();
 builder.Services.AddSingleton<IAssetCatalogStore>(p => p.GetRequiredService<GoogleAssetCatalogStore>());
 builder.Services.AddSingleton<AssetCrudService>();
+builder.Services.AddSingleton<GoogleInventoryStore>();
+builder.Services.AddSingleton<IInventoryStore>(p => p.GetRequiredService<GoogleInventoryStore>());
+builder.Services.AddSingleton<InventoryService>();
+builder.Services.AddSingleton<ReportService>();
 builder.Services.AddSingleton<GoogleCategoryCatalogStore>();
 builder.Services.AddSingleton<ICategoryCatalogStore>(p => p.GetRequiredService<GoogleCategoryCatalogStore>());
 builder.Services.AddSingleton<ITreeMutationStore, GoogleTreeMutationStore>();
 builder.Services.AddSingleton<TreeMutationService>();
 builder.Services.Configure<MediaUploadOptions>(builder.Configuration.GetSection(MediaUploadOptions.SectionName));
 builder.Services.AddSingleton(p => p.GetRequiredService<IOptions<MediaUploadOptions>>().Value);
-builder.Services.AddSingleton<IMediaCatalogStore, GoogleMediaCatalogStore>();
+builder.Services.AddSingleton<GoogleMediaCatalogStore>();
+builder.Services.AddSingleton<IMediaCatalogStore>(p => p.GetRequiredService<GoogleMediaCatalogStore>());
 builder.Services.AddSingleton<IManagedMediaContentStore, GoogleManagedMediaContentStore>();
 builder.Services.AddSingleton<MediaLibraryService>();
 builder.Services.AddSingleton<CategoryCatalogService>();
@@ -185,27 +194,10 @@ app.MapTask006CategoryApi();
 app.MapTask007AssetApi();
 app.MapTask008TreeApi();
 app.MapTask009MediaApi();
+app.MapTask010InventoryApi();
+app.MapTask011ReportApi();
 
-app.MapGet(
-    "/api/system/status",
-    async (
-        IAssetDataStore dataStore,
-        IAssetFileStore fileStore,
-        CancellationToken cancellationToken) =>
-    {
-        var sheets = await dataStore.CheckReadinessAsync(cancellationToken);
-        var drive = await fileStore.CheckReadinessAsync(cancellationToken);
-
-        return Results.Ok(new SystemStatusResponse(
-            State: "TASK005_LOCAL_IN_PROGRESS",
-            SingleWriterMode: true,
-            Sheets: new ExternalStorageStatus(
-                sheets.ConfigurationPresent,
-                sheets.LiveConnectionVerified),
-            Drive: new ExternalStorageStatus(
-                drive.ConfigurationPresent,
-                drive.LiveConnectionVerified)));
-    });
+app.MapLocalSystemStatus();
 
 await using var authWriterLease = await app.Services
     .GetRequiredService<IAuthWriterLeaseManager>()

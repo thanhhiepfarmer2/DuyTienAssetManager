@@ -82,14 +82,22 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
                 if (existing.GridProperties.ColumnCount < allHeaders[pair.Key].Length)
                     throw new ExternalStorageException("Schema danh mục không đủ số cột; dừng import.");
             }
-            if (rows.Count > 0) requests.Add(new { updateCells = new { start = new { sheetId, rowIndex = startRow, columnIndex = 0 },
-                rows = rows.Select(r => new { values = r.Select(v => new { userEnteredValue = new { stringValue = v } }).ToArray() }).ToArray(), fields = "userEnteredValue" } });
+            if (rows.Count > 0) requests.Add(new
+            {
+                updateCells = new
+                {
+                    start = new { sheetId, rowIndex = startRow, columnIndex = 0 },
+                    rows = rows.Select(r => new { values = r.Select(v => new { userEnteredValue = new { stringValue = v } }).ToArray() }).ToArray(),
+                    fields = "userEnteredValue"
+                }
+            });
         }
         return requests;
     }
     public static string[] TreeChangeHeader { get; } = ["OperationId", "IdempotencyKey", "Actor", "RequestHash", "Kind", "BeforeTreeVersionId", "TreeVersionId", "ExpectedTreeRevision", "ExpectedAssetRevision", "Reason", "CompletedAt", "PreviewHash", "RequestJson", "CategoryIdsJson", "AssetIdsJson", "DiffRef", "ResultJson"];
     public static string[] TreeChangeDetailHeader { get; } = ["OperationId", "CategoryId", "Name", "BeforePath", "AfterPath", "BeforeLevel", "AfterLevel", "BeforeState", "AfterState"];
-    private static IReadOnlyDictionary<string, string[]> AllHeaders => Headers.Concat(new[] { new KeyValuePair<string, string[]>("TreeChanges", TreeChangeHeader), new KeyValuePair<string, string[]>("TreeChangeDetails", TreeChangeDetailHeader) }).ToDictionary(p => p.Key, p => p.Value, StringComparer.Ordinal);
+    public static string[] TreeRegistryHeader { get; } = ["OperationId", "Kind", "EntityId", "RecordJson"];
+    private static IReadOnlyDictionary<string, string[]> AllHeaders => Headers.Concat(new[] { new KeyValuePair<string, string[]>("TreeChanges", TreeChangeHeader), new KeyValuePair<string, string[]>("TreeChangeDetails", TreeChangeDetailHeader), new KeyValuePair<string, string[]>("TreeRegistryDetails", TreeRegistryHeader) }).ToDictionary(p => p.Key, p => p.Value, StringComparer.Ordinal);
     private async Task<Spreadsheet> Metadata(CancellationToken ct)
     {
         if (options.GetMissingSheetsSettings().Count > 0 || string.IsNullOrWhiteSpace(options.SystemSpreadsheetId) || options.SpreadsheetId == options.SystemSpreadsheetId)
@@ -104,10 +112,13 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
         var existing = Headers.Keys.Where(t => metadata.Sheets.Any(s => s.Properties.Title == t)).ToArray();
         var hasChanges = metadata.Sheets.Any(s => s.Properties.Title == "TreeChanges");
         var hasDetails = metadata.Sheets.Any(s => s.Properties.Title == "TreeChangeDetails");
+        var hasRegistry = metadata.Sheets.Any(s => s.Properties.Title == "TreeRegistryDetails");
+        if (hasRegistry && !hasChanges) throw new ExternalStorageException("Registry checkpoint thiếu journal cây.");
         if (hasChanges != hasDetails) throw new ExternalStorageException("Journal cây thiếu bảng chi tiết; không ghi đè.");
         if (existing.Length == 0 && !hasChanges) return new();
         if (existing.Length != Headers.Count) throw new ExternalStorageException("Schema danh mục chưa đầy đủ; không tự ghi đè dữ liệu chưa xác định.");
         if (hasChanges) existing = existing.Append("TreeChanges").Append("TreeChangeDetails").ToArray();
+        if (hasRegistry) existing = existing.Append("TreeRegistryDetails").ToArray();
         var allHeaders = AllHeaders;
         var query = string.Join('&', existing.Select(t => "ranges=" + Uri.EscapeDataString($"'{t}'!A1:AZ20001")));
         using var response = await api.SendAsync(() => new HttpRequestMessage(HttpMethod.Get, UriFor("/values:batchGet?" + query + "&valueRenderOption=UNFORMATTED_VALUE")), GoogleRequestSemantics.SafeRead, ct).ConfigureAwait(false);
@@ -123,7 +134,7 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
             var rows = (range.Values ?? []).Select(r => r.Select(v => v.ValueKind == JsonValueKind.String ? v.GetString()! : v.GetRawText()).ToArray()).ToArray();
             if (rows.Length == 0 || !rows[0].SequenceEqual(allHeaders[title]) || rows.Length > 20000)
                 throw new ExternalStorageException("Header/schema hoặc kích thước bảng danh mục không hợp lệ; không overwrite.");
-            if (rows.Skip(1).Any(r => r.Length != allHeaders[title].Length)) throw new ExternalStorageException("Dòng danh mục không đủ cột.");
+            if (rows.Skip(1).Any(r => r.Length != allHeaders[title].Length || r.Any(v => v.Length > 45000))) throw new ExternalStorageException("Dòng danh mục không đủ cột.");
             tables[title] = rows.Skip(1).ToArray();
         }
         try
@@ -131,23 +142,40 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
             var marker = tables["SchemaVersions"].Single();
             if (marker[0] != "CATEGORY_V1") throw new ExternalStorageException("Schema business chưa được hỗ trợ.");
             var state = new CategoryCatalogState { ActiveTreeVersionId = marker[3], Revision = long.Parse(marker[4], CultureInfo.InvariantCulture) };
-            foreach (var r in tables["Categories"]) state.Categories.Add(new(r[0],r[1],Empty(r[2]),int.Parse(r[3]),int.Parse(r[4]),r[5],r[6],r[7],r[8],r[9],int.Parse(r[10]),r[11],r[12],int.Parse(r[13]),r[14]));
-            foreach (var r in tables["TreeVersions"]) state.Versions.Add(new(r[0],r[1],r[2],r[3],r[4],DateTimeOffset.Parse(r[5],CultureInfo.InvariantCulture),r[6]));
+            foreach (var r in tables["Categories"]) state.Categories.Add(new(r[0], r[1], Empty(r[2]), int.Parse(r[3]), int.Parse(r[4]), r[5], r[6], r[7], r[8], r[9], int.Parse(r[10]), r[11], r[12], int.Parse(r[13]), r[14]));
+            foreach (var r in tables["TreeVersions"]) state.Versions.Add(new(r[0], r[1], r[2], r[3], r[4], DateTimeOffset.Parse(r[5], CultureInfo.InvariantCulture), r[6]));
             foreach (var r in tables["Operations"])
             {
                 if (r[4] != "CATEGORY_IMPORT" || r[5] != "COMPLETE") throw new ExternalStorageException("Operation business không được hỗ trợ.");
-                state.Operations.Add(new(r[0],r[1],r[2],r[3],r[6],int.Parse(r[7]),DateTimeOffset.Parse(r[8],CultureInfo.InvariantCulture),r[9],r[10],bool.Parse(r[11])));
+                state.Operations.Add(new(r[0], r[1], r[2], r[3], r[6], int.Parse(r[7]), DateTimeOffset.Parse(r[8], CultureInfo.InvariantCulture), r[9], r[10], bool.Parse(r[11])));
             }
             TreeNodeImpact[] ReadDiff(string operationId, string reference)
             {
                 if (reference != "DETAIL_ROWS") throw new ExternalStorageException("Diff reference không hợp lệ.");
-                return tables["TreeChangeDetails"].Where(r => r[0] == operationId).Select(r => new TreeNodeImpact(r[1],r[2],r[3],r[4],int.Parse(r[5],CultureInfo.InvariantCulture),int.Parse(r[6],CultureInfo.InvariantCulture),r[7],r[8])).ToArray();
+                return tables["TreeChangeDetails"].Where(r => r[0] == operationId).Select(r => new TreeNodeImpact(r[1], r[2], r[3], r[4], int.Parse(r[5], CultureInfo.InvariantCulture), int.Parse(r[6], CultureInfo.InvariantCulture), r[7], r[8])).ToArray();
             }
             if (tables.TryGetValue("TreeChanges", out var changes))
-                foreach (var r in changes) state.TreeChanges.Add(new(r[0],r[1],r[2],r[3],r[4],r[5],r[6],long.Parse(r[7],CultureInfo.InvariantCulture),long.Parse(r[8],CultureInfo.InvariantCulture),r[9],DateTimeOffset.Parse(r[10],CultureInfo.InvariantCulture),r[11],JsonSerializer.Deserialize<TreeMutationRequest>(r[12],Json)!,JsonSerializer.Deserialize<string[]>(r[13],Json)!,JsonSerializer.Deserialize<string[]>(r[14],Json)!,ReadDiff(r[0],r[15]),JsonSerializer.Deserialize<TreeMutationResult>(r[16],Json)!));
+                foreach (var r in changes) state.TreeChanges.Add(new(r[0], r[1], r[2], r[3], r[4], r[5], r[6], long.Parse(r[7], CultureInfo.InvariantCulture), long.Parse(r[8], CultureInfo.InvariantCulture), r[9], DateTimeOffset.Parse(r[10], CultureInfo.InvariantCulture), r[11], JsonSerializer.Deserialize<TreeMutationRequest>(r[12], Json)!, JsonSerializer.Deserialize<string[]>(r[13], Json)!, JsonSerializer.Deserialize<string[]>(r[14], Json)!, ReadDiff(r[0], r[15]), JsonSerializer.Deserialize<TreeMutationResult>(r[16], Json)!));
             if (state.Operations.Count + state.TreeChanges.Count != state.Revision || !state.Versions.Any(v => v.TreeVersionId == state.ActiveTreeVersionId) ||
                 state.Versions.Any(v => v.State != "DRAFT") || state.Categories.Any(n => n.State is not ("DRAFT" or "DRAFT_INACTIVE"))) throw new ExternalStorageException("Pointer hoặc state danh mục không hợp lệ.");
             // Reject unmanaged edits instead of overwriting unknown rows at computed append offsets.
+            if (state.TreeChanges.Any(o => o.Result is null)) throw new ExternalStorageException("Tree ledger result null; không ghi cây.");
+            if (state.TreeChanges.Any(o => o.Result.RegistryReconciled))
+            {
+                if (!tables.TryGetValue("TreeRegistryDetails", out var registryRows)) throw new ExternalStorageException("Registry receipt thiếu bảng đối soát; không ghi cây.");
+                for (var i = 0; i < state.TreeChanges.Count; i++)
+                {
+                    var op = state.TreeChanges[i]; if (!op.Result.RegistryReconciled) continue;
+                    var rows = registryRows.Where(r => r[0] == op.OperationId).ToArray();
+                    var checkpoints = rows.Where(r => r[1] == "CHECKPOINT" && r[2] == "CHECKPOINT").ToArray();
+                    if (checkpoints.Length != 1 || rows.Any(r => r[1] is not ("CHECKPOINT" or "IMPACT"))) throw new ExternalStorageException("Registry receipt partial/unknown.");
+                    var checkpoint = JsonSerializer.Deserialize<TreeRegistryCheckpoint>(checkpoints[0][3], Json)!;
+                    var impacts = rows.Where(r => r[1] == "IMPACT").Select(r => JsonSerializer.Deserialize<TreeRegistryImpact>(r[3], Json)!).ToArray();
+                    if (checkpoint is null || checkpoint.InventoryRevision < 0 || checkpoint.MediaRevision < 0 || impacts.Any(x => x is null || x.Kind is not ("ITEM" or "STOCK" or "DOCUMENT" or "VERSION" or "PHOTO" or "DOCX" or "PDF") || string.IsNullOrWhiteSpace(x.Id) || string.IsNullOrWhiteSpace(x.BeforeCategoryId) || string.IsNullOrWhiteSpace(x.AfterCategoryId) || x.ExpectedVersion < 1) || impacts.Select(x => x.Kind + ":" + x.Id).Distinct(StringComparer.Ordinal).Count() != impacts.Length || impacts.Length != op.Result.RegistryImpactCount || rows.Length != impacts.Length + 1) throw new ExternalStorageException("Registry receipt/diff không hợp lệ.");
+                    state.TreeChanges[i] = op with { RegistryCheckpoint = checkpoint, RegistryImpacts = impacts };
+                }
+            }
+            else if (hasRegistry) throw new ExternalStorageException("Registry details không có receipt hợp lệ.");
             var expectedTables = Tables(state);
             foreach (var table in tables)
                 if (!table.Value.Select(r => string.Join("\0", r)).SequenceEqual(expectedTables[table.Key].Skip(1).Select(r => string.Join("\0", r))))
@@ -170,30 +198,40 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
         catch (Exception e) when (e is JsonException or FormatException or OverflowException or InvalidOperationException or ArgumentException)
         { throw new ExternalStorageException("Dữ liệu schema danh mục không hợp lệ."); }
     }
+    private static string TreeResultJson(TreeMutationResult result) => result.RegistryReconciled
+        ? JsonSerializer.Serialize(result, Json)
+        : JsonSerializer.Serialize(new { result.TreeVersionId, result.TreeRevision, result.AssetRevision, result.ChangedCategoryCount, result.ChangedAssetCount, result.Replayed }, Json);
     private static Dictionary<string, List<string[]>> Tables(CategoryCatalogState s)
     {
         var tables = Headers.ToDictionary(p => p.Key, p => new List<string[]> { p.Value }, StringComparer.Ordinal);
         var last = s.Versions.Last();
         tables["SchemaVersions"].Add(["CATEGORY_V1", last.CreatedAt.ToString("O"), "TASK-006 DRAFT snapshot", s.ActiveTreeVersionId!, s.Revision.ToString(CultureInfo.InvariantCulture)]);
-        tables["Categories"].AddRange(s.Categories.Select(n => new[] {n.CategoryId,n.TreeVersionId,n.ParentId??"",n.FLevel.ToString(CultureInfo.InvariantCulture),n.DisplayOrder.ToString(CultureInfo.InvariantCulture),n.Name,n.SegmentCode,n.FullCode,n.Definition,n.State,n.Version.ToString(CultureInfo.InvariantCulture),n.SourceKey,n.SourceSheet,n.SourceRow.ToString(CultureInfo.InvariantCulture),n.SourceStt}));
-        tables["TreeVersions"].AddRange(s.Versions.Select(v => new[] {v.TreeVersionId,v.State,v.SourceHash,v.MappingVersion,v.ContentHash,v.CreatedAt.ToString("O"),v.ActorUserId}));
+        tables["Categories"].AddRange(s.Categories.Select(n => new[] { n.CategoryId, n.TreeVersionId, n.ParentId ?? "", n.FLevel.ToString(CultureInfo.InvariantCulture), n.DisplayOrder.ToString(CultureInfo.InvariantCulture), n.Name, n.SegmentCode, n.FullCode, n.Definition, n.State, n.Version.ToString(CultureInfo.InvariantCulture), n.SourceKey, n.SourceSheet, n.SourceRow.ToString(CultureInfo.InvariantCulture), n.SourceStt }));
+        tables["TreeVersions"].AddRange(s.Versions.Select(v => new[] { v.TreeVersionId, v.State, v.SourceHash, v.MappingVersion, v.ContentHash, v.CreatedAt.ToString("O"), v.ActorUserId }));
         foreach (var o in s.Operations)
         {
             var version = s.Versions.Single(v => v.TreeVersionId == o.TreeVersionId);
-            tables["Operations"].Add([o.OperationId,o.IdempotencyKey,o.ActorUserId,o.RequestHash,"CATEGORY_IMPORT","COMPLETE",o.TreeVersionId,o.TotalRows.ToString(CultureInfo.InvariantCulture),o.CompletedAt.ToString("O"),o.SourceHash,o.MappingVersion,o.AlreadyImported.ToString()]);
-            tables["ImportJobs"].Add([o.OperationId,o.SourceHash,o.MappingVersion,"COMPLETE",o.TotalRows.ToString(CultureInfo.InvariantCulture),o.TotalRows.ToString(CultureInfo.InvariantCulture),o.ActorUserId,o.CompletedAt.ToString("O")]);
-            if (!o.AlreadyImported) tables["ImportRows"].AddRange(s.Categories.Where(n => n.TreeVersionId == o.TreeVersionId).Select(n => new[] {o.OperationId,n.SourceSheet,n.SourceRow.ToString(CultureInfo.InvariantCulture),n.SourceStt,"COMPLETE",n.CategoryId,"DRAFT; giữ riêng tên nhiều mã"}));
-            tables["AuditEvents"].Add(["AUDIT-"+o.OperationId,o.OperationId,o.ActorUserId,o.TreeVersionId,o.AlreadyImported?"CATEGORY_IMPORT_NOOP":"CATEGORY_IMPORT","{}",JsonSerializer.Serialize(new {o.TotalRows,State="DRAFT"}),"Commit preview đã xác nhận",o.CompletedAt.ToString("O")]);
+            tables["Operations"].Add([o.OperationId, o.IdempotencyKey, o.ActorUserId, o.RequestHash, "CATEGORY_IMPORT", "COMPLETE", o.TreeVersionId, o.TotalRows.ToString(CultureInfo.InvariantCulture), o.CompletedAt.ToString("O"), o.SourceHash, o.MappingVersion, o.AlreadyImported.ToString()]);
+            tables["ImportJobs"].Add([o.OperationId, o.SourceHash, o.MappingVersion, "COMPLETE", o.TotalRows.ToString(CultureInfo.InvariantCulture), o.TotalRows.ToString(CultureInfo.InvariantCulture), o.ActorUserId, o.CompletedAt.ToString("O")]);
+            if (!o.AlreadyImported) tables["ImportRows"].AddRange(s.Categories.Where(n => n.TreeVersionId == o.TreeVersionId).Select(n => new[] { o.OperationId, n.SourceSheet, n.SourceRow.ToString(CultureInfo.InvariantCulture), n.SourceStt, "COMPLETE", n.CategoryId, "DRAFT; giữ riêng tên nhiều mã" }));
+            tables["AuditEvents"].Add(["AUDIT-" + o.OperationId, o.OperationId, o.ActorUserId, o.TreeVersionId, o.AlreadyImported ? "CATEGORY_IMPORT_NOOP" : "CATEGORY_IMPORT", "{}", JsonSerializer.Serialize(new { o.TotalRows, State = "DRAFT" }), "Commit preview đã xác nhận", o.CompletedAt.ToString("O")]);
         }
         if (s.TreeChanges.Count > 0)
         {
             tables["TreeChanges"] = new() { TreeChangeHeader };
             tables["TreeChangeDetails"] = new() { TreeChangeDetailHeader };
+            if (s.TreeChanges.Any(o => o.Result.RegistryReconciled)) tables["TreeRegistryDetails"] = new() { TreeRegistryHeader };
             foreach (var o in s.TreeChanges)
             {
-                tables["TreeChanges"].Add([o.OperationId,o.IdempotencyKey,o.Actor,o.RequestHash,o.Kind,o.BeforeTreeVersionId,o.TreeVersionId,o.ExpectedTreeRevision.ToString(CultureInfo.InvariantCulture),o.ExpectedAssetRevision.ToString(CultureInfo.InvariantCulture),o.Reason,o.CompletedAt.ToString("O"),o.PreviewHash,JsonSerializer.Serialize(o.Request,Json),JsonSerializer.Serialize(o.CategoryIds,Json),JsonSerializer.Serialize(o.AssetIds,Json),"DETAIL_ROWS",JsonSerializer.Serialize(o.Result,Json)]);
-                tables["TreeChangeDetails"].AddRange(o.Diff.Select(d => new[] {o.OperationId,d.CategoryId,d.Name,d.BeforePath,d.AfterPath,d.BeforeLevel.ToString(CultureInfo.InvariantCulture),d.AfterLevel.ToString(CultureInfo.InvariantCulture),d.BeforeState,d.AfterState}));
-                tables["AuditEvents"].Add(["AUDIT-"+o.OperationId,o.OperationId,o.Actor,o.TreeVersionId,o.Kind,JsonSerializer.Serialize(new {o.BeforeTreeVersionId,o.ExpectedTreeRevision}),JsonSerializer.Serialize(new {o.TreeVersionId,o.Result,DiffCount=o.Diff.Length,DetailOperationId=o.OperationId}),o.Reason,o.CompletedAt.ToString("O")]);
+                if (o.Result.RegistryReconciled)
+                {
+                    if (o.RegistryCheckpoint is null || o.RegistryImpacts is null || o.RegistryImpacts.Length != o.Result.RegistryImpactCount) throw new CategoryValidationException("Registry receipt chưa đầy đủ.");
+                    tables["TreeRegistryDetails"].Add([o.OperationId, "CHECKPOINT", "CHECKPOINT", JsonSerializer.Serialize(o.RegistryCheckpoint, Json)]);
+                    tables["TreeRegistryDetails"].AddRange(o.RegistryImpacts.Select(i => new[] { o.OperationId, "IMPACT", i.Kind + ":" + i.Id, JsonSerializer.Serialize(i, Json) }));
+                }
+                tables["TreeChanges"].Add([o.OperationId, o.IdempotencyKey, o.Actor, o.RequestHash, o.Kind, o.BeforeTreeVersionId, o.TreeVersionId, o.ExpectedTreeRevision.ToString(CultureInfo.InvariantCulture), o.ExpectedAssetRevision.ToString(CultureInfo.InvariantCulture), o.Reason, o.CompletedAt.ToString("O"), o.PreviewHash, JsonSerializer.Serialize(o.Request, Json), JsonSerializer.Serialize(o.CategoryIds, Json), JsonSerializer.Serialize(o.AssetIds, Json), "DETAIL_ROWS", TreeResultJson(o.Result)]);
+                tables["TreeChangeDetails"].AddRange(o.Diff.Select(d => new[] { o.OperationId, d.CategoryId, d.Name, d.BeforePath, d.AfterPath, d.BeforeLevel.ToString(CultureInfo.InvariantCulture), d.AfterLevel.ToString(CultureInfo.InvariantCulture), d.BeforeState, d.AfterState }));
+                tables["AuditEvents"].Add(["AUDIT-" + o.OperationId, o.OperationId, o.Actor, o.TreeVersionId, o.Kind, JsonSerializer.Serialize(new { o.BeforeTreeVersionId, o.ExpectedTreeRevision }), JsonSerializer.Serialize(new { o.TreeVersionId, Result = JsonSerializer.Deserialize<JsonElement>(TreeResultJson(o.Result)), DiffCount = o.Diff.Length, DetailOperationId = o.OperationId }), o.Reason, o.CompletedAt.ToString("O")]);
             }
         }
         return tables;

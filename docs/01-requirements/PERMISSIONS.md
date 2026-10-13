@@ -134,3 +134,15 @@ Tree mutation dùng nguyên ma trận trên. UPDATE/MOVE/DELETE Category + READ 
 ## TASK-009 local — 2026-10-13
 
 Không thay ma trận/policy auth. Ảnh cần ASSETS_READ + ASSET_FILES_DOWNLOAD/UPLOAD/DELETE đúng current Asset đủ OrgUnit+Location+Category trong cùng assignment; owner deleted/inactive scope bị chặn, kể cả biết opaque file ID. Tài liệu cần Category DRAFT/read và DOCUMENTS_READ/DOWNLOAD/MANAGE; draft/future version chỉ manager scoped, Viewer chỉ PUBLISHED_DEMO hiệu lực. File inherit owner, không nhận Drive ID/scope/URL client; gateway check lại current owner/slot/scopes trước Drive IO. Route parent trên Razor phải match file/version đã đăng ký, không thao tác nhầm entity. Role UI không thay service enforcement; counts/list filter scope trước response. Không mở quyền qua registry mới hoặc bypass guard TASK-008.
+
+## TASK-010 local — 2026-10-13
+
+Items READ/IMPORT theo Category đang DRAFT, cùng scope core TASK-005. Chưa phân loại QUARANTINED không global/list/detail; admin đủ ba ALL dùng import phục hồi. Import thay Category phải source/destination trong cùng assignment chứa ITEMS_IMPORT, không ghép hai role/assignment. Preview/job/progress/chunk/replay kiểm actor và quyền hiện hành; job của actor khác chỉ admin ALL, không lộ plan/count ngoài scope.
+
+Stock READ/UPDATE resolve Item.Category + Location.OrgUnit + Location, ba chiều cùng assignment; Item chưa tracking xác nhận, Dịch vụ, thiếu/ngừng reference hoặc đơn vị khác đều không cập nhật. Scoped list/count trước paging. API bearer/no-store; Razor cookie/anti-forgery, server kiểm mọi POST dù nút UI bị ẩn. Không đổi catalog role, passwordmin8 hoặc session policy. Guard metadata TASK-008 giữ nguyên.
+
+## TASK-011 local reports — 2026-10-13
+
+REPORTS_READ hoặc REPORTS_EXPORT và quyền nguồn phải nằm trong cùng assignment match đủ chiều: Asset=ASSETS_READ+Org/Location/Category; snapshot=STOCK_READ+ITEMS_READ+Org/Location/Category; Item catalog không snapshot/nonstock=ITEMS_READ+Category,N/AOrg/Loc. CATEGORIES_READ+action report để hiển thị node/filter/path; parent ngoài quyền bị che. Invalid/missing/inactive reference không vào count kể cả Admin, report không là recovery flow. Auth active/effective/MustChangePassword recheck mỗi request; export re-read current authority/source, không dùng rows/cache client.
+
+Item catalog chưa có **snapshot trong phạm vi** không tiết lộ snapshot hidden tồn tại; không gán địa điểm. Bộ lọc địa điểm/đơn vị/asOf không biến unlocated catalog row thành StockBalance. Scope trước counts/unit sums/ancestor totals/paging/export; không trả global AssetRevision/InventoryRevision hoặc private paths. Viewer read không export; có role export hẹp không ghép Viewer rộng. API bearer, Razor cookie read-only GET/export; không POST mutation mới hoặc thay auth/session/passwordmin8/guard.

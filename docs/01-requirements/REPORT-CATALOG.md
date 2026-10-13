@@ -25,3 +25,9 @@ Mọi report có filter, số bản ghi, thời điểm/asOf, phạm vi quyền 
 R01/R02 đếm từng Asset, không đếm Items hoặc nhân sự như tài sản; phân loại loại đối tượng rõ ràng.
 R03/R04 chỉ cho stock-tracked items, gộp theo Item+Location+Unit; không cộng khác đơn vị. UNKNOWN/không có ngưỡng được liệt kê riêng, không tự =0.
 Đề xuất xuất CSV/XLSX và in/PDF theo filter; user hiện mới yêu cầu xuất cây TXT nên định dạng report export phải chọn trong Task, không tự mở rộng tất cả.
+
+## TASK-011 local — 2026-10-13
+
+R01–R04 đã triển khai local service/API/Razor/CSV, không bật R05–R15. CSV UTF-8 BOM là lựa chọn kỹ thuật của TASK-011 theo quyền tự chủ local; XLSX/in/PDF chưa được chọn. Read/export permission kiểm riêng và scope theo từng resource trước mọi filter/count/aggregate/page/CSV. Export có thể hẹp hơn read khi role export scope hẹp; không ghép role Viewer rộng.
+
+R03/R04 có Section selector cho UNKNOWN, thiếu ngưỡng, nonstock/unconfirmed, thiếu nguồn, snapshot cần đối soát; là thông tin bổ sung trong hai report, không tạo R12/stale-policy. Thiếu minimum là kiểm tra độc lập: row quantity0/UNKNOWN cũng có thể thiếu minimum, không cộng status counts thành một tổng. Item không có snapshot được phép có row catalog N/AOrg/Location/asOf/source, không gán warehouse thành location hoặc quantity0; filter Org/Location/asOf chỉ xét snapshot có fields thực. Source/ngưỡng chưa xác minh giữ nhãn DRAFT/demo, không chính thức. [Thiết kế](../02-architecture/REPORT-DESIGN-TASK-011.md), [report](../07-testing/TEST-REPORT-TASK-011.md).

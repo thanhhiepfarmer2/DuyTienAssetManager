@@ -1,16 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
 namespace DuyTien.AssetManagement.Mobile;
 
-public partial class App : Application
+public partial class App : Microsoft.Maui.Controls.Application
 {
-    public App()
-    {
-        InitializeComponent();
-    }
-
-    protected override Window CreateWindow(IActivationState? activationState)
-    {
-        return new Window(new AppShell());
-    }
+    private readonly MainPage main;
+    public App(MainPage main) { InitializeComponent(); this.main = main; }
+    protected override Window CreateWindow(IActivationState? activationState) => new(new AppShell(main));
 }
