@@ -19,3 +19,19 @@ window.addEventListener("pageshow", () => {
         const status = form.querySelector("[data-native-status]"); if (status) status.textContent = "";
     }
 });
+
+// Keep only navigation state, never records/tokens/forms/passwords in web storage.
+try {
+const workspaceBanner = document.querySelector("[data-workspace]");
+if (workspaceBanner) {
+    const owner = [workspaceBanner.dataset.workspace, workspaceBanner.dataset.viewer, workspaceBanner.dataset.session].join(":");
+    if (sessionStorage.getItem("dt-view-owner") !== owner) { for (const k of Object.keys(sessionStorage)) if (k.startsWith("dt-view:")) sessionStorage.removeItem(k); sessionStorage.setItem("dt-view-owner", owner); }
+    const key = "dt-view:" + owner + ":" + location.pathname + location.search;
+    const saved = Number(sessionStorage.getItem(key)); if (Number.isFinite(saved) && saved > 0) requestAnimationFrame(() => window.scrollTo(0, saved));
+    window.addEventListener("pagehide", () => sessionStorage.setItem(key, String(window.scrollY)));
+}
+
+} catch (error) {
+    // Navigation state is optional when browser storage is denied; never cache business data.
+    if (!(error instanceof DOMException)) throw error;
+}

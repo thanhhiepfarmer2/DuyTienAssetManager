@@ -64,7 +64,7 @@ public sealed class LoginModel(AuthApplicationService authService) : PageModel
         }
 
         Response.Cookies.Append(
-            OpaqueSessionAuthenticationHandler.CookieName,
+            OpaqueSessionAuthenticationHandler.CookieFor(HttpContext),
             result.AccessToken,
             new CookieOptions
             {

@@ -1,5 +1,8 @@
 # REQ-001 — Mã số hóa tài sản Công ty TNHH Duy Tiến
 
+Bổ sung hiện hành2026-10-14: [REQ-002](REQ-002-local-offline.md) và ADR-002 cho phép LocalOffline filesystem/JSON thực, offline đọc/ghi, không SQL/SQLite/auto-sync. Thay online-first cho mode này; giữ Google mode và yêu cầu nghiệp vụ/source/rule OPEN/TBD dưới đây. Android tạm dừng/iOS DEFERRED_BY_USER.
+
+
 Ngày: 2026-10-07. Trạng thái: READY — các quyết định sản phẩm đủ để lập kế hoạch; mục OPEN/PROPOSED vẫn là gate của Task phụ thuộc, không phải quyết định đã duyệt.
 Nguồn: yêu cầu người dùng ngày 06–07/10/2026; gói `DuyTien_Asset_Requirements`; kết quả phân tích ba file được ghi tại [SOURCE-AUDIT](SOURCE-AUDIT.md). TASK-002 không đọc lại ba file nguồn vì chúng không nằm trong gói.
 Người xác lập nghiệp vụ: Nguyễn Thanh Hiệp.

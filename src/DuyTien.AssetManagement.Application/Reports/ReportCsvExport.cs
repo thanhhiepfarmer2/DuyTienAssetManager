@@ -4,7 +4,7 @@ namespace DuyTien.AssetManagement.Application.Reports;
 
 public sealed partial class ReportService
 {
-    public Task<ReportExport> ExportAsync(string actor, string code, ReportQuery query, CancellationToken ct = default) => writer.ExecuteAsync(async t =>
+    public Task<ReportExport> ExportAsync(string actor, string code, ReportQuery query, CancellationToken ct = default) => writer.ReadAsync(async t =>
     {
         // Fresh authority/source snapshot; export scope can be narrower than read scope.
         var report = await Build(actor, code, query, true, t); var csv = new StringBuilder(); long csvBytes = 3;

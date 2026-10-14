@@ -11,7 +11,7 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
     ISingleWriterCoordinator writer, TimeProvider clock, DuyTien.AssetManagement.Application.Assets.IAssetCatalogStore? assetStore = null, DuyTien.AssetManagement.Application.Inventory.IInventoryStore? inventoryStore = null, ITreeMutationStore? registryStore = null)
 {
     private readonly ScopeAuthorizationService authorization = new();
-    public Task<CategoryPreview> PreviewAsync(string actor, CategoryDocument document, CancellationToken ct = default) => writer.ExecuteAsync(t => PreviewCore(actor, document, t), ct);
+    public Task<CategoryPreview> PreviewAsync(string actor, CategoryDocument document, CancellationToken ct = default) => writer.ReadAsync(t => PreviewCore(actor, document, t), ct);
     private async Task<CategoryPreview> PreviewCore(string actor, CategoryDocument document, CancellationToken ct)
     {
         var auth = await authStore.ReadAsync(s => s.Clone(), ct).ConfigureAwait(false);
@@ -93,7 +93,7 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
         await store.CommitAsync(candidate, state.Revision, token).ConfigureAwait(false);
         return new CategoryImportResult(versionId, candidate.Revision, alreadyImported, document.Rows.Count);
     }, ct);
-    public Task<CategoryList> ListAsync(string actor, string? search = null, bool export = false, CancellationToken ct = default) => writer.ExecuteAsync(t => ListCore(actor, search, export, t), ct);
+    public Task<CategoryList> ListAsync(string actor, string? search = null, bool export = false, CancellationToken ct = default) => writer.ReadAsync(t => ListCore(actor, search, export, t), ct);
     private async Task<CategoryList> ListCore(string actor, string? search, bool export, CancellationToken ct)
     {
         if (search?.Length > 200) throw new CategoryValidationException("Từ khóa không vượt 200 ký tự.");

@@ -38,6 +38,7 @@ public sealed class GoogleApiRequestExecutor(
             try
             {
                 if (sheetsBudget is not null) await sheetsBudget.WaitAsync(request, cancellationToken).ConfigureAwait(false);
+                using var metric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure("google-http");
                 response = await httpClient.SendAsync(
                     request,
                     HttpCompletionOption.ResponseHeadersRead,

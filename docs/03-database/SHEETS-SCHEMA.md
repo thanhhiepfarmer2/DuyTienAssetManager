@@ -1,5 +1,8 @@
 # Schema logic đề xuất cho Google Sheets
 
+Ngoại lệ lưu trữ mới2026-10-14: [ADR-002](../02-architecture/ADR-002-local-offline.md) / REQ-002 thêm LocalOffline filesystem/JSON, không thay schema Sheets này hoặc migrate Google tự động. Bốn module/journals giữ logical contracts, auth/session/workspace riêng. Reference HTML12cột không thay VTHH20cột hoặc nguồn authoritative.
+
+
 ## TASK-007 local subset — 2026-10-13
 
 ASSET_DEMO_V1 dùng business spreadsheet, tách system auth. Headers authoritative local trong GoogleAssetCatalogStore, không apply trên Google trong lượt. Sáu bảng ghi: AssetSchemaVersions(SchemaVersion/Revision), Assets(23 cột theo AssetRecord), IdCounters(Key/LastAllocated), LegacyAliases(AliasId/Namespace/OldCode/AssetId/IsActive), AssetOperations(op/key/actor/hash/action/entity/before/after/aliases/counter/reason/time), AssetAuditEvents(before/after/alias snapshot/actor/reason/time). CodeRules(CodeRuleId/CategoryRootId/Prefix/CCC/Status/ApprovedForDemo/Version), OrgUnits(Id/ParentId/Name/State/Version), Locations(Id/ParentId/OrgUnitId/Name/State/Version) chỉ đọc, không seed/update nguồn trong CRUD.

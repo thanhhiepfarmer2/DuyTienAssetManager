@@ -11,7 +11,7 @@ public sealed class InProcessSingleWriterCoordinator : ISingleWriterCoordinator,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(operation);
-        await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+        using (var wait = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure("coordinator-wait")) await semaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             return await operation(cancellationToken).ConfigureAwait(false);

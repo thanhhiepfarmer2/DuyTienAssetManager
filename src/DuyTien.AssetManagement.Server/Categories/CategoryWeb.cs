@@ -50,11 +50,14 @@ public static class CategoryWeb
     public static bool IsExpected(Exception e) => e is CategoryValidationException or CategoryConflictException or CategoryForbiddenException or CategoryNotFoundException or ExternalStorageException;
     public static int Status(Exception e) => e switch
     {
-        CategoryForbiddenException => 403, CategoryNotFoundException => 404,
-        CategoryConflictException => 409, CategoryValidationException => 400, _ => 503
+        CategoryForbiddenException => 403,
+        CategoryNotFoundException => 404,
+        CategoryConflictException => 409,
+        CategoryValidationException => 400,
+        _ => 503
     };
     public static string Message(Exception e) => e is ExternalStorageException
-        ? "Không đọc/ghi được danh mục trên Google Sheets. Dữ liệu chưa được xác nhận; vui lòng thử lại." : e.Message;
+        ? "Không đọc/ghi được dữ liệu danh mục. Dữ liệu chưa được xác nhận; vui lòng thử lại." : e.Message;
     public static IResult Error(Exception e) => Results.Problem(statusCode: Status(e), title: Message(e));
     public static IEndpointRouteBuilder MapTask006CategoryApi(this IEndpointRouteBuilder endpoints)
     {

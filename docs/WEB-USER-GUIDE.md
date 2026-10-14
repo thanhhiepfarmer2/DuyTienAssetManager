@@ -1,5 +1,16 @@
 # Hướng dẫn web demo Duy Tiến
 
+## LocalOffline trên Windows — 2026-10-14
+
+Chạy `DuyTien-LocalOffline.cmd` sau khi đã chuẩn bị Release output một lần; launcher mở https://localhost:7008, chạy backend local không Internet/build/restore mỗi lần. Mode/workspace hiện đầu trang. Backend phải còn chạy; đây không là HTML độc lập/PWA đọc khi backend đã dừng. Tài nguyên UI đi kèm trên máy, không CDN.
+
+Workspace mới: mở liên kết **Khởi tạo workspace mới**, đặt mật khẩu admin riêng qua ô password, đăng nhập và đổi mật khẩu bắt buộc. Không có password mặc định hoặc tài khoản Google được copy. Sau đó **Quản trị → Demo GIẢ local** để chủ động tạo3nút DRAFT/đơn vị/địa điểm/rule LOCAL GIẢ nếu muốn sử dụng demo ngay. Không tự seed20744Items hoặc nguồn HTML. Dữ liệu có trước khác fixture sẽ bị chặn, không overwrite.
+
+Các luồng danh mục, tài sản, import Items20cột, snapshot, ảnh/DOCX/PDF và R01–R04 dùng cùng API/quyền/validation. Chưa có tồn vẫn UNKNOWN; DRAFT/demo chưa chính thức. Giữ key/form/version khi lỗi,409 cần reload có chủ ý, không đổi key để retry. Báo lưu thành công chỉ sau durable commit. Cây hiển thị60nút/trang; Assets/Items/report phân trang; browser chỉ lưu vị trí cuộn theo workspace/user/session, không cache dataset hoặc credential.
+
+Google mode giữ riêng cho quy trình chủ động về sau. Chưa có migration Google→local được chạy/chứng minh; không tự dùng Drive metadata nếu thiếu bytes. Workbook/rule/OrgLocation/ngưỡng OPEN/TBD không đổi.
+
+
 Checkpoint 2026-10-14: đã nối Google DEV và đang kiểm tích hợp thật bằng dữ liệu giả; xem [report hiện hành](07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md). Browser và nguồn/rule công ty chưa nghiệm thu. Đây là hướng dẫn sử dụng, không phải yêu cầu người dùng thực hiện UAT. Web được ưu tiên; mobile tạm hoãn.
 
 1. Đăng nhập bằng tài khoản ứng dụng và đổi mật khẩu khi được yêu cầu. Mật khẩu tối thiểu 8 ký tự. Viewer tra cứu; AssetEditor quản lý tài sản/ảnh; CatalogManager quản lý cây/Items/snapshot; DocumentManager quản lý hồ sơ; Admin quản trị. Mỗi hành động còn phụ thuộc assignment và scope được server kiểm tra.

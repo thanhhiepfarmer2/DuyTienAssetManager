@@ -15,6 +15,7 @@ public static class InventoryIntegrity
     }
     public static void Validate(InventoryState s)
     {
+        using var metric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure("journal-replay");
         if (s.Revision != s.Operations.Count || s.Revision < 0) throw new InventoryValidationException("Inventory revision/journal sai.");
         var items = new Dictionary<string, ItemRecord>(StringComparer.Ordinal); var jobs = new Dictionary<string, ItemImportJob>(StringComparer.Ordinal); var plans = new Dictionary<string, List<ItemImportPlanRow>>(StringComparer.Ordinal); var balances = new Dictionary<string, StockBalance>(StringComparer.Ordinal); var planIds = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal); var planRows = new Dictionary<string, HashSet<int>>(StringComparer.Ordinal); var keys = new HashSet<string>(StringComparer.Ordinal); var ops = new HashSet<string>(StringComparer.Ordinal);
         foreach (var op in s.Operations)

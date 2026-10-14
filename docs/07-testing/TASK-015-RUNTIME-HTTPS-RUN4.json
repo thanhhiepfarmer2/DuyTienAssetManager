@@ -1,0 +1,582 @@
+{
+  "source": "ACTUAL_RELEASE_PROCESS_HTTPS_PRODUCTION_LOCAL_ADAPTER_SYNTHETIC",
+  "nodes": 665,
+  "items": 20744,
+  "tlsValidation": true,
+  "browser": "NOT_RUN",
+  "checks": [
+    {
+      "case": "Explicit LocalOffline mode",
+      "passed": true
+    },
+    {
+      "case": "Initial outbound attempts zero",
+      "passed": true
+    },
+    {
+      "case": "Repeated launcher reuses same PID",
+      "passed": true
+    },
+    {
+      "case": "Login Razor accessible strict HTTPS",
+      "passed": true
+    },
+    {
+      "case": "Local fixture Razor login succeeded",
+      "passed": true
+    },
+    {
+      "case": "Workspace cookie isolated",
+      "passed": true
+    },
+    {
+      "case": "Bundled resource /js/site.js",
+      "passed": true
+    },
+    {
+      "case": "Bundled resource /lib/bootstrap/dist/css/bootstrap.min.css",
+      "passed": true
+    },
+    {
+      "case": "Bundled resource /lib/jquery/dist/jquery.min.js",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample0",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample1",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample2",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample3",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample4",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample5",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample6",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample7",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample8",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample9",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample10",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample11",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample12",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample13",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample14",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample15",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample16",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample17",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample18",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample19",
+      "passed": true
+    },
+    {
+      "case": "categories HTTP200 sample20",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample0",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample1",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample2",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample3",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample4",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample5",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample6",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample7",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample8",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample9",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample10",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample11",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample12",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample13",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample14",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample15",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample16",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample17",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample18",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample19",
+      "passed": true
+    },
+    {
+      "case": "assets HTTP200 sample20",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample0",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample1",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample2",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample3",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample4",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample5",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample6",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample7",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample8",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample9",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample10",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample11",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample12",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample13",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample14",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample15",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample16",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample17",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample18",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample19",
+      "passed": true
+    },
+    {
+      "case": "items HTTP200 sample20",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample0",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample1",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample2",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample3",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample4",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample5",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample6",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample7",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample8",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample9",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample10",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample11",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample12",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample13",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample14",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample15",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample16",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample17",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample18",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample19",
+      "passed": true
+    },
+    {
+      "case": "reportR01 HTTP200 sample20",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample0",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample1",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample2",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample3",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample4",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample5",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample6",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample7",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample8",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample9",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample10",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample11",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample12",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample13",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample14",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample15",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample16",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample17",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample18",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample19",
+      "passed": true
+    },
+    {
+      "case": "reportR04 HTTP200 sample20",
+      "passed": true
+    },
+    {
+      "case": "API fixture login",
+      "passed": true
+    },
+    {
+      "case": "Actual durable create HTTP201",
+      "passed": true
+    },
+    {
+      "case": "Same key replays same ID/code",
+      "passed": true
+    },
+    {
+      "case": "Stale version rejected",
+      "passed": true
+    },
+    {
+      "case": "Photo upload AVAILABLE",
+      "passed": true
+    },
+    {
+      "case": "Photo retry no duplicate",
+      "passed": true
+    },
+    {
+      "case": "Gateway actual bytes",
+      "passed": true
+    },
+    {
+      "case": "No runtime outbound attempts through login/write/file/report",
+      "passed": true
+    },
+    {
+      "case": "Session and asset survive actual process restart",
+      "passed": true
+    },
+    {
+      "case": "Razor cookie survives restart",
+      "passed": true
+    },
+    {
+      "case": "Photo bytes survive restart",
+      "passed": true
+    },
+    {
+      "case": "Still zero outbound attempts",
+      "passed": true
+    }
+  ],
+  "metrics": [
+    {
+      "case": "categories",
+      "path": "/Categories",
+      "coldFirstMs": 98.7155999901006,
+      "warmCount": 20,
+      "warmP50Ms": 15.920299993013032,
+      "warmP95Ms": 27.067300005001016,
+      "maxMs": 36.06319999380503,
+      "maxBytes": 24126,
+      "targetMs": 500,
+      "observedTargetMet": true
+    },
+    {
+      "case": "assets",
+      "path": "/Assets",
+      "coldFirstMs": 60.314100002869964,
+      "warmCount": 20,
+      "warmP50Ms": 16.231799992965534,
+      "warmP95Ms": 32.80159999849275,
+      "maxMs": 33.88870001072064,
+      "maxBytes": 80301,
+      "targetMs": 500,
+      "observedTargetMet": true
+    },
+    {
+      "case": "items",
+      "path": "/Items",
+      "coldFirstMs": 85.02169999701437,
+      "warmCount": 20,
+      "warmP50Ms": 57.53079999703914,
+      "warmP95Ms": 134.89319999644067,
+      "maxMs": 166.0859999974491,
+      "maxBytes": 9136,
+      "targetMs": 500,
+      "observedTargetMet": true
+    },
+    {
+      "case": "reportR01",
+      "path": "/Reports?Code=R01",
+      "coldFirstMs": 59.28589998802636,
+      "warmCount": 20,
+      "warmP50Ms": 9.85650000802707,
+      "warmP95Ms": 26.9339999940712,
+      "maxMs": 30.213100006221794,
+      "maxBytes": 76790,
+      "targetMs": 500,
+      "observedTargetMet": true
+    },
+    {
+      "case": "reportR04",
+      "path": "/Reports?Code=R04",
+      "coldFirstMs": 292.33879999083,
+      "warmCount": 20,
+      "warmP50Ms": 194.35950000479352,
+      "warmP95Ms": 241.00860000180546,
+      "maxMs": 248.3281999884639,
+      "maxBytes": 76092,
+      "targetMs": 500,
+      "observedTargetMet": true
+    }
+  ],
+  "launcherStartMs": 4418.23409999779,
+  "backendPidBeforeRestart": 6696,
+  "loginGetColdMs": 134.45969999884255,
+  "loginPostColdMs": 123.01389999629464,
+  "backendPidAfterRestart": 27448,
+  "complete": true,
+  "ownedBackendStopped": true
+}

@@ -1,5 +1,8 @@
 # QuanLyTaiSan_DuyTien
 
+Web LocalOffline (TASK-015): sau prepare Release một lần, chạy [DuyTien-LocalOffline.cmd](DuyTien-LocalOffline.cmd) để mở https://localhost:7008, không build/download mỗi lần và không cần Google/Internet. Workspace ở `%LOCALAPPDATA%\DuyTienAssets\LocalOffline\default` ngoài Git. Xem [cấu hình](docs/CONFIGURATION.md), [hướng dẫn](docs/WEB-USER-GUIDE.md), [lệnh](docs/COMMANDS.md), [bằng chứng và giới hạn](docs/07-testing/TEST-REPORT-TASK-015.md). Không tự seed/reset/sync; Android tạm dừng, iOS DEFERRED_BY_USER.
+
+
 Ứng dụng **Mã số hóa tài sản Công ty TNHH Duy Tiến** đang được phát triển theo
 từng Task nhỏ, có kiểm thử và bằng chứng.
 

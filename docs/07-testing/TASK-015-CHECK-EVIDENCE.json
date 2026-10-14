@@ -1,0 +1,10 @@
+{
+  "changedFilesBeforeEvidence": 85,
+  "localLinksChecked": 132,
+  "jsonPythonProjectParsed": 13,
+  "issues": [],
+  "head": "139155f472e61897ad3d1303d1bdefec276fa7d1",
+  "indexEmpty": true,
+  "diffCheckExit": 0,
+  "source": "AI local static checks; not a comprehensive security audit"
+}

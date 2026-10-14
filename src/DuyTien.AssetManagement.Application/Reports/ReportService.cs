@@ -28,7 +28,7 @@ public sealed partial class ReportService(IAssetCatalogStore assetStore, ICatego
         public Dictionary<string, AuthSystemState> AllowedAuth { get; } = new(StringComparer.Ordinal);
     }
     public Task<ReportResult> ReadAsync(string actor, string code, ReportQuery query, CancellationToken ct = default) =>
-        writer.ExecuteAsync(t => Build(actor, code, query, false, t), ct);
+        writer.ReadAsync(t => Build(actor, code, query, false, t), ct);
     private async Task<ReportResult> Build(string actor, string code, ReportQuery query, bool export, CancellationToken ct)
     {
         Validate(code, query); var permission = export ? "REPORTS_EXPORT" : "REPORTS_READ";

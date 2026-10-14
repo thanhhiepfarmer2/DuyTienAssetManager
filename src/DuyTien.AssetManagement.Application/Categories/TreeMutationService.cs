@@ -10,7 +10,7 @@ public sealed partial class TreeMutationService(ITreeMutationStore store, IAuthS
 {
     private readonly ScopeAuthorizationService policy = new();
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
-    public Task<TreeMutationPreview> PreviewAsync(string actor, TreeMutationRequest request, CancellationToken ct = default) => writer.ExecuteAsync(async token =>
+    public Task<TreeMutationPreview> PreviewAsync(string actor, TreeMutationRequest request, CancellationToken ct = default) => writer.ReadAsync(async token =>
     {
         request = Normalize(request); var auth = await Auth(actor, Permission(request.Kind), token);
         return Prepare(auth, actor, await store.ReadAsync(token), request).Preview;

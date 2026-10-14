@@ -11,7 +11,9 @@
 <p>@Model.Catalog.Total nút được phép xem. Chỉ đường dẫn trong phạm vi được hiển thị.</p>
 @if (Model.Catalog.Nodes.Count == 0 && Model.Error is null) { <p role="status">Chưa có danh mục trong phạm vi hoặc không tìm thấy kết quả.</p> }
 <div class="table-responsive"><table class="table"><caption>Các danh mục được phép xem</caption><thead><tr><th>Tên / cây</th><th>Cấp</th><th>Mã đoạn</th><th>Đường dẫn được phép</th></tr></thead><tbody>
-@foreach (var n in Model.Catalog.Nodes) {
+@foreach (var n in Model.Catalog.Nodes.Skip((Model.PageNumber-1)*60).Take(60)) {
 <tr><td><span style="padding-left:@(n.VisibleDepth * 1.25)rem"><a asp-page="Detail" asp-route-id="@n.CategoryId">@n.Name</a></span>@if(n.PathIsPartial){<small> (nhánh được phép)</small>}</td><td>F@n.FLevel</td><td>@n.SegmentCode</td><td>@n.FullCode<br/><small>@n.Path</small></td></tr>
 }
 </tbody></table></div>
+
+<nav aria-label="Trang cây">@if(Model.PageNumber>1){<a asp-route-Q="@Model.Q" asp-route-PageNumber="@(Model.PageNumber-1)">Trang trước</a>} · @Model.PageNumber @if(Model.PageNumber*60<Model.Catalog.Total){<a asp-route-Q="@Model.Q" asp-route-PageNumber="@(Model.PageNumber+1)">Trang sau</a>}</nav>

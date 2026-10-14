@@ -1,0 +1,103 @@
+{
+  "source": "FAKE_HTTP_GOOGLE_ADAPTER_SMALL_FIXTURE",
+  "auth": "fixture memory; not Google auth/login",
+  "pacing": "not active in fixture; not real Google latency",
+  "measures": [
+    {
+      "name": "categories",
+      "phase": "cold-service",
+      "ms": 6.9727,
+      "googleHttpCalls": 2
+    },
+    {
+      "name": "categories",
+      "phase": "warm",
+      "ms": 0.8556,
+      "googleHttpCalls": 2
+    },
+    {
+      "name": "categories",
+      "phase": "warm",
+      "ms": 0.6186,
+      "googleHttpCalls": 2
+    },
+    {
+      "name": "categories",
+      "phase": "warm",
+      "ms": 0.6098,
+      "googleHttpCalls": 2
+    },
+    {
+      "name": "assets",
+      "phase": "cold-service",
+      "ms": 14.6891,
+      "googleHttpCalls": 4
+    },
+    {
+      "name": "assets",
+      "phase": "warm",
+      "ms": 1.7121,
+      "googleHttpCalls": 4
+    },
+    {
+      "name": "assets",
+      "phase": "warm",
+      "ms": 1.426,
+      "googleHttpCalls": 4
+    },
+    {
+      "name": "assets",
+      "phase": "warm",
+      "ms": 2.5238,
+      "googleHttpCalls": 4
+    },
+    {
+      "name": "items",
+      "phase": "cold-service",
+      "ms": 19.7485,
+      "googleHttpCalls": 5
+    },
+    {
+      "name": "items",
+      "phase": "warm",
+      "ms": 13.9522,
+      "googleHttpCalls": 5
+    },
+    {
+      "name": "items",
+      "phase": "warm",
+      "ms": 2.109,
+      "googleHttpCalls": 5
+    },
+    {
+      "name": "items",
+      "phase": "warm",
+      "ms": 1.4905,
+      "googleHttpCalls": 5
+    },
+    {
+      "name": "reportsR04",
+      "phase": "cold-service",
+      "ms": 24.5616,
+      "googleHttpCalls": 5
+    },
+    {
+      "name": "reportsR04",
+      "phase": "warm",
+      "ms": 1.8371,
+      "googleHttpCalls": 5
+    },
+    {
+      "name": "reportsR04",
+      "phase": "warm",
+      "ms": 1.8506,
+      "googleHttpCalls": 5
+    },
+    {
+      "name": "reportsR04",
+      "phase": "warm",
+      "ms": 1.5109,
+      "googleHttpCalls": 5
+    }
+  ]
+}

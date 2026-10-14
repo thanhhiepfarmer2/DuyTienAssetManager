@@ -96,3 +96,9 @@ Importer phải đọc lại file nguồn và đối chiếu hash, không dùng 
 ## Checkpoint TASK-006 — 2026-10-10
 
 AI đọc lại staging trong repository: 665/15/98/552, 39 tên nhiều code, không lệch baseline. Không tìm thấy workbook XLSX gốc kể cả hidden/ignored (ngoài bin/obj/.git); chưa tái xác minh hash/header/definition gốc. Nguồn authoritative vẫn workbook Nháp lần5 đã xác lập; không thay bằng DOCX 13F1. Parser metadata đã test với workbook giả, không là bằng chứng nguồn original.
+
+## Reference tối ưu/offline bổ sung — 2026-10-14
+
+Nguồn bằng chứng: phân tích tĩnh **người dùng cung cấp**, không phải AI đọc lại file hoặc benchmark. [QuanLyVatTu_DuyTien_v4_Offline.html](https://drive.google.com/file/d/1ilMyTYJnKNbsvhie919cAElKZxBB9hh_/view): khoảng7,19MB tự chứa JS/CSS, không script src/stylesheet ngoài; dataset20744x12; IndexedDB duy-tien-material-manager/application/state-v1; snapshot RAM/Map/searchIndex chuẩn hóa/memoization/deferred search, render60tăng dần; autosave debounce900ms; XLSX/file người dùng chọn. V4 vẫn gọi Apps Script cho login/resume/mutations, offline cached user chỉ đọc và lần đầu cần Internet.
+
+Dùng làm UX/performance reference của REQ-002, không nguồn nghiệp vụ authoritative/benchmark/đề xuất rule mã theo name/path. Không tải hoặc commit HTML/dataset, không seed tự động. Không ép12cột vào contract VTHH20cột hoặc bỏ mô tả; workbook gốc/provenance/rule vẫn OPEN/TBD. LocalOffline mới cần đọc/ghi thật qua backend/JSON durable, không sao chép giới hạn offline-read-only hoặc báo đã lưu theo debounce.

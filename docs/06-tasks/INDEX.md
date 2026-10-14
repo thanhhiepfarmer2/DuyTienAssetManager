@@ -17,5 +17,7 @@
 | TASK-013 | [App iOS: nhập liệu và chụp ảnh](TASK-013.md) | TODO | DEFERRED_BY_USER14/10: iOS thiếu môi trường/thiết bị; không chặn Web |
 | TASK-014 | [Nghiệm thu, backup/restore và hướng dẫn](TASK-014.md) | IN_REVIEW | Web strictHTTPS/GoogleDEV fixture đã đạt: selected78local, finish57live exit0; browser/cookie mới/source/restore còn gate; Android tạm dừng/iOS DEFERRED_BY_USER, không chặn Web |
 
+| TASK-015 | [Web LocalOffline và tối ưu snapshot](TASK-015.md) | IN_REVIEW | REQ-002/ADR-002/PLAN-002; local21/21+affected207/207, actual Release HTTPS128/128; warm p95<500msfixture665/20744; browser/source/baselineGoogle/restore còn gate; không mobile/Google writes/commit |
+
 TASK-003 mới tạo scaffold và chốt kiến trúc; không có nghĩa TASK-004–TASK-014 đã
 được triển khai. AI cập nhật trạng thái bảng cùng trạng thái trong từng Task.

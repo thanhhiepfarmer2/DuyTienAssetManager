@@ -13,9 +13,9 @@ public sealed class LogoutModel(AuthApplicationService authService) : PageModel
 
     public async Task<IActionResult> OnPostAsync(CancellationToken cancellationToken)
     {
-        Request.Cookies.TryGetValue(OpaqueSessionAuthenticationHandler.CookieName, out var token);
+        Request.Cookies.TryGetValue(OpaqueSessionAuthenticationHandler.CookieFor(HttpContext), out var token);
         await authService.LogoutAsync(token, cancellationToken);
-        Response.Cookies.Delete(OpaqueSessionAuthenticationHandler.CookieName);
+        Response.Cookies.Delete(OpaqueSessionAuthenticationHandler.CookieFor(HttpContext));
         return RedirectToPage("/Account/Login");
     }
 }

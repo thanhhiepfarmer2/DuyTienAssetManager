@@ -1,0 +1,14 @@
+{
+  "source": "ACTUAL_RELEASE_PROCESS_HTTPS_PRODUCTION_LOCAL_ADAPTER_SYNTHETIC",
+  "nodes": 665,
+  "items": 20744,
+  "tlsValidation": true,
+  "browser": "NOT_RUN",
+  "checks": [],
+  "metrics": [],
+  "launcherStartMs": 240551.6445999965,
+  "complete": false,
+  "failureType": "URLError",
+  "failureMessage": "Details kept private; no credential printed",
+  "ownedBackendStopped": true
+}

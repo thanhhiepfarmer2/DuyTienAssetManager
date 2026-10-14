@@ -1,0 +1,6 @@
+@page
+@model DuyTien.AssetManagement.Server.Pages.Admin.LocalDemoModel
+@{ViewData["Title"]="Demo GIẢ LocalOffline";}
+<h1>Khởi tạo demo GIẢ trên workspace local</h1><p>Thao tác chủ động tạo cây 3 nút DRAFT, một đơn vị/địa điểm GIẢ và rule LOCAL chỉ cho demo. Không nhập HTML/Excel công ty, không ghi Google. Chạy lại không nhân bản hoặc reset dữ liệu. Có dữ liệu khác thì dừng để đối soát.</p>
+@if(Model.Message is not null){<p role="status">@Model.Message</p>}
+<form method="post"><button class="btn btn-primary">Khởi tạo / xác minh demo GIẢ</button></form><p><a href="/Assets/Create">Tạo tài sản demo</a> · <a href="/Items/Import">Import Items riêng</a> · <a href="/Help">Hướng dẫn</a></p>

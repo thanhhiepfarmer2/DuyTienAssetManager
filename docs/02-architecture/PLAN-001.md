@@ -1,5 +1,10 @@
 # PLAN-001 — Demo quản lý tài sản dựa trên Google Sheets/Drive
 
+## Quyết định LocalOffline mới — 2026-10-14
+
+REQ-002/ADR-002/PLAN-002 và TASK-015 cho phép web filesystem/JSON thực, ngoài Git; Google mode giữ cho thao tác chủ động về sau, không auto sync/fallback. Web trước, Android tạm dừng/iOS DEFERRED_BY_USER. Không đổi trạng thái các task trước hoặc gate hoãn. Những đoạn Google-primary/online-first dưới đây là quyết định/checkpoint lịch sử trước ngoại lệ mới.
+
+
 ## Ưu tiên hiện hành — 2026-10-14
 
 Chỉ đạo mới thay yêu cầu TASK-013: hoàn thiện Web trước (TASK-014 pha Web), Android sau; iOS DEFERRED_BY_USER vì môi trường/thiết bị chưa sẵn sàng. TASK-012 giữ IN_REVIEW/local42tests/build, phát triển/runtime UAT DEFERRED_BY_USER. Không gate mobile chặn Web, không xóa code hoặc thay bằng chứng lịch sử. TASK-003 IN_REVIEW, TASK-004 DONE; TASK-005–011/gates hoãn giữ. TASK-010/011/012 chưa commit bảo vệ; không Google live/real writes/deploy/commit/push/timeout runner mới. [Thiết kế Web](WEB-COMPLETION-DESIGN-TASK-014.md).

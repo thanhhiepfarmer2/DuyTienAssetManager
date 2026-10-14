@@ -1,0 +1,76 @@
+[
+  {
+    "project": "src/DuyTien.AssetManagement.Application/DuyTien.AssetManagement.Application.csproj",
+    "files": [
+      "src/DuyTien.AssetManagement.Application/Assets/AssetCatalogIntegrity.cs",
+      "src/DuyTien.AssetManagement.Application/Assets/AssetCrudService.cs",
+      "src/DuyTien.AssetManagement.Application/Authentication/AuthApplicationService.cs",
+      "src/DuyTien.AssetManagement.Application/Authentication/AuthModels.cs",
+      "src/DuyTien.AssetManagement.Application/Categories/CategoryCatalogService.cs",
+      "src/DuyTien.AssetManagement.Application/Categories/CategoryHistoryService.cs",
+      "src/DuyTien.AssetManagement.Application/Categories/TreeMutationService.cs",
+      "src/DuyTien.AssetManagement.Application/Concurrency/ISingleWriterCoordinator.cs",
+      "src/DuyTien.AssetManagement.Application/Diagnostics/PerformanceTrace.cs",
+      "src/DuyTien.AssetManagement.Application/Inventory/InventoryIntegrity.cs",
+      "src/DuyTien.AssetManagement.Application/Inventory/InventoryModels.cs",
+      "src/DuyTien.AssetManagement.Application/Inventory/InventoryService.cs",
+      "src/DuyTien.AssetManagement.Application/Inventory/StockService.cs",
+      "src/DuyTien.AssetManagement.Application/Media/MediaCatalogIntegrity.cs",
+      "src/DuyTien.AssetManagement.Application/Media/MediaLibraryService.cs",
+      "src/DuyTien.AssetManagement.Application/Media/MediaUploadService.cs",
+      "src/DuyTien.AssetManagement.Application/Reports/ReportCsvExport.cs",
+      "src/DuyTien.AssetManagement.Application/Reports/ReportService.cs"
+    ],
+    "exitCode": 0
+  },
+  {
+    "project": "src/DuyTien.AssetManagement.Infrastructure.Google/DuyTien.AssetManagement.Infrastructure.Google.csproj",
+    "files": [
+      "src/DuyTien.AssetManagement.Infrastructure.Google/Adapters/GoogleAssetCatalogStore.cs",
+      "src/DuyTien.AssetManagement.Infrastructure.Google/Concurrency/InProcessSingleWriterCoordinator.cs",
+      "src/DuyTien.AssetManagement.Infrastructure.Google/Http/GoogleApiRequestExecutor.cs",
+      "src/DuyTien.AssetManagement.Infrastructure.Google/Http/GoogleSheetsRequestBudget.cs"
+    ],
+    "exitCode": 0
+  },
+  {
+    "project": "src/DuyTien.AssetManagement.Infrastructure.Local/DuyTien.AssetManagement.Infrastructure.Local.csproj",
+    "files": [
+      "src/DuyTien.AssetManagement.Infrastructure.Local/LocalWorkspace.cs",
+      "src/DuyTien.AssetManagement.Infrastructure.Local/Properties/AssemblyInfo.cs"
+    ],
+    "exitCode": 0
+  },
+  {
+    "project": "src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj",
+    "files": [
+      "src/DuyTien.AssetManagement.Server/Assets/AssetWeb.cs",
+      "src/DuyTien.AssetManagement.Server/Authentication/AuthRuntimeOptions.cs",
+      "src/DuyTien.AssetManagement.Server/Authentication/OpaqueSessionAuthenticationHandler.cs",
+      "src/DuyTien.AssetManagement.Server/Categories/CategoryWeb.cs",
+      "src/DuyTien.AssetManagement.Server/Inventory/InventoryWeb.cs",
+      "src/DuyTien.AssetManagement.Server/LocalOffline/LocalDemoInitializer.cs",
+      "src/DuyTien.AssetManagement.Server/LocalOffline/LocalOfflineRegistration.cs",
+      "src/DuyTien.AssetManagement.Server/LocalOffline/PerformanceMiddleware.cs",
+      "src/DuyTien.AssetManagement.Server/LocalOffline/RequestAuthStore.cs",
+      "src/DuyTien.AssetManagement.Server/Media/MediaWeb.cs",
+      "src/DuyTien.AssetManagement.Server/Pages/Account/LocalSetup.cshtml.cs",
+      "src/DuyTien.AssetManagement.Server/Pages/Account/Login.cshtml.cs",
+      "src/DuyTien.AssetManagement.Server/Pages/Account/Logout.cshtml.cs",
+      "src/DuyTien.AssetManagement.Server/Pages/Admin/LocalDemo.cshtml.cs",
+      "src/DuyTien.AssetManagement.Server/Pages/Categories/Index.cshtml.cs",
+      "src/DuyTien.AssetManagement.Server/Program.cs"
+    ],
+    "exitCode": 0
+  },
+  {
+    "project": "tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj",
+    "files": [
+      "tests/DuyTien.AssetManagement.ArchitectureTests/LocalOfflineFixture.cs",
+      "tests/DuyTien.AssetManagement.ArchitectureTests/LocalOfflineHttpTests.cs",
+      "tests/DuyTien.AssetManagement.ArchitectureTests/LocalOfflineTests.cs",
+      "tests/DuyTien.AssetManagement.ArchitectureTests/OfflineBaselineTests.cs"
+    ],
+    "exitCode": 0
+  }
+]

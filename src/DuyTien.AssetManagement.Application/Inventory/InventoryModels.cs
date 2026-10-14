@@ -1,3 +1,4 @@
+using System.Collections.Frozen;
 using System.Text.Json.Serialization;
 namespace DuyTien.AssetManagement.Application.Inventory;
 
@@ -22,10 +23,14 @@ public sealed record StockWriteRequest(string ItemId, string LocationId, string 
 public sealed record InventoryOperation(string OperationId, string Key, string Actor, string RequestHash, string Action, string Reason, DateTimeOffset At, ItemImportJob? Job, ItemImportPlanRow[] Plan, ItemRecord[] Items, StockBalance? Balance);
 public sealed class InventoryState
 {
-    public long Revision { get; set; }
+    private long revision;
+    private IReadOnlyDictionary<string, string>? searchIndex;
+    public long Revision { get => revision; set { revision = value; searchIndex = null; } }
+    [JsonIgnore] public IReadOnlyDictionary<string, string> SearchIndex => searchIndex ??= Items.ToFrozenDictionary(i => i.ItemId, i => NormalizeSearch(i.SourceCode + " " + i.Name + " " + i.Cells[4]), StringComparer.Ordinal);
+    public static string NormalizeSearch(string text) => string.Concat(text.Normalize(System.Text.NormalizationForm.FormD).Where(c => System.Globalization.CharUnicodeInfo.GetUnicodeCategory(c) != System.Globalization.UnicodeCategory.NonSpacingMark)).Replace('đ', 'd').Replace('Đ', 'D').ToUpperInvariant();
     public List<ItemRecord> Items { get; } = []; public List<StockBalance> Balances { get; } = [];
     public List<ItemImportJob> Jobs { get; } = []; public List<ItemImportPlanRow> Plan { get; } = []; public List<InventoryOperation> Operations { get; } = [];
-    public InventoryState Clone() { var s = new InventoryState { Revision = Revision }; s.Items.AddRange(Items); s.Balances.AddRange(Balances); s.Jobs.AddRange(Jobs); s.Plan.AddRange(Plan); s.Operations.AddRange(Operations); return s; }
+    public InventoryState Clone() { var s = new InventoryState { Revision = Revision }; s.Items.AddRange(Items); s.Balances.AddRange(Balances); s.Jobs.AddRange(Jobs); s.Plan.AddRange(Plan); s.Operations.AddRange(Operations); s.searchIndex = searchIndex; return s; }
 }
 public interface IInventoryStore
 { Task<InventoryState> ReadAsync(CancellationToken ct = default); Task CommitAsync(InventoryState candidate, long expectedRevision, CancellationToken ct = default); }

@@ -7,6 +7,7 @@ public static class MediaCatalogIntegrity
     private static readonly string[] Actions = ["DOCUMENT_CREATE", "DOCUMENT_UPDATE", "DOCUMENT_ARCHIVE", "DOCUMENT_RELOCATE", "VERSION_CREATE", "VERSION_PUBLISH", "UPLOAD_PENDING", "UPLOAD_AVAILABLE", "UPLOAD_FAILED", "UPLOAD_CANCEL", "PHOTO_UPDATE", "PHOTO_DELETE"];
     public static void Validate(MediaCatalogState s)
     {
+        using var metric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure("journal-replay");
         if (s.Revision != s.Operations.Count || s.Operations.Any(o => o is null) || s.Operations.Select(o => o.OperationId).Distinct(StringComparer.Ordinal).Count() != s.Operations.Count || s.Operations.Select(o => o.Actor + "\0" + o.IdempotencyKey).Distinct(StringComparer.Ordinal).Count() != s.Operations.Count) Bad();
         var rebuilt = new MediaCatalogState();
         foreach (var o in s.Operations)

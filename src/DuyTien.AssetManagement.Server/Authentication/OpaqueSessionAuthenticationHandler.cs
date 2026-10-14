@@ -15,6 +15,7 @@ public sealed class OpaqueSessionAuthenticationHandler(
 {
     public const string SchemeName = "DuyTienOpaqueSession";
     public const string CookieName = "dt_session";
+    public static string CookieFor(HttpContext context) => context.RequestServices.GetService<DuyTien.AssetManagement.Infrastructure.Local.LocalWorkspace>() is { } workspace ? "dt_local_" + workspace.WorkspaceId : CookieName;
     public const string CredentialSourceClaim = "credential_source";
     internal const string StorageUnavailableItem = "DuyTien.AuthStorageUnavailable";
     public const string MustChangePasswordClaim = "must_change_password";
@@ -30,6 +31,7 @@ public sealed class OpaqueSessionAuthenticationHandler(
         AuthenticatedSession? session;
         try
         {
+            using var metric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure("auth");
             session = await authService.ValidateAccessTokenAsync(token, Context.RequestAborted);
         }
         catch (OperationCanceledException) when (Context.RequestAborted.IsCancellationRequested)
@@ -102,7 +104,7 @@ public sealed class OpaqueSessionAuthenticationHandler(
             return (authorization["Bearer ".Length..].Trim(), "bearer");
         }
 
-        return (Request.Cookies.TryGetValue(CookieName, out var cookie) ? cookie : null, "cookie");
+        return (Request.Cookies.TryGetValue(CookieFor(Context), out var cookie) ? cookie : null, "cookie");
     }
 
     private bool AcceptsHtml() =>

@@ -1,5 +1,19 @@
 # Bối cảnh dự án
 
+## Checkpoint LocalOffline hiện hành — 2026-10-14
+
+TASK-015 IN_REVIEW, hoàn tất phần local theo REQ-002/ADR-002/PLAN-002. Filesystem/JSON thật, private workspace/auth/bytes, snapshot/index, atomic module manifest, server scopes/versions/idempotency/guard và auth policy giữ. Build Release exit0;21/21local+budget,207/207affected regression,128/128actual Release HTTPSassertions exit0. [Report](07-testing/TEST-REPORT-TASK-015.md).
+
+Một backend LocalOffline **PID25112** chạy **https://localhost:7008**, owner Windows khớp current, HTTPS validation bật/public200/outboundAttempts0. Default workspace `%LOCALAPPDATA%\DuyTienAssets\LocalOffline\default` tách fake benchmark; không auto bootstrap/reset/seed. Launcher CMD/PS dùng Release output, không build/download mỗi lần. Warm p95 actual fixtureGIẢ665/20744: category30ms,assets36ms,Items107ms,R01 35ms,R04 249ms (làm tròn; JSON có số gốc).
+
+Browser provider unavailable/NOT_RUN; Google protected-before baseline chưa đo thực, nguồn/rule/OrgLocation/ngưỡng/restore/power-loss/OS packet trace chưa xác minh. Không đóng gate/task trước, Android tạm dừng/iOS DEFERRED_BY_USER. Google DEV/auth/PoC nguyên vẹn, không sync/data thật. HEAD139155f giữ, thay đổi chưa commit. Các checkpoint tiếp theo là lịch sử.
+
+
+## Đang thực hiện LocalOffline — 2026-10-14
+
+TASK-015 theo REQ-002/ADR-002/PLAN-002: user cho phép adapter filesystem/JSON thật cho web, không SQL/SQLite, không Google fallback/sync. Giữ task trước/gates, Android dừng/iOS hoãn. Snapshot/journals/auth/bytes local, single writer, read pinning; benchmark GIẢ665/20744; [report](07-testing/TEST-REPORT-TASK-015.md). HEAD139155f giữ, thay đổi lượt này chưa commit. Chưa ghi DONE hoặc browser/Google benchmark gate PASS. Các checkpoint dưới là lịch sử.
+
+
 ## Lưu checkpoint Google DEV lên Git — 2026-10-14
 
 Người dùng yêu cầu lưu toàn bộ dự án lên Git sau pha Web Google DEV TASK-014, cho phép commit/push lên origin/main đã xác minh. Checkpoint gồm implementation, scripts init/backup/live, tests và bằng chứng HTTPS/Google DEV; không đưa secret, backup auth, runtime hoặc build artifacts lên Git. Không thay code hoặc chạy lại build/test cho thao tác lưu này.

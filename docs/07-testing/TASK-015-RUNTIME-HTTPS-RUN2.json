@@ -1,0 +1,13 @@
+{
+  "source": "ACTUAL_RELEASE_PROCESS_HTTPS_PRODUCTION_LOCAL_ADAPTER_SYNTHETIC",
+  "nodes": 665,
+  "items": 20744,
+  "tlsValidation": true,
+  "browser": "NOT_RUN",
+  "checks": [],
+  "metrics": [],
+  "complete": false,
+  "failureType": "RuntimeError",
+  "failureMessage": "Operator script failed: Start-LocalOffline.ps1 exit 1",
+  "ownedBackendStopped": true
+}

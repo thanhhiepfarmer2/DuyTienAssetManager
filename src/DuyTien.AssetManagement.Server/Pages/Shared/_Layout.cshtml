@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="~/DuyTien.AssetManagement.Server.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @{var localWorkspace=Context.RequestServices.GetService(typeof(DuyTien.AssetManagement.Infrastructure.Local.LocalWorkspace)) as DuyTien.AssetManagement.Infrastructure.Local.LocalWorkspace;}
+    <div class="container small py-2" data-workspace="@(localWorkspace?.WorkspaceId ?? "Google")" data-viewer="@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous")" data-session="@(User.FindFirst("session_id")?.Value ?? "none")">@(localWorkspace is null?"Google DEV · DRAFT/demo":"LocalOffline · workspace "+localWorkspace.WorkspaceId[..8]+" · DRAFT/demo · dữ liệu lưu trên máy")
+    @if(localWorkspace is not null && User.Identity?.IsAuthenticated!=true){<a href="/Account/LocalSetup">Khởi tạo workspace mới</a>}</div>
     <a class="visually-hidden-focusable" href="#main-content">Đến nội dung chính</a>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-3" aria-label="Điều hướng chính">
@@ -28,7 +31,7 @@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Quản trị</a>
-                                    <ul class="dropdown-menu"><li><a class="dropdown-item" asp-page="/Admin/Users/Index">Tài khoản</a></li><li><a class="dropdown-item" asp-page="/Admin/Authorization">Phân quyền</a></li><li><a class="dropdown-item" asp-page="/Admin/SecurityEvents">Bảo mật / audit</a></li></ul>
+                                    <ul class="dropdown-menu">@if(localWorkspace is not null){<li><a class="dropdown-item" href="/Admin/LocalDemo">Demo GIẢ local</a></li>}<li><a class="dropdown-item" asp-page="/Admin/Users/Index">Tài khoản</a></li><li><a class="dropdown-item" asp-page="/Admin/Authorization">Phân quyền</a></li><li><a class="dropdown-item" asp-page="/Admin/SecurityEvents">Bảo mật / audit</a></li></ul>
                                 </li>
                             }
                         }

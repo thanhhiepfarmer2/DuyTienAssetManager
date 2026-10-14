@@ -1,7 +1,7 @@
 @page "{id}"
 @model DuyTien.AssetManagement.Server.Pages.Assets.PhotosModel
 @{ViewData["Title"]="Ảnh tài sản demo";}
-<h1>Ảnh tài sản demo</h1><p class="alert alert-warning">DRAFT_DEMO — ảnh chỉ trong phạm vi tài sản. Ngừng/hủy không xóa file Drive hoặc lịch sử.</p>
+<h1>Ảnh tài sản demo</h1><p class="alert alert-warning">DRAFT_DEMO — ảnh chỉ trong phạm vi tài sản. Ngừng/hủy không xóa bytes file hoặc lịch sử.</p>
 @if(Model.Error is not null){<div class="alert alert-danger" role="alert">@Model.Error</div>}
 @if(Model.Feedback is not null){<div class="alert alert-success" role="status">@Model.Feedback</div>}
 @if(Model.Item is {} item)

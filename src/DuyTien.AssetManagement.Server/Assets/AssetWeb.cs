@@ -4,12 +4,13 @@ using DuyTien.AssetManagement.Application.ExternalStorage;
 using DuyTien.AssetManagement.Server.Authentication;
 using Microsoft.AspNetCore.Mvc;
 namespace DuyTien.AssetManagement.Server.Assets;
+
 public static class AssetWeb
 {
     public static string Actor(ClaimsPrincipal user) => user.FindFirstValue(ClaimTypes.NameIdentifier)!;
     public static bool IsExpected(Exception e) => e is AssetValidationException or AssetConflictException or AssetForbiddenException or AssetNotFoundException or ExternalStorageException;
     public static int Status(Exception e) => e switch { AssetValidationException => 422, AssetConflictException => 409, AssetForbiddenException => 403, AssetNotFoundException => 404, _ => 503 };
-    public static string Message(Exception e) => e is ExternalStorageException ? "Không xác nhận được dữ liệu Google Sheets. Giữ dữ liệu đang nhập và thử lại cùng yêu cầu; chưa báo lưu thành công." : e.Message;
+    public static string Message(Exception e) => e is ExternalStorageException ? "Chưa xác nhận được dữ liệu lưu trữ. Giữ dữ liệu đang nhập và thử lại cùng yêu cầu; chưa báo lưu thành công." : e.Message;
     private static string Key(HttpContext context)
     {
         var values = context.Request.Headers["Idempotency-Key"];

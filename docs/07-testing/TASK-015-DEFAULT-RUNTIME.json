@@ -1,0 +1,21 @@
+{
+  "launcherExit": 0,
+  "pid": 25112,
+  "url": "https://localhost:7008",
+  "mode": "LocalOffline",
+  "workspaceId": "7686c7143de7455287d80656501d41ab",
+  "outboundAttempts": 0,
+  "tlsValidation": true,
+  "publicChecks": {
+    "/api/system/status": 200,
+    "/": 200,
+    "/Account/LocalSetup": 200,
+    "/Account/Login": 200,
+    "/js/site.js": 200,
+    "/lib/bootstrap/dist/css/bootstrap.min.css": 200
+  },
+  "profile": "default workspace; no synthetic dataset copied; no automatic admin/bootstrap",
+  "singleBackendObserved": true,
+  "windowsOwnerMatchesCurrentObserved": true,
+  "previousDefaultPidBeforeFinalReload": 11172
+}

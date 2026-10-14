@@ -5,6 +5,7 @@
     <ProjectReference Include="..\DuyTien.AssetManagement.Infrastructure.Google\DuyTien.AssetManagement.Infrastructure.Google.csproj" />
   </ItemGroup>
 
+  <ItemGroup><ProjectReference Include="../DuyTien.AssetManagement.Infrastructure.Local/DuyTien.AssetManagement.Infrastructure.Local.csproj" /></ItemGroup>
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>

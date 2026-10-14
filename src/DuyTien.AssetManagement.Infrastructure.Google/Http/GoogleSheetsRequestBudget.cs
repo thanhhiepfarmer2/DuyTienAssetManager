@@ -18,16 +18,17 @@ public sealed class GoogleSheetsRequestBudget(string path, TimeProvider? timePro
         if (!Applies(request)) return;
         while (true)
         {
-            var wait = await ReserveAsync(request.Method != HttpMethod.Get, false, ct);
+            var reservation = await ReserveAsync(request.Method != HttpMethod.Get, false, ct);
+            var wait = reservation.Delay;
             if (wait == TimeSpan.Zero) return;
             if (wait > TimeSpan.FromSeconds(65)) throw new ExternalStorageTransientException("Google request budget đang bận; giữ yêu cầu để thử lại.", false);
-            await delayAsync(wait, ct);
+            using (var metric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure(reservation.Cooldown ? "google-cooldown" : "google-pacing")) await delayAsync(wait, ct);
         }
     }
     public async Task RejectedAsync(HttpRequestMessage request, HttpStatusCode status, CancellationToken ct)
     { if (status == HttpStatusCode.TooManyRequests && Applies(request)) _ = await ReserveAsync(request.Method != HttpMethod.Get, true, ct); }
     private static bool Applies(HttpRequestMessage request) => request.RequestUri?.Host.Equals("sheets.googleapis.com", StringComparison.OrdinalIgnoreCase) == true;
-    private async Task<TimeSpan> ReserveAsync(bool write, bool rejected, CancellationToken ct)
+    private async Task<(TimeSpan Delay, bool Cooldown)> ReserveAsync(bool write, bool rejected, CancellationToken ct)
     {
         await gate.WaitAsync(ct);
         try
@@ -38,14 +39,14 @@ public sealed class GoogleSheetsRequestBudget(string path, TimeProvider? timePro
             try { cursor = File.Exists(full) ? JsonSerializer.Deserialize<Cursor>(await File.ReadAllBytesAsync(full, ct), Json) ?? throw new JsonException() : new(default, default); }
             catch (Exception e) when (e is JsonException or IOException) { throw new ExternalStorageException("Local Google budget không hợp lệ; chưa gửi request.", e); }
             var now = clock.GetUtcNow(); var ready = write ? cursor.Write : cursor.Read;
-            if (!rejected && ready > now) return ready - now;
+            if (!rejected && ready > now) return (ready - now, (write ? cursor.WriteCooldown : cursor.ReadCooldown) > now);
             var next = rejected ? now.AddMinutes(1) : now + Spacing;
             if (rejected && ready > next) next = ready;
-            var updated = write ? cursor with { Write = next } : cursor with { Read = next };
+            var updated = write ? cursor with { Write = next, WriteCooldown = rejected ? next : cursor.WriteCooldown } : cursor with { Read = next, ReadCooldown = rejected ? next : cursor.ReadCooldown };
             var temp = full + "." + Guid.NewGuid().ToString("N") + ".tmp";
             try { await File.WriteAllBytesAsync(temp, JsonSerializer.SerializeToUtf8Bytes(updated, Json), ct); File.Move(temp, full, true); }
             finally { if (File.Exists(temp)) File.Delete(temp); }
-            return TimeSpan.Zero;
+            return (TimeSpan.Zero, false);
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException) { throw new ExternalStorageException("Không giữ được Google request budget; chưa gửi request.", e); }
         finally { gate.Release(); }
@@ -55,5 +56,5 @@ public sealed class GoogleSheetsRequestBudget(string path, TimeProvider? timePro
         while (true)
         { ct.ThrowIfCancellationRequested(); try { return new(file, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); } catch (IOException) { await delayAsync(TimeSpan.FromMilliseconds(20), ct); } }
     }
-    private sealed record Cursor(DateTimeOffset Read, DateTimeOffset Write);
+    private sealed record Cursor(DateTimeOffset Read, DateTimeOffset Write, DateTimeOffset ReadCooldown = default, DateTimeOffset WriteCooldown = default);
 }

@@ -4,7 +4,7 @@ public sealed class AuthRuntimeOptions
 {
     public const string SectionName = "Auth";
 
-    public string SystemWriterLockFilePath { get; init; } = Path.Combine(
+    public string SystemWriterLockFilePath { get; set; } = Path.Combine(
         AppContext.BaseDirectory,
         ".auth-locks",
         "duytien-asset-auth-system-writer.lock");

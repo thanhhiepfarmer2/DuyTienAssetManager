@@ -13,7 +13,7 @@ public sealed class AssetCrudService(IAssetCatalogStore store, ICategoryCatalogS
 {
     private readonly ScopeAuthorizationService authorization = new();
     public async Task<AssetList> ListAsync(string actor, AssetQuery query, CancellationToken ct = default) => (await BrowseAsync(actor, query, ct)).List;
-    public Task<(AssetList List, AssetFormChoices Filters)> BrowseAsync(string actor, AssetQuery query, CancellationToken ct = default) => writer.ExecuteAsync(t => BrowseCore(actor, query, t), ct);
+    public Task<(AssetList List, AssetFormChoices Filters)> BrowseAsync(string actor, AssetQuery query, CancellationToken ct = default) => writer.ReadAsync(t => BrowseCore(actor, query, t), ct);
     private async Task<(AssetList List, AssetFormChoices Filters)> BrowseCore(string actor, AssetQuery query, CancellationToken ct)
     {
         ValidateQuery(query);
@@ -35,13 +35,13 @@ public sealed class AssetCrudService(IAssetCatalogStore store, ICategoryCatalogS
         var rows = visible.OrderBy(a => a.ObjectCode, StringComparer.Ordinal).ToArray();
         return (new(rows.Skip((query.Page - 1) * query.PageSize).Take(query.PageSize).Select(a => View(c, a)).ToArray(), rows.Length, query.Page, query.PageSize, clock.GetUtcNow()), Choices(c, actor, "ASSETS_READ"));
     }
-    public Task<AssetView> DetailAsync(string actor, string id, CancellationToken ct = default) => writer.ExecuteAsync(t => DetailCore(actor, id, t), ct);
+    public Task<AssetView> DetailAsync(string actor, string id, CancellationToken ct = default) => writer.ReadAsync(t => DetailCore(actor, id, t), ct);
     private async Task<AssetView> DetailCore(string actor, string id, CancellationToken ct)
     {
         var c = await Load(actor, "ASSETS_READ", ct);
         return View(c, Find(c, actor, "ASSETS_READ", id));
     }
-    public Task<AssetFormChoices> ChoicesAsync(string actor, bool editing = false, CancellationToken ct = default) => writer.ExecuteAsync(t => ChoicesCore(actor, editing, t), ct);
+    public Task<AssetFormChoices> ChoicesAsync(string actor, bool editing = false, CancellationToken ct = default) => writer.ReadAsync(t => ChoicesCore(actor, editing, t), ct);
     private async Task<AssetFormChoices> ChoicesCore(string actor, bool editing, CancellationToken ct)
     {
         var permission = editing ? "ASSETS_UPDATE" : "ASSETS_CREATE";
@@ -124,9 +124,23 @@ public sealed class AssetCrudService(IAssetCatalogStore store, ICategoryCatalogS
                 input.Manufacturer, input.RecordedOn, input.Condition, input.Notes, "DRAFT_DEMO", false, now, actor, now, actor, 1);
         }
         else if (input is not null)
-            after = before with { CategoryId = input.CategoryId, Name = input.Name, OrgUnitId = input.OrgUnitId, LocationId = input.LocationId,
-                CustodianRef = input.CustodianRef, Serial = input.Serial, Model = input.Model, Manufacturer = input.Manufacturer,
-                RecordedOn = input.RecordedOn, Condition = input.Condition, Notes = input.Notes, UpdatedAt = now, UpdatedBy = actor, Version = before.Version + 1 };
+            after = before with
+            {
+                CategoryId = input.CategoryId,
+                Name = input.Name,
+                OrgUnitId = input.OrgUnitId,
+                LocationId = input.LocationId,
+                CustodianRef = input.CustodianRef,
+                Serial = input.Serial,
+                Model = input.Model,
+                Manufacturer = input.Manufacturer,
+                RecordedOn = input.RecordedOn,
+                Condition = input.Condition,
+                Notes = input.Notes,
+                UpdatedAt = now,
+                UpdatedBy = actor,
+                Version = before.Version + 1
+            };
         else after = before with { IsDeleted = action == "DELETE", UpdatedAt = now, UpdatedBy = actor, Version = before.Version + 1 };
         candidate.Assets.RemoveAll(a => a.AssetId == after.AssetId); candidate.Assets.Add(after);
         if (input is not null) SetAliases(candidate, after.AssetId, input.Aliases!);

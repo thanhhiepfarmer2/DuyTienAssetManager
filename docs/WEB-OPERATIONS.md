@@ -1,5 +1,15 @@
 # Vận hành web dev — 2026-10-14
 
+## Vận hành LocalOffline — TASK-015
+
+- Prepare Release một lần theo COMMANDS; .NET10 ASP.NET Core runtime và cert localhost phải sẵn trên máy. Không publish/host Internet. Chạy `.\scripts\Start-LocalOffline.ps1` hoặc CMD ở root; `-Workspace` absolute ngoài Git nếu cần workspace khác. Launcher không build/download, không tự trust hoặc tắt TLS. Cert chưa trusted dùng hướng dẫn dev-certs đã có, không -k.
+- Launcher dùng startup mutex, kiểm cổng/backend và workspace ID trước khi reuse; không dừng backend khác. `workspace.lock` FileShare.None giữ trong suốt process; auth CLI/server có lock riêng trong cùng workspace. Không mở JSON để sửa trong lúc backend chạy. `.\scripts\Stop-LocalOffline.ps1` chỉ dừng PID có executable/start-time khớp record do launcher tạo; không stop process lạ.
+- Data/auth/journal/blob/keys/logs/process record đều ở workspace ngoài Git. Backup: dừng đúng backend, copy toàn workspace tới đích riêng được bảo vệ, không đưa auth/keys vào Git/cloud. Chưa thực hiện actual restore trong lượt này; không ghi gate restore PASS. DPAPI keys ràng buộc Windows user; review/revoke active sessions trước khi mở lại backup. Không chỉ copy manifest mà bỏ generations/blobs.
+- Corrupt/schema lạ/missing checksum/AVAILABLE thiếu bytes: fail closed, giữ nguyên file và kiểm backup; không xóa manifest để reset. File write/permission/full-disk503: giữ form/key, giải quyết lỗi storage rồi retry cùng key; commit chưa rõ có thể đã bền vững, retry sẽ replay. Power-loss/hardware-full-disk thật chưa thử, tests chỉ fault injection.
+- Generations cũ/failed-write orphan được giữ để recovery, chưa automatic compaction; theo dõi dung lượng. Atomic business descriptor cập nhật tất cả registry tree trong một commit. Fake-demo setup là workflow hai checkpoint tree→reference, chỉ báo hoàn tất khi cả hai đã xác nhận; retry idempotent.
+- Google DEV không bị reset/migration/sync. Không dùng backup chỉ có Drive manifest làm local bytes. Chuyển dữ liệu sau này phải explicit export/manifest/schema/version/logical IDs/checksums/bytes, không copy Google credentials/sessions, không sửa nguồn Google.
+
+
 ## Trạng thái Google DEV hiện hành
 
 HTTPS đã trust ở tài khoản Windows vận hành và kiểm bằng TLS validation bật; chứng chỉ backend phục vụ đã đối chiếu. Ba resource DEV cũ đúng owner-only/exact drive.file. Init explicit đã tạo 23 bảng mới và repeat no-op; cây/reference giả đã import, không đổi auth/PoC hoặc resource IDs cấu hình. [Report Google/HTTPS](07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md) là bằng chứng mới, các mô tả TLS blocked bên dưới là checkpoint trước.

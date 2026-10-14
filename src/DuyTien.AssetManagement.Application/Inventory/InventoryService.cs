@@ -11,7 +11,12 @@ public sealed partial class InventoryService(IInventoryStore store, ICategoryCat
     public const int ChunkSize = 100;
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
     private readonly ScopeAuthorizationService authorization = new();
-    private sealed record Context(InventoryState State, CategoryCatalogState Tree, AssetCatalogState References, AuthSystemState Auth, ScopeHierarchySet Hierarchies);
+    private sealed record Context(InventoryState State, CategoryCatalogState Tree, AssetCatalogState References, AuthSystemState Auth, ScopeHierarchySet Hierarchies)
+    {
+        public HashSet<string> ActiveCategories { get; } = Tree.ActiveNodes.Where(n => n.State == "DRAFT").Select(n => n.CategoryId).ToHashSet(StringComparer.Ordinal);
+        public Dictionary<(string Actor, string Permission, string Category), bool> Allowed { get; } = new();
+        public Dictionary<string, ItemRecord> ByItem { get; } = State.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
+    }
     private async Task<Context> Load(string actor, string permission, CancellationToken ct)
     {
         var auth = await authStore.ReadAsync(s => s.Clone(), ct); Require(auth, actor, permission);
@@ -23,7 +28,7 @@ public sealed partial class InventoryService(IInventoryStore store, ICategoryCat
     { if (!a.Users.Any(u => u.UserId == actor && u.State == AuthUserState.Active && !u.MustChangePassword) || !a.RoleAssignments.Any(r => r.UserId == actor && AuthAuthorizationRules.IsEffective(r, clock.GetUtcNow()) && AuthRoleCatalog.HasPermission(r.RoleCode, permission))) throw new InventoryForbiddenException(); }
     private bool Recovery(Context c, string actor) => AuthAuthorizationRules.IsActiveAdmin(c.Auth, c.Auth.Users.Single(u => u.UserId == actor), clock.GetUtcNow());
     private static ResourceScope CategoryScope(string? id) => new(new(false, null), new(false, null), new(true, id));
-    private bool CanItem(Context c, string actor, string permission, ItemRecord item) => item.CategoryId.Length > 0 && c.Tree.ActiveNodes.Any(n => n.CategoryId == item.CategoryId && n.State == "DRAFT") && authorization.IsAllowed(c.Auth, actor, permission, CategoryScope(item.CategoryId), c.Hierarchies, clock.GetUtcNow());
+    private bool CanItem(Context c, string actor, string permission, ItemRecord item) { var key = (actor, permission, item.CategoryId); if (!c.Allowed.TryGetValue(key, out var allowed)) { allowed = item.CategoryId.Length > 0 && c.ActiveCategories.Contains(item.CategoryId) && authorization.IsAllowed(c.Auth, actor, permission, CategoryScope(item.CategoryId), c.Hierarchies, clock.GetUtcNow()); c.Allowed[key] = allowed; } return allowed; }
     private void CheckImport(Context c, string actor, ItemRecord item, ItemRecord? before = null)
     {
         if (item.CategoryId.Length == 0) { if (!Recovery(c, actor)) throw new InventoryForbiddenException(); }
@@ -35,7 +40,7 @@ public sealed partial class InventoryService(IInventoryStore store, ICategoryCat
             if (before.CategoryId.Length > 0 && item.CategoryId.Length > 0 && !authorization.IsMoveAllowed(c.Auth, actor, "ITEMS_IMPORT", CategoryScope(before.CategoryId), CategoryScope(item.CategoryId), c.Hierarchies, clock.GetUtcNow())) throw new InventoryForbiddenException();
         }
     }
-    public Task<ItemPreview> PreviewAsync(string actor, ItemImportRequest request, int page = 1, int pageSize = 20, CancellationToken ct = default) => writer.ExecuteAsync(async t =>
+    public Task<ItemPreview> PreviewAsync(string actor, ItemImportRequest request, int page = 1, int pageSize = 20, CancellationToken ct = default) => writer.ReadAsync(async t =>
     { var c = await Load(actor, "ITEMS_IMPORT", t); var (rows, errors, warnings) = Prepare(c, actor, request); Page(page, pageSize); return Preview(c, request, rows, errors, warnings, page, pageSize); }, ct);
     private (ItemPlannedRow[] Rows, List<InventoryIssue> Errors, List<string> Warnings) Prepare(Context c, string actor, ItemImportRequest request)
     {
@@ -107,8 +112,8 @@ public sealed partial class InventoryService(IInventoryStore store, ICategoryCat
         }
         return job;
     }, ct);
-    public Task<ItemImportJob> JobAsync(string actor, string id, CancellationToken ct = default) => writer.ExecuteAsync(async t => { var c = await Load(actor, "ITEMS_IMPORT", t); var j = c.State.Jobs.SingleOrDefault(j => j.JobId == id) ?? throw new InventoryNotFoundException(); CheckJob(c, actor, j); return j; }, ct);
-    public Task<IReadOnlyList<ItemImportJob>> JobsAsync(string actor, CancellationToken ct = default) => writer.ExecuteAsync(async t => { var c = await Load(actor, "ITEMS_IMPORT", t); return (IReadOnlyList<ItemImportJob>)c.State.Jobs.Where(j => j.Actor == actor || Recovery(c, actor)).Where(j => c.State.Plan.Where(p => p.JobId == j.JobId).All(p => p.Row.Item.CategoryId.Length == 0 ? Recovery(c, actor) : CanItem(c, actor, "ITEMS_IMPORT", p.Row.Item))).OrderByDescending(j => j.CreatedAt).Take(50).ToArray(); }, ct);
+    public Task<ItemImportJob> JobAsync(string actor, string id, CancellationToken ct = default) => writer.ReadAsync(async t => { var c = await Load(actor, "ITEMS_IMPORT", t); var j = c.State.Jobs.SingleOrDefault(j => j.JobId == id) ?? throw new InventoryNotFoundException(); CheckJob(c, actor, j); return j; }, ct);
+    public Task<IReadOnlyList<ItemImportJob>> JobsAsync(string actor, CancellationToken ct = default) => writer.ReadAsync(async t => { var c = await Load(actor, "ITEMS_IMPORT", t); return (IReadOnlyList<ItemImportJob>)c.State.Jobs.Where(j => j.Actor == actor || Recovery(c, actor)).Where(j => c.State.Plan.Where(p => p.JobId == j.JobId).All(p => p.Row.Item.CategoryId.Length == 0 ? Recovery(c, actor) : CanItem(c, actor, "ITEMS_IMPORT", p.Row.Item))).OrderByDescending(j => j.CreatedAt).Take(50).ToArray(); }, ct);
     private void CheckJob(Context c, string actor, ItemImportJob job)
     { if (job.Actor != actor && !Recovery(c, actor)) throw new InventoryNotFoundException(); var known = c.State.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal); var checkedScopes = new HashSet<(string, string?)>(); foreach (var p in c.State.Plan.Where(p => p.JobId == job.JobId)) { known.TryGetValue(p.Row.Item.ItemId, out var before); if (checkedScopes.Add((p.Row.Item.CategoryId, before?.CategoryId))) CheckImport(c, actor, p.Row.Item, before); } }
     public Task<ItemImportJob> CommitChunkAsync(string actor, string id, int expectedProgress, string key, CancellationToken ct = default) => writer.ExecuteAsync(async t =>

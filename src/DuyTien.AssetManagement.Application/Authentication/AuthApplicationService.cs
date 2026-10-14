@@ -120,6 +120,7 @@ public sealed partial class AuthApplicationService(
     {
         var now = timeProvider.GetUtcNow();
         var normalized = NormalizeUsername(request.Username);
+        using var loginMetric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure("auth-login");
         var rateKey = $"{request.ClientKey}|{normalized}";
         if (!TryConsumeLoginAttempt(rateKey, now))
         {
@@ -256,18 +257,22 @@ public sealed partial class AuthApplicationService(
         return result;
     }
 
-    public Task<AuthenticatedSession?> ValidateAccessTokenAsync(
+    public async Task<AuthenticatedSession?> ValidateAccessTokenAsync(
         string? rawToken,
         CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(rawToken))
         {
-            return Task.FromResult<AuthenticatedSession?>(null);
+            return null;
         }
 
         var now = timeProvider.GetUtcNow();
         var tokenHash = HashToken(rawToken);
-        return store.MutateAsync(state =>
+        if (store is not IAuthSnapshotValidation { CanValidateReadOnly: true }) return await store.MutateAsync(state => Evaluate(state, true), cancellationToken);
+        var needsTouch = false;
+        var result = await store.ReadAsync(state => Evaluate(state, false), cancellationToken);
+        return needsTouch ? await store.MutateAsync(state => Evaluate(state, true), cancellationToken) : result;
+        AuthenticatedSession? Evaluate(AuthSystemState state, bool touch)
         {
             var session = state.Sessions.SingleOrDefault(item =>
                 string.Equals(item.AccessTokenHash, tokenHash, StringComparison.Ordinal));
@@ -285,6 +290,7 @@ public sealed partial class AuthApplicationService(
 
             if (now - session.LastSeenAt >= TimeSpan.FromMinutes(5))
             {
+                if (!touch) { needsTouch = true; return null; }
                 var idle = session.ClientType == AuthClientType.Mobile
                     ? session.IdleExpiresAt
                     : now.Add(session.RememberMe ? policy.RememberIdle : policy.WebIdle);
@@ -312,7 +318,7 @@ public sealed partial class AuthApplicationService(
                 user.MustChangePassword,
                 roles,
                 user.SecurityVersion);
-        }, cancellationToken);
+        }
     }
 
     public Task<RefreshResult> RefreshAsync(

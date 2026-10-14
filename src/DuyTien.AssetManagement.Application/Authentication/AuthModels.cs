@@ -125,6 +125,10 @@ public static class AuthSystemSchema
 
 public sealed record AuthSystemInitializationResult(bool Changed, int SchemaVersion);
 
+// A validated, exclusively leased local snapshot can validate without testing writer availability.
+// Legacy/remote stores retain TASK-005 fail-closed mutation semantics.
+public interface IAuthSnapshotValidation { bool CanValidateReadOnly { get; } }
+
 public interface IAuthSystemStore
 {
     Task<T> ReadAsync<T>(

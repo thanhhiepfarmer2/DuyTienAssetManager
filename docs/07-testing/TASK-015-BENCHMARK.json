@@ -1,0 +1,179 @@
+{
+  "source": "PRODUCTION_LOCAL_FILESYSTEM_SYNTHETIC_FIXTURE",
+  "nodes": 665,
+  "f1": 15,
+  "f2": 98,
+  "f3": 552,
+  "items": 20744,
+  "fixtureBuildMs": 3276.8461,
+  "startupMs": 1545.7263,
+  "workspaceLoadValidateMs": 1246.2914,
+  "startupPhasesMs": {
+    "deserialize": 650.8203,
+    "snapshot-load": 123.8648,
+    "journal-replay": 344.8498,
+    "reconcile": 352.2591,
+    "index-build": 114.0299
+  },
+  "loginGetColdMs": 410.4353,
+  "loginGetWarmP95Ms": 8.2196,
+  "loginPostColdMs": 81.0013,
+  "loginWarmP95Ms": 94.3535,
+  "externalManagedHttpRequests": 0,
+  "googleCalls": 0,
+  "metrics": [
+    {
+      "path": "/Categories",
+      "coldFirstRequestMs": 60.4775,
+      "warmCount": 20,
+      "p50Ms": 6.6491,
+      "p95Ms": 12.2505,
+      "maxMs": 16.5566,
+      "maxBytes": 24060,
+      "targetP95Ms": 500,
+      "observedTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "meanMs": 0.012561904761904764,
+          "maxMs": 0.0254
+        },
+        "auth": {
+          "meanMs": 0.07155238095238096,
+          "maxMs": 0.1395
+        },
+        "razor-render": {
+          "meanMs": 3.459195238095239,
+          "maxMs": 25.8942
+        },
+        "request": {
+          "meanMs": 8.59507142857143,
+          "maxMs": 58.4097
+        }
+      }
+    },
+    {
+      "path": "/Assets",
+      "coldFirstRequestMs": 37.3772,
+      "warmCount": 20,
+      "p50Ms": 6.1257,
+      "p95Ms": 7.8033,
+      "maxMs": 9.1379,
+      "maxBytes": 79966,
+      "targetP95Ms": 500,
+      "observedTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "meanMs": 0.008861904761904762,
+          "maxMs": 0.0237
+        },
+        "auth": {
+          "meanMs": 0.08259999999999998,
+          "maxMs": 0.8441
+        },
+        "razor-render": {
+          "meanMs": 4.522657142857142,
+          "maxMs": 27.1449
+        },
+        "request": {
+          "meanMs": 6.572876190476189,
+          "maxMs": 36.2285
+        }
+      }
+    },
+    {
+      "path": "/Items",
+      "coldFirstRequestMs": 122.2456,
+      "warmCount": 20,
+      "p50Ms": 159.1835,
+      "p95Ms": 197.373,
+      "maxMs": 264.601,
+      "maxBytes": 9070,
+      "targetP95Ms": 500,
+      "observedTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "meanMs": 1.4334523809523807,
+          "maxMs": 29.8799
+        },
+        "auth": {
+          "meanMs": 1.4834714285714288,
+          "maxMs": 29.9447
+        },
+        "snapshot-clone": {
+          "meanMs": 126.52293333333334,
+          "maxMs": 213.351
+        },
+        "razor-render": {
+          "meanMs": 1.9090904761904761,
+          "maxMs": 19.5674
+        },
+        "request": {
+          "meanMs": 150.6951,
+          "maxMs": 263.2395
+        }
+      }
+    },
+    {
+      "path": "/Reports?Code=R01",
+      "coldFirstRequestMs": 44.1473,
+      "warmCount": 20,
+      "p50Ms": 5.0213,
+      "p95Ms": 37.441,
+      "maxMs": 37.6514,
+      "maxBytes": 76293,
+      "targetP95Ms": 500,
+      "observedTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "meanMs": 0.00895714285714286,
+          "maxMs": 0.0264
+        },
+        "auth": {
+          "meanMs": 0.046347619047619054,
+          "maxMs": 0.0679
+        },
+        "razor-render": {
+          "meanMs": 3.804580952380953,
+          "maxMs": 30.766
+        },
+        "request": {
+          "meanMs": 9.133157142857144,
+          "maxMs": 42.8603
+        }
+      }
+    },
+    {
+      "path": "/Reports?Code=R04",
+      "coldFirstRequestMs": 316.7627,
+      "warmCount": 20,
+      "p50Ms": 283.3725,
+      "p95Ms": 324.7206,
+      "maxMs": 327.3178,
+      "maxBytes": 76015,
+      "targetP95Ms": 500,
+      "observedTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "meanMs": 0.010438095238095238,
+          "maxMs": 0.0202
+        },
+        "auth": {
+          "meanMs": 0.1435857142857143,
+          "maxMs": 1.9945
+        },
+        "snapshot-clone": {
+          "meanMs": 48.29193333333333,
+          "maxMs": 74.2188
+        },
+        "razor-render": {
+          "meanMs": 2.504442857142857,
+          "maxMs": 8.8957
+        },
+        "request": {
+          "meanMs": 288.50787142857143,
+          "maxMs": 326.1279
+        }
+      }
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+using DuyTien.AssetManagement.Server.LocalOffline;
 using DuyTien.AssetManagement.Application.Reports;
 using DuyTien.AssetManagement.Server.Reports;
 using DuyTien.AssetManagement.Application.Inventory;
@@ -25,6 +26,14 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+var storageMode = builder.Configuration["Storage:Mode"] ?? "Google";
+if (storageMode is not ("Google" or "LocalOffline")) throw new InvalidOperationException("Storage:Mode phải là Google hoặc LocalOffline, không fallback.");
+var localOffline = storageMode == "LocalOffline";
+if (localOffline)
+{
+    foreach (var source in builder.Configuration.Sources.OfType<Microsoft.Extensions.Configuration.Json.JsonConfigurationSource>().Where(s => Path.GetFileName(s.Path) == "secrets.json").ToArray()) builder.Configuration.Sources.Remove(source);
+    if (args.FirstOrDefault()?.StartsWith("google-", StringComparison.Ordinal) == true) throw new InvalidOperationException("Google CLI không chạy trong LocalOffline mode.");
+}
 var configuredMinimumPasswordLength = builder.Configuration.GetValue<int?>(
     "Auth:Password:MinimumLength") ?? AuthPasswordPolicy.MinimumLength;
 if (configuredMinimumPasswordLength != AuthPasswordPolicy.MinimumLength)
@@ -33,68 +42,72 @@ if (configuredMinimumPasswordLength != AuthPasswordPolicy.MinimumLength)
         "Auth:Password:MinimumLength must remain 8 for the accepted TASK-005 policy.");
 }
 
-builder.Services.AddRazorPages();
+builder.Services.AddRazorPages().AddMvcOptions(o => o.Filters.Add<PerformanceResultFilter>());
 builder.Services.AddAuthentication(OpaqueSessionAuthenticationHandler.SchemeName)
     .AddScheme<AuthenticationSchemeOptions, OpaqueSessionAuthenticationHandler>(
         OpaqueSessionAuthenticationHandler.SchemeName,
         _ => { });
 builder.Services.AddAuthorization();
-builder.Services.Configure<GoogleWorkspaceOptions>(
-    builder.Configuration.GetSection(GoogleWorkspaceOptions.SectionName));
-builder.Services.AddSingleton(
-    serviceProvider =>
-        serviceProvider.GetRequiredService<IOptions<GoogleWorkspaceOptions>>().Value);
-builder.Services.AddSafeGoogleHttpClient("GoogleOAuth", TimeSpan.FromSeconds(30));
-builder.Services.AddSafeGoogleHttpClient("GoogleApi", TimeSpan.FromSeconds(30));
-builder.Services.AddSingleton<IGoogleAccessTokenProvider>(serviceProvider =>
-    new GoogleOAuthTokenProvider(
-        serviceProvider.GetRequiredService<GoogleWorkspaceOptions>(),
-        serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleOAuth")));
-builder.Services.AddSingleton(serviceProvider => new GoogleSheetsRequestBudget(
-    serviceProvider.GetRequiredService<IOptions<AuthRuntimeOptions>>().Value.SystemWriterLockFilePath + ".sheets-budget.json"));
-builder.Services.AddSingleton(serviceProvider =>
-    new GoogleApiRequestExecutor(
-        serviceProvider.GetRequiredService<GoogleWorkspaceOptions>(),
-        serviceProvider.GetRequiredService<IGoogleAccessTokenProvider>(),
-        serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleApi"),
-        sheetsBudget: serviceProvider.GetRequiredService<GoogleSheetsRequestBudget>()));
-builder.Services.AddSingleton<GoogleSheetsDataStore>();
-builder.Services.AddSingleton<GoogleAuthSystemStore>();
-builder.Services.AddSingleton<GoogleAssetCatalogStore>();
-builder.Services.AddSingleton<IAssetCatalogStore>(p => p.GetRequiredService<GoogleAssetCatalogStore>());
-builder.Services.AddSingleton<AssetCrudService>();
-builder.Services.AddSingleton<GoogleInventoryStore>();
-builder.Services.AddSingleton<IInventoryStore>(p => p.GetRequiredService<GoogleInventoryStore>());
-builder.Services.AddSingleton<InventoryService>();
-builder.Services.AddSingleton<ReportService>();
-builder.Services.AddSingleton<GoogleCategoryCatalogStore>();
-builder.Services.AddSingleton<ICategoryCatalogStore>(p => p.GetRequiredService<GoogleCategoryCatalogStore>());
-builder.Services.AddSingleton<GoogleTreeMutationStore>();
-builder.Services.AddSingleton<ITreeMutationStore>(p => p.GetRequiredService<GoogleTreeMutationStore>());
-builder.Services.AddSingleton<GoogleWebDevInitializer>();
-builder.Services.AddSingleton<TreeMutationService>();
-builder.Services.Configure<MediaUploadOptions>(builder.Configuration.GetSection(MediaUploadOptions.SectionName));
-builder.Services.AddSingleton(p => p.GetRequiredService<IOptions<MediaUploadOptions>>().Value);
-builder.Services.AddSingleton<GoogleMediaCatalogStore>();
-builder.Services.AddSingleton<IMediaCatalogStore>(p => p.GetRequiredService<GoogleMediaCatalogStore>());
-builder.Services.AddSingleton<IManagedMediaContentStore, GoogleManagedMediaContentStore>();
-builder.Services.AddSingleton<MediaLibraryService>();
-builder.Services.AddSingleton<CategoryCatalogService>();
-builder.Services.AddSingleton<CategoryPreviewCache>();
-builder.Services.AddSingleton<IAuthSystemStore>(serviceProvider =>
-    serviceProvider.GetRequiredService<GoogleAuthSystemStore>());
-builder.Services.AddSingleton<IAssetDataStore>(serviceProvider =>
-    serviceProvider.GetRequiredService<GoogleSheetsDataStore>());
-builder.Services.AddSingleton<IPocAtomicDataStore>(serviceProvider =>
-    serviceProvider.GetRequiredService<GoogleSheetsDataStore>());
-builder.Services.AddSingleton<IPocFileStateStore>(serviceProvider =>
-    serviceProvider.GetRequiredService<GoogleSheetsDataStore>());
-builder.Services.AddSingleton<GoogleDriveFileStore>();
-builder.Services.AddSingleton<IAssetFileStore>(serviceProvider =>
-    serviceProvider.GetRequiredService<GoogleDriveFileStore>());
-builder.Services.AddSingleton<GoogleDriveAccessVerifier>();
-builder.Services.AddSingleton<GoogleWorkspaceProvisioner>();
-builder.Services.AddSingleton<ISingleWriterCoordinator, InProcessSingleWriterCoordinator>();
+if (!localOffline)
+{
+    builder.Services.Configure<GoogleWorkspaceOptions>(
+        builder.Configuration.GetSection(GoogleWorkspaceOptions.SectionName));
+    builder.Services.AddSingleton(
+        serviceProvider =>
+            serviceProvider.GetRequiredService<IOptions<GoogleWorkspaceOptions>>().Value);
+    builder.Services.AddSafeGoogleHttpClient("GoogleOAuth", TimeSpan.FromSeconds(30));
+    builder.Services.AddSafeGoogleHttpClient("GoogleApi", TimeSpan.FromSeconds(30));
+    builder.Services.AddSingleton<IGoogleAccessTokenProvider>(serviceProvider =>
+        new GoogleOAuthTokenProvider(
+            serviceProvider.GetRequiredService<GoogleWorkspaceOptions>(),
+            serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleOAuth")));
+    builder.Services.AddSingleton(serviceProvider => new GoogleSheetsRequestBudget(
+        serviceProvider.GetRequiredService<IOptions<AuthRuntimeOptions>>().Value.SystemWriterLockFilePath + ".sheets-budget.json"));
+    builder.Services.AddSingleton(serviceProvider =>
+        new GoogleApiRequestExecutor(
+            serviceProvider.GetRequiredService<GoogleWorkspaceOptions>(),
+            serviceProvider.GetRequiredService<IGoogleAccessTokenProvider>(),
+            serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleApi"),
+            sheetsBudget: serviceProvider.GetRequiredService<GoogleSheetsRequestBudget>()));
+    builder.Services.AddSingleton<GoogleSheetsDataStore>();
+    builder.Services.AddSingleton<GoogleAuthSystemStore>();
+    builder.Services.AddSingleton<GoogleAssetCatalogStore>();
+    builder.Services.AddSingleton<IAssetCatalogStore>(p => p.GetRequiredService<GoogleAssetCatalogStore>());
+    builder.Services.AddSingleton<AssetCrudService>();
+    builder.Services.AddSingleton<GoogleInventoryStore>();
+    builder.Services.AddSingleton<IInventoryStore>(p => p.GetRequiredService<GoogleInventoryStore>());
+    builder.Services.AddSingleton<InventoryService>();
+    builder.Services.AddSingleton<ReportService>();
+    builder.Services.AddSingleton<GoogleCategoryCatalogStore>();
+    builder.Services.AddSingleton<ICategoryCatalogStore>(p => p.GetRequiredService<GoogleCategoryCatalogStore>());
+    builder.Services.AddSingleton<GoogleTreeMutationStore>();
+    builder.Services.AddSingleton<ITreeMutationStore>(p => p.GetRequiredService<GoogleTreeMutationStore>());
+    builder.Services.AddSingleton<GoogleWebDevInitializer>();
+    builder.Services.AddSingleton<TreeMutationService>();
+    builder.Services.Configure<MediaUploadOptions>(builder.Configuration.GetSection(MediaUploadOptions.SectionName));
+    builder.Services.AddSingleton(p => p.GetRequiredService<IOptions<MediaUploadOptions>>().Value);
+    builder.Services.AddSingleton<GoogleMediaCatalogStore>();
+    builder.Services.AddSingleton<IMediaCatalogStore>(p => p.GetRequiredService<GoogleMediaCatalogStore>());
+    builder.Services.AddSingleton<IManagedMediaContentStore, GoogleManagedMediaContentStore>();
+    builder.Services.AddSingleton<MediaLibraryService>();
+    builder.Services.AddSingleton<CategoryCatalogService>();
+    builder.Services.AddSingleton<CategoryPreviewCache>();
+    builder.Services.AddSingleton<IAuthSystemStore>(serviceProvider =>
+        new RequestAuthStore(serviceProvider.GetRequiredService<GoogleAuthSystemStore>()));
+    builder.Services.AddSingleton<IAssetDataStore>(serviceProvider =>
+        serviceProvider.GetRequiredService<GoogleSheetsDataStore>());
+    builder.Services.AddSingleton<IPocAtomicDataStore>(serviceProvider =>
+        serviceProvider.GetRequiredService<GoogleSheetsDataStore>());
+    builder.Services.AddSingleton<IPocFileStateStore>(serviceProvider =>
+        serviceProvider.GetRequiredService<GoogleSheetsDataStore>());
+    builder.Services.AddSingleton<GoogleDriveFileStore>();
+    builder.Services.AddSingleton<IAssetFileStore>(serviceProvider =>
+        serviceProvider.GetRequiredService<GoogleDriveFileStore>());
+    builder.Services.AddSingleton<GoogleDriveAccessVerifier>();
+    builder.Services.AddSingleton<GoogleWorkspaceProvisioner>();
+    builder.Services.AddSingleton<ISingleWriterCoordinator, InProcessSingleWriterCoordinator>();
+}
+else builder.AddLocalOffline();
 builder.Services.Configure<AuthRuntimeOptions>(
     builder.Configuration.GetSection(AuthRuntimeOptions.SectionName));
 builder.Services.AddSingleton(serviceProvider =>
@@ -127,21 +140,24 @@ builder.Services.AddSingleton(new AuthPolicyOptions
     MaxActiveSessionsPerUser = builder.Configuration.GetValue<int?>("Auth:Sessions:MaxActivePerUser") ?? 5
 });
 builder.Services.AddSingleton<AuthApplicationService>();
-builder.Services.AddSingleton<PocAssetWriteService>();
-builder.Services.AddSingleton<PocFileWriteService>();
-builder.Services.AddSingleton(serviceProvider =>
+if (!localOffline)
+{
+    builder.Services.AddSingleton<PocAssetWriteService>();
+    builder.Services.AddSingleton<PocFileWriteService>();
+}
+if (!localOffline) builder.Services.AddSingleton(serviceProvider =>
     new GoogleOAuthBootstrapper(
         serviceProvider.GetRequiredService<GoogleWorkspaceOptions>(),
         serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleOAuth")));
 
 var app = builder.Build();
 
-if (await GoogleWorkspaceCommandRunner.TryRunAsync(args, app.Services))
+if (!localOffline && await GoogleWorkspaceCommandRunner.TryRunAsync(args, app.Services))
 {
     return;
 }
 
-if (await WebDevCommandRunner.TryRunAsync(args, app.Services, app.Environment))
+if (!localOffline && await WebDevCommandRunner.TryRunAsync(args, app.Services, app.Environment))
 {
     return;
 }
@@ -160,6 +176,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UsePerformanceTrace();
+app.Use(async (context, next) => { using var scope = RequestAuthStore.Begin(); await next(); });
 app.UseTask005SessionAuthentication();
 app.Use(async (context, next) =>
 {
@@ -207,7 +225,12 @@ app.MapTask009MediaApi();
 app.MapTask010InventoryApi();
 app.MapTask011ReportApi();
 
-app.MapLocalSystemStatus();
+if (localOffline)
+{
+    var workspace = app.Services.GetRequiredService<DuyTien.AssetManagement.Infrastructure.Local.LocalWorkspace>();
+    app.MapGet("/api/system/status", (HttpContext context) => { context.Response.Headers.CacheControl = "no-store"; return Results.Ok(new { state = "LOCAL_OFFLINE", mode = "LocalOffline", workspaceId = workspace.WorkspaceId, singleWriterMode = true, requiresGoogle = false, outboundAttempts = OfflineOutboundGuard.Attempts }); });
+}
+else app.MapLocalSystemStatus();
 
 await using var authWriterLease = await app.Services
     .GetRequiredService<IAuthWriterLeaseManager>()

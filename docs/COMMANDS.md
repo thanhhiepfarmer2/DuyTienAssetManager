@@ -648,3 +648,24 @@ dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagem
 78/78 passed, 0 failed/skipped, exit 0; không full UAT task trước. `GoogleSheetsRequestBudget` test dùng fake clock, không là timeout phiên thực. GET Razor bằng bearer được server chấp nhận là HTTP rendered evidence, khác cookie/browser UAT; cookie cũ từng trả302 được giữ trong report.
 
 Preservation trước/sau: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Compare-Task014DevBackups.ps1 -BeforePath '<pre .dpapi ngoài Git>' -AfterPath '<post .dpapi ngoài Git>'`; đã exit0/Poc+existing credentials/roles/scopes preserved. Không in giá trị nhạy cảm.
+
+## TASK-015 — trước thay đổi runtime
+
+`$env:DUYTIEN_BASELINE_OUTPUT = Join-Path (Get-Location) 'docs/07-testing/TASK-015-BASELINE.json'` rồi `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~OfflineBaselineTests"`. Fixture HTTP giả, không Google live latency.
+
+## TASK-015 — LocalOffline build/test/run
+
+Prepare (dev only, launcher không chạy các lệnh này): `dotnet restore src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --ignore-failed-sources -p:NuGetAudit=false`; `dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj -c Release --no-restore --nologo -v:minimal`.
+
+Tests: `$env:DUYTIEN_OFFLINE_BENCHMARK_OUTPUT=Join-Path (Get-Location) 'docs/07-testing/TASK-015-BENCHMARK.json'`; `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~LocalOfflineTests|FullyQualifiedName~LocalOfflineHttpTests"`.
+
+Run: `.\scripts\Start-LocalOffline.ps1` hoặc double-click `DuyTien-LocalOffline.cmd`; `-NoBrowser` dùng kiểm launcher. Stop đúng process: `.\scripts\Stop-LocalOffline.ps1`. Workspace mặc định `%LOCALAPPDATA%\DuyTienAssets\LocalOffline\default`, ngoài Git. HTTPS `https://localhost:7008`; launcher không trust/bypass TLS, không dừng backend khác.
+
+### TASK-015 — actual Release/HTTPS fixture (AI đã chạy)
+
+1. Set `$env:DUYTIEN_OFFLINE_RUNTIME_FIXTURE=Join-Path $env:LOCALAPPDATA ('DuyTienAssets\LocalOffline\FAKE-TASK015-'+[guid]::NewGuid().ToString('N'))` cùng DUYTIEN_OFFLINE_BENCHMARK_OUTPUT ở trên; chạy local filter để export riêng fixture đã kiểm. Target phải mới, không resource có trước. Đây là dữ liệu GIẢ, không migration nguồn.
+2. `dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj -c Release --no-restore --nologo -v:minimal` (server dùng output này phải dừng đúng PID trước build).
+3. `python -B scripts/Test-Task015OfflineRuntime.py --workspace <FAKE-TASK015-path-outside-Git> --output docs/07-testing/TASK-015-RUNTIME-HTTPS.json`. Runner chỉ chấp nhận fake marker, giữ token/cookie RAM, private operator logs, tự stop/start đúng owned process, TLS validation bật. Không script Google/UAT secret/stdin checkpoint. Các run1–4 evidence lịch sử giữ.
+4. Start default qua `Start-LocalOffline.ps1 -NoBrowser` từ subprocess stdio→private file/stdin DEVNULL khi automation; không dùng capture_output pipe giữ sống bởi child background. Thao tác người dùng chạy CMD/PS bình thường mở URL theo default browser, không build/restore/download.
+
+Scoped whitespace formatter5projects --no-restore --include exact files trong TASK-015-FORMAT-EVIDENCE.json. `node --check src/DuyTien.AssetManagement.Server/wwwroot/js/site.js`; PowerShell Parser.ParseFile cho start/stop; Python ast.parse runner không pyc. Regression filter207cases gồm AuthApplicationServiceTests/AuthSessionTimeoutTests/ScopeAuthorizationTests/AuthApiIntegrationTests/AuthRazorUserDetailTests/GoogleAssetCatalogTests/GoogleTreeMutationTests/InventoryTests/InventoryHttpRazorTests/ReportTests/ReportHttpRazorTests/WebIntegrationTests/InProcessSingleWriterCoordinatorTests/CategoryHttpRazorTests/ManagedMediaHttpRazorTests/TreeMutationHttpRazorTests/GoogleSheetsRequestBudgetTests, ghép `FullyQualifiedName~...` bằng `|`; không Google live/timeout dài/mobile.
