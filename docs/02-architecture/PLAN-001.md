@@ -62,7 +62,7 @@ TASK-005 giữ `IN_REVIEW`: G2a/G2b PASS_MANUAL; G2c và browser còn mở DEFER
 | 10 | [TASK-011](../06-tasks/TASK-011.md) | IN_REVIEW | Local R01–R04/API/Razor/scopedCSV, build sạch78+36tests | Ngoại lệ13/10 khi TASK-007/010 IN_REVIEW; source/stock/ngưỡng/Google/browser còn gate |
 | 11 | [TASK-012](../06-tasks/TASK-012.md) | IN_REVIEW | Android MAUI local auth/assets/ảnh; build sạch42/42tests | Ngoại lệ13/10 khi TASK-005/007/009 IN_REVIEW; runtime/device/camera/Google còn gate |
 | 12 | [TASK-013](../06-tasks/TASK-013.md) | TODO | App iOS hoãn DEFERRED_BY_USER | Môi trường/thiết bị chưa sẵn sàng; không chặn Web |
-| 13 | [TASK-014](../06-tasks/TASK-014.md) | IN_REVIEW | Web local: menu/registry/luồng/hướng dẫn; 126 checks/build đạt, runtime TLS blocked | Mobile không chặn Web; giữ gate browser/Google/source/restore |
+| 13 | [TASK-014](../06-tasks/TASK-014.md) | IN_REVIEW | Web local + Google DEV fixture: HTTPS/registry/scope thật, selected78local/finish57live exit0 | Mobile không chặn Web; browser/cookie mới/source/restore còn gate |
 
 Chi tiết và trạng thái authoritative nằm tại [INDEX](../06-tasks/INDEX.md). Không
 bắt mọi Task chờ toàn bộ sản phẩm, nhưng không bỏ qua gate trực tiếp; không dựng
@@ -96,3 +96,5 @@ fake adapter không thay live Google, Android không thay iOS. Tài liệu READY
 có nghĩa feature đã hoàn thành.
 
 Checkpoint Web 14/10: [Report](../07-testing/TEST-REPORT-TASK-014-WEB.md). Phát triển/runtime Android TASK-012 DEFERRED_BY_USER; iOS TASK-013 DEFERRED_BY_USER do môi trường/thiết bị chưa sẵn. Không tự chuyển sang mobile từ local Web pass.
+
+Checkpoint Google DEV hiện hành14/10: [Report](../07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md). Quyền live/migration/dữ liệu giả chỉ pha Web; không mở lại UAT/timeout đã hoãn, không chuyển mobile/DONE. Backup/plan không là actual restore.

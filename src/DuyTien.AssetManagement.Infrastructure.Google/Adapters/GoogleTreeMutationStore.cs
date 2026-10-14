@@ -91,10 +91,11 @@ public sealed class GoogleTreeMutationStore(GoogleWorkspaceOptions options, Goog
             using var document = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync(ct), cancellationToken: ct);
             var titles = document.RootElement.GetProperty("sheets").EnumerateArray().Select(s => s.GetProperty("properties").GetProperty("title").GetString()).ToArray();
             var known = GoogleCategoryCatalogStore.Headers.Keys.Concat(["TreeChanges", "TreeChangeDetails", "TreeRegistryDetails"])
-                .Concat(GoogleAssetCatalogStore.Headers.Keys).Concat(GoogleAssetCatalogStore.ReferenceHeaders.Keys).Concat(GoogleInventoryStore.Headers.Keys).Concat(GoogleMediaCatalogStore.Headers.Keys).ToHashSet(StringComparer.Ordinal);
+                .Concat(GoogleLegacyDevTables.Names).Concat(GoogleAssetCatalogStore.Headers.Keys).Concat(GoogleAssetCatalogStore.ReferenceHeaders.Keys).Concat(GoogleInventoryStore.Headers.Keys).Concat(GoogleMediaCatalogStore.Headers.Keys).ToHashSet(StringComparer.Ordinal);
             if (titles.Any(t => t is null || !known.Contains(t)) || titles.Distinct(StringComparer.Ordinal).Count() != titles.Length) throw new ExternalStorageException("Bảng metadata ngoài registry đã đối soát/không hợp lệ; không ghi cây.");
             if (inventory is null && titles.Any(t => GoogleInventoryStore.Headers.ContainsKey(t!)) || media is null && titles.Any(t => GoogleMediaCatalogStore.Headers.ContainsKey(t!)))
                 throw new ExternalStorageException("Có bảng đối tượng chưa có adapter đối soát; không coi là rỗng và không ghi cây.");
+            await GoogleLegacyDevTables.ValidateAsync(options, api, titles.Select(t => t!), ct);
             // Registered adapters MUST validate complete headers, journal and owner references before returning.
         }
         catch (Exception e) when (e is JsonException or InvalidOperationException or KeyNotFoundException) { throw new ExternalStorageException("Metadata business không hợp lệ; không ghi cây."); }

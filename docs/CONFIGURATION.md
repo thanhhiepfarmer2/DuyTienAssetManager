@@ -92,8 +92,10 @@ Các tên khóa dưới đây đã được duyệt; không chứa giá trị th
 
 ## Host và HTTPS
 
-- Local dùng launch profile HTTPS của ASP.NET Core. Chứng thư dev trên máy hiện có
-  nhưng chưa được trust toàn hệ thống.
+- Local dùng launch profile HTTPS của ASP.NET Core. Checkpoint 2026-10-14 đã trust
+  development cert của tài khoản Windows vận hành; HTTPS validation bật và cert
+  backend phục vụ đã được đối chiếu với CurrentUser/My. Bằng chứng cũ chưa trust
+  bên dưới là lịch sử; không suy thành trust cho máy/client khác.
 - Môi trường sử dụng phải công bố một HTTPS endpoint dùng được từ mạng công ty và
   Internet. Nhà cung cấp host, domain, TLS/reverse proxy và `ASPNETCORE_URLS`
   chưa được xác lập.
@@ -203,3 +205,11 @@ Registry6tab MEDIA_V1 chỉ tạo trong explicit write, không Google apply tron
 ## Android TASK-012 local — backend và lưu phiên
 
 URL môi trường nhập tại màn hình login MAUI, chỉ HTTPS (không userinfo/query/fragment), lưu Preferences key duytien.backend.url. Không URL công ty mặc định/Google credential/client secret/SQL/offline store. URL là cấu hình không bí mật; endpoint/TLS phải được thiết bị tin cậy, host/domain vẫn TBD. Không bypass certificate hoặc bật cleartext. App dùng bearer headers, không tự theo redirect hoặc cookie. Token pair và refresh-in-flight marker lưu một SecureStorage entry duytien.mobile.session.v1 ràng buộc URL; không lưu password/role/scope authority. Backup Android tắt, logout/revoke xóa entry qua adapter; OS storage/delete/restore chưa kiểm thực. Thay backend yêu cầu logout trước, data/form/photo RAM không chuyển qua tài khoản/môi trường. [Thiết kế](02-architecture/MOBILE-ANDROID-DESIGN-TASK-012.md).
+
+## TASK-014 Google DEV / quota — 2026-10-14
+
+Ba resource hiện có đã được xác minh đúng tên legacy DEV, owner-only, distinct, token exact drive.file; không tạo resource trùng/đổi ACL. Init mới chỉ explicit CLI và cùng lease; Category/receipt qua operations đã kiểm quyền. Backup DPAPI ngoài Git, Drive mới có manifest, chưa restore.
+
+Production GoogleApiRequestExecutor dùng GoogleSheetsRequestBudget tại `Auth:SystemWriterLockFilePath + .sheets-budget.json`, chỉ timestamp operational, không business/auth rows hoặc secret. Read/write pacing riêng 1250 ms và cooldown42960s, giữ qua restart. Không chỉnh file khi backend đang chạy. Cursor lỗi fail-closed; kiểm permission/file integrity, không sửa Sheets/guard để tránh429. Độ trễ có thể tăng do full registry reads; chưa là bằng chứng throughput/performance công ty.
+
+[Report hiện hành](07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md). Mật khẩu UAT chỉ prompt/ngoài repo, runner xóa khóa ngay khi đọc/finally. Session resume DPAPI ngoài Git, xóa sau hoàn tất; không đặt credential vào args/log.

@@ -50,11 +50,14 @@ builder.Services.AddSingleton<IGoogleAccessTokenProvider>(serviceProvider =>
     new GoogleOAuthTokenProvider(
         serviceProvider.GetRequiredService<GoogleWorkspaceOptions>(),
         serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleOAuth")));
+builder.Services.AddSingleton(serviceProvider => new GoogleSheetsRequestBudget(
+    serviceProvider.GetRequiredService<IOptions<AuthRuntimeOptions>>().Value.SystemWriterLockFilePath + ".sheets-budget.json"));
 builder.Services.AddSingleton(serviceProvider =>
     new GoogleApiRequestExecutor(
         serviceProvider.GetRequiredService<GoogleWorkspaceOptions>(),
         serviceProvider.GetRequiredService<IGoogleAccessTokenProvider>(),
-        serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleApi")));
+        serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleApi"),
+        sheetsBudget: serviceProvider.GetRequiredService<GoogleSheetsRequestBudget>()));
 builder.Services.AddSingleton<GoogleSheetsDataStore>();
 builder.Services.AddSingleton<GoogleAuthSystemStore>();
 builder.Services.AddSingleton<GoogleAssetCatalogStore>();
@@ -66,7 +69,9 @@ builder.Services.AddSingleton<InventoryService>();
 builder.Services.AddSingleton<ReportService>();
 builder.Services.AddSingleton<GoogleCategoryCatalogStore>();
 builder.Services.AddSingleton<ICategoryCatalogStore>(p => p.GetRequiredService<GoogleCategoryCatalogStore>());
-builder.Services.AddSingleton<ITreeMutationStore, GoogleTreeMutationStore>();
+builder.Services.AddSingleton<GoogleTreeMutationStore>();
+builder.Services.AddSingleton<ITreeMutationStore>(p => p.GetRequiredService<GoogleTreeMutationStore>());
+builder.Services.AddSingleton<GoogleWebDevInitializer>();
 builder.Services.AddSingleton<TreeMutationService>();
 builder.Services.Configure<MediaUploadOptions>(builder.Configuration.GetSection(MediaUploadOptions.SectionName));
 builder.Services.AddSingleton(p => p.GetRequiredService<IOptions<MediaUploadOptions>>().Value);
@@ -132,6 +137,11 @@ builder.Services.AddSingleton(serviceProvider =>
 var app = builder.Build();
 
 if (await GoogleWorkspaceCommandRunner.TryRunAsync(args, app.Services))
+{
+    return;
+}
+
+if (await WebDevCommandRunner.TryRunAsync(args, app.Services, app.Environment))
 {
     return;
 }

@@ -15,7 +15,7 @@
 | TASK-011 | [Báo cáo tài sản và tồn hết/sắp hết](TASK-011.md) | IN_REVIEW | Ngoại lệ13/10 local khi TASK-007/010 IN_REVIEW; build sạch78/78 report+36/36 hồi quy; nguồn/stock/ngưỡng/Google/browser chưa đạt |
 | TASK-012 | [App Android: nhập liệu và chụp ảnh](TASK-012.md) | IN_REVIEW | Ngoại lệ13/10 local khi TASK-005/007/009 IN_REVIEW; Android build sạch,42/42 tests; device/UI/camera/OS storage/TLS/Google NOT_RUN; phát triển/runtime DEFERRED_BY_USER14/10 tới sau Web |
 | TASK-013 | [App iOS: nhập liệu và chụp ảnh](TASK-013.md) | TODO | DEFERRED_BY_USER14/10: iOS thiếu môi trường/thiết bị; không chặn Web |
-| TASK-014 | [Nghiệm thu, backup/restore và hướng dẫn](TASK-014.md) | IN_REVIEW | Pha Web: build sạch, 126/126 checks local; HTTPS runtime BLOCKED_TLS_TRUST, browser/Google/source/restore chưa đạt gate; Android sau, iOS DEFERRED_BY_USER, không chặn Web |
+| TASK-014 | [Nghiệm thu, backup/restore và hướng dẫn](TASK-014.md) | IN_REVIEW | Web strictHTTPS/GoogleDEV fixture đã đạt: selected78local, finish57live exit0; browser/cookie mới/source/restore còn gate; Android tạm dừng/iOS DEFERRED_BY_USER, không chặn Web |
 
 TASK-003 mới tạo scaffold và chốt kiến trúc; không có nghĩa TASK-004–TASK-014 đã
 được triển khai. AI cập nhật trạng thái bảng cùng trạng thái trong từng Task.

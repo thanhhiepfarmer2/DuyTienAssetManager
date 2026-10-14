@@ -612,3 +612,39 @@ try {
 } finally { $taskWebClient.Dispose(); $taskWebHandler.Dispose() }
 $taskWebProbe | ConvertTo-Json -Depth 5 -Compress
 ```
+
+## TASK-014 Google DEV — 2026-10-14
+
+Không mobile, không PoC/init/bootstrap lại. Web dừng và CLI lấy cùng process lease.
+
+```powershell
+dotnet dev-certs https --check --trust
+dotnet dev-certs https --trust
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Backup-Task014GoogleDev.ps1 -Backup
+dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal
+dotnet run --project src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-build --no-restore --launch-profile https -- google-web-dev-init
+```
+
+Init chỉ tạo Assets/Inventory/Media hoàn toàn vắng và reference headers, không marker Category sai pointer. Partial/unknown/schema/legacy sai dừng. Category import DRAFT và tree receipt tạo qua thao tác đã kiểm quyền. Demo reference dùng `google-web-dev-demo-references <fake-root-id...>` sau import GIẢ TASK014_FAKE; cần dừng web. Backup DPAPI ngoài Git, Drive manifest chưa là backup bytes/restore PASS.
+
+Kiểm riêng init/legacy guard: `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebDevInitialization"`.
+
+Live HTTP runner: `python -u -B scripts/Test-Task014WebLive.py --phase all`; retry/reconcile dùng `--resume`, giữ key/payload và session DPAPI ngoài Git. Không TLS bypass; khóa UAT xóa ngay khi đọc và finally; checkpoint session xóa sau hoàn tất.
+
+Restore plan không ghi Google: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Test-Task014RestorePlan.ps1 -BackupPath '<file .dpapi ngoài Git vừa tạo>'`. Chỉ kiểm đầu vào/coverage, không restore PASS. Restore thật cần hai đích DEV mới, owner-only, typed cells/adapter ledger/IDs/Drive bytes/session handling; không dùng lệnh provisioning hiện tại để ghi đè IDs cấu hình.
+
+Hồi quy local đã chạy: `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebDevInitialization|FullyQualifiedName~TreeRegistry|FullyQualifiedName~WebIntegration|FullyQualifiedName~GoogleTreeMutationTests"`.
+
+Checkpoint phần còn lại: `python -u -B scripts/Test-Task014WebLive.py --phase finish --resume` dùng dữ liệu/key đã lưu, không chạy lại các bước asset/media/Item/snapshot đã đạt.
+
+Quota checks (fake clock, không elapsed policy/UAT): `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~GoogleSheetsRequestBudget|FullyQualifiedName~GoogleApiRequestExecutor"`.
+
+Final quota/web regression đã chạy (sau format):
+
+```powershell
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~GoogleSheetsRequestBudget|FullyQualifiedName~GoogleAdapterHttpTests|FullyQualifiedName~WebDevInitialization|FullyQualifiedName~TreeRegistry|FullyQualifiedName~WebIntegration|FullyQualifiedName~GoogleTreeMutationTests"
+```
+
+78/78 passed, 0 failed/skipped, exit 0; không full UAT task trước. `GoogleSheetsRequestBudget` test dùng fake clock, không là timeout phiên thực. GET Razor bằng bearer được server chấp nhận là HTTP rendered evidence, khác cookie/browser UAT; cookie cũ từng trả302 được giữ trong report.
+
+Preservation trước/sau: `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/Compare-Task014DevBackups.ps1 -BeforePath '<pre .dpapi ngoài Git>' -AfterPath '<post .dpapi ngoài Git>'`; đã exit0/Poc+existing credentials/roles/scopes preserved. Không in giá trị nhạy cảm.

@@ -1,4 +1,18 @@
-# Vận hành web dev — checkpoint 2026-10-14
+# Vận hành web dev — 2026-10-14
+
+## Trạng thái Google DEV hiện hành
+
+HTTPS đã trust ở tài khoản Windows vận hành và kiểm bằng TLS validation bật; chứng chỉ backend phục vụ đã đối chiếu. Ba resource DEV cũ đúng owner-only/exact drive.file. Init explicit đã tạo 23 bảng mới và repeat no-op; cây/reference giả đã import, không đổi auth/PoC hoặc resource IDs cấu hình. [Report Google/HTTPS](07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md) là bằng chứng mới, các mô tả TLS blocked bên dưới là checkpoint trước.
+
+Khởi động bằng `dotnet run --project src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-build --no-restore --launch-profile https`, sau kiểm port/PID; không tạo backend thứ hai. `https://localhost:7008` là endpoint dev, chưa host/domain công ty. CLI `google-web-dev-init` chỉ chạy khi web dừng và đã backup; schema lạ/partial không overwrite. Không init/bootstrap/PoC lại.
+
+429/503: giữ form/key, không bấm ghi bằng key mới. Executor pace reads/writes riêng và cooldown 429; full registry có thể tải chậm, chưa có benchmark tải công ty. Cursor operational ở cạnh process lease, không chứa business data/secret; kiểm permission/integrity khi lỗi, không tắt guard hoặc sửa Sheets để tránh quota.
+
+Backup dùng `Backup-Task014GoogleDev.ps1 -Backup`: DPAPI CurrentUser ngoài Git; cần cùng Windows profile để giải mã. Đã có Sheets values/metadata và Drive manifest, chưa có bytes/format đầy đủ hoặc restore thật. `Test-Task014RestorePlan.ps1` chỉ kiểm đầu vào/coverage. Restore cần hai đích DEV mới, owner-only, kiểm typed cells/ledger/IDs/roles/scope/Drive links/active sessions trước switch; không ghi đè source hoặc đổi user-secrets IDs đang dùng.
+
+Browser chưa có provider. Login cookie ban đầu đạt; một cookie cũ về sau trả 302, không gán thành browser/session UAT PASS. GET Razor qua bearer hợp lệ là HTTP rendered evidence riêng. Android tạm dừng, iOS DEFERRED_BY_USER.
+
+## Checkpoint local trước live
 
 Nguồn bằng chứng: [Test Report](07-testing/TEST-REPORT-TASK-014-WEB.md). Tài liệu mô tả phần local; chưa có bằng chứng deploy production hoặc backup/restore thật.
 

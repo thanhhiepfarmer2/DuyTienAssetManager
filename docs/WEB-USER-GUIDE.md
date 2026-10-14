@@ -1,6 +1,6 @@
 # Hướng dẫn web demo Duy Tiến
 
-Checkpoint 2026-10-14. Chức năng local đã có bằng chứng tự động; browser, Google thật và nguồn/rule còn chưa nghiệm thu. Đây là hướng dẫn sử dụng, không phải yêu cầu người dùng thực hiện UAT. Web được ưu tiên; mobile tạm hoãn.
+Checkpoint 2026-10-14: đã nối Google DEV và đang kiểm tích hợp thật bằng dữ liệu giả; xem [report hiện hành](07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md). Browser và nguồn/rule công ty chưa nghiệm thu. Đây là hướng dẫn sử dụng, không phải yêu cầu người dùng thực hiện UAT. Web được ưu tiên; mobile tạm hoãn.
 
 1. Đăng nhập bằng tài khoản ứng dụng và đổi mật khẩu khi được yêu cầu. Mật khẩu tối thiểu 8 ký tự. Viewer tra cứu; AssetEditor quản lý tài sản/ảnh; CatalogManager quản lý cây/Items/snapshot; DocumentManager quản lý hồ sơ; Admin quản trị. Mỗi hành động còn phụ thuộc assignment và scope được server kiểm tra.
 2. Trang chủ và menu nối Danh mục, Tài sản, Hồ sơ, Items, Snapshot, R01–R04 và Quản trị. Chi tiết danh mục liên kết đến tài sản, Items và báo cáo trong nhánh; chi tiết tài sản liên kết đến ảnh, danh mục và R01. Liên kết không thay thế kiểm quyền.
@@ -13,4 +13,4 @@ Checkpoint 2026-10-14. Chức năng local đã có bằng chứng tự động; 
 
 Trang `/Help` có hướng dẫn trong web. 403 báo thiếu quyền; 404 có thể là ngoài phạm vi; 422 báo validation; 409 báo phiên bản cũ; 503 báo dịch vụ chưa xác nhận kết quả. Việc ẩn nút không chứng minh quyền. Không gửi password/token/cookie vào chat hoặc audit.
 
-Giới hạn hiện tại nằm trong [Test Report](07-testing/TEST-REPORT-TASK-014-WEB.md). HTTPS client probe bị BLOCKED_TLS_TRUST (UntrustedRoot); browser, Google/schema thật, nguồn và backup/restore chưa đạt gate.
+Giới hạn hiện tại nằm trong [Test Report](07-testing/TEST-REPORT-TASK-014-WEB.md). TLS blocked là checkpoint cũ; chứng chỉ hiện đã trust và strict HTTPS đạt. Bằng chứng Google từng module được ghi riêng trong report mới; browser, nguồn/rule và restore thật vẫn còn gate.

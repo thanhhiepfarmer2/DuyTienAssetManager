@@ -10,7 +10,8 @@ public sealed class GoogleApiRequestExecutor(
     GoogleWorkspaceOptions options,
     IGoogleAccessTokenProvider tokenProvider,
     HttpClient httpClient,
-    Func<TimeSpan, CancellationToken, Task>? delayAsync = null)
+    Func<TimeSpan, CancellationToken, Task>? delayAsync = null,
+    GoogleSheetsRequestBudget? sheetsBudget = null)
 {
     private readonly Func<TimeSpan, CancellationToken, Task> delayAsync =
         delayAsync ?? Task.Delay;
@@ -36,6 +37,7 @@ public sealed class GoogleApiRequestExecutor(
             HttpResponseMessage response;
             try
             {
+                if (sheetsBudget is not null) await sheetsBudget.WaitAsync(request, cancellationToken).ConfigureAwait(false);
                 response = await httpClient.SendAsync(
                     request,
                     HttpCompletionOption.ResponseHeadersRead,
@@ -84,6 +86,11 @@ public sealed class GoogleApiRequestExecutor(
                 continue;
             }
 
+            if (sheetsBudget is not null)
+            {
+                try { await sheetsBudget.RejectedAsync(request, response.StatusCode, cancellationToken).ConfigureAwait(false); }
+                catch { response.Dispose(); throw; }
+            }
             var transient = response.StatusCode == HttpStatusCode.TooManyRequests ||
                 response.StatusCode == HttpStatusCode.RequestTimeout ||
                 (int)response.StatusCode >= 500;

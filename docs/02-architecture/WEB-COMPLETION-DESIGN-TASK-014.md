@@ -32,3 +32,17 @@ Menu/Home/hướng dẫn tiếng Việt, liên kết nhóm thao tác và dữ li
 Form cập nhật snapshot phải GET giá trị/version đã lưu và POST lỗi giữ version/key cũ. HTML input-number gửi invariant; culture vi-VN từng parse6.25 thành625, sửa binder nullable invariant, không nhận hàng nghìn/đổi rule stock. Media prepare dùng delta giữ physical row order để không rewrite file/hồ sơ ngoài tác động hoặc sai dòng sau reorder; cap atomic vẫn giữ.
 
 Public /api/system/status được làm đúng config-only như contract scaffold: không tự probe Google anonymous, state WEB_DEMO_LOCAL không là lifecycle Task, liveVerified=false cho endpoint này. CLI/live gate có chủ đích giữ, không gọi trong lượt.
+
+## Google DEV — kế hoạch trước code, 2026-10-14
+
+Người dùng cho phép xác minh/init/migration và dữ liệu hoàn toàn giả trên DEV hiện có. Chỉ một writer/lease, không reset auth/PoC hoặc resource trùng. CLI mới kiểm DEV name/MIME/owner/ACL/distinct resources trước write; adapter kiểm version/header/journal/ownership. Init chỉ tạo module hoàn toàn vắng với revision 0 (Assets/Inventory/Media); Category cần import DRAFT hợp lệ, không tạo marker rỗng sai pointer. Schema partial/lạ dừng, không overwrite. Marker/receipt tree tạo theo explicit mutation đúng ledger. Fixture/reference/rule chỉ nhánh GIẢ TASK-014, không là quy tắc công ty.
+
+Legacy TASK004_POC phải giữ nguyên; nếu hiện diện, chỉ được công nhận sau kiểm hợp đồng header/rows, không tắt guard cho tab bất kỳ. Backup trước write: Sheets values/formulas và Drive manifest được DPAPI CurrentUser bảo vệ ngoài Git, round-trip decrypt cục bộ; manifest chưa là backup bytes hoặc diễn tập restore. Restore chỉ đích DEV riêng khi có kiểm xung đột; không ghi đè resource đang dùng. API/Razor live dùng credential prompt hiện có, TLS validation bật và xóa khóa tạm trong finally. Không timeout dài/mobile/commit/push.
+
+Resource legacy vừa quan sát: business `DuyTien Assets DEV`, folder `DuyTien Assets DEV Files`, system tên provisioning hiện có; ba resource distinct/owner-only/exact drive.file. Business có Sheet1 và TASK004_POC, chưa có các module mới trước init. Sheet1 chỉ được nhận khi full used-range rỗng; PoC kiểm header/record kind/identity/state, không chạy lại PoC hoặc đổi rows.
+
+## Lỗi quota live và phương án — trước sửa, 2026-10-14
+
+Sau joint tree commit/replay 200, Asset read 503; safe logger cho thấy Google GET 429 liên tiếp. Sheets giới hạn read/write riêng 60 requests/phút/user/project theo [Google](https://developers.google.com/workspace/sheets/api/limits). Full registry validation phát nhiều reads; không bỏ validation/cache authority để đạt test.
+
+Bổ sung budget operational dùng chung executor: cách nhau tối thiểu 1250 ms cho Sheets reads/writes riêng, lưu hai timestamp cạnh process lease ngoài Git để restart/CLI không reset pacing. File reservation lock + async cancellation; không lưu business rows/ID/token, không SQL/offline DB hoặc đổi auth policy. 429 ghi cooldown 60 s và giữ retry semantics cũ, không retry mù write chưa xác định. Đây là bảo vệ quota, chưa tối ưu latency/full snapshot batching hoặc chứng minh tải thực.

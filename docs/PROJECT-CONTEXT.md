@@ -1,5 +1,21 @@
 # Bối cảnh dự án
 
+## Lưu checkpoint Google DEV lên Git — 2026-10-14
+
+Người dùng yêu cầu lưu toàn bộ dự án lên Git sau pha Web Google DEV TASK-014, cho phép commit/push lên origin/main đã xác minh. Checkpoint gồm implementation, scripts init/backup/live, tests và bằng chứng HTTPS/Google DEV; không đưa secret, backup auth, runtime hoặc build artifacts lên Git. Không thay code hoặc chạy lại build/test cho thao tác lưu này.
+
+Giữ TASK-014 IN_REVIEW, các gate browser/cookie mới/source/restore còn mở, Android tạm dừng và iOS DEFERRED_BY_USER; trạng thái task trước và bằng chứng lịch sử giữ nguyên. Hash/kết quả push được xác minh bằng Git CLI sau commit và báo cuối lượt. Các mô tả HEAD4196623, chưa commit hoặc không commit/push dưới đây phản ánh thời điểm thực hiện pha Google DEV trước yêu cầu lưu mới này.
+
+
+## Checkpoint Web Google DEV hiện hành — 2026-10-14, sau Git4196623
+
+TASK-014 IN_REVIEW: strict HTTPS đã trust/kiểm cert đúng Windows owner; Google DEV owner-only/exact drive.file, init23tab/repeat no-op; Category/Assets/media/Items/snapshot/R01–R04/tree và scope thật đã kiểm bằng dữ liệu GIẢ. Local selected78/78 pass exit0; finish live57/57 exit0, có giữ failures/history. Lỗi429 khi full registry read đã sửa bằng pacing/cooldown operational, không bypass guard hoặc cache scope/data cũ.
+
+Web đang một backend13420 (launcher9236) tại https://localhost:7008, HTTPS public200/HTTP307. Bảy GET Razor bearer rendered200; cookie cũ302 chưa retest cookie mới, browser unavailable. Không xem HTTP rendered/budget fake clock là browser/elapsed-policy PASS. Backup49tab sau dừng writer, DPAPI ngoài Git, decrypt/plan/PoC/auth preservation đạt; Drive bytes và actual restore NOT_RUN.
+
+[Report hiện hành](07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md), [evidence](07-testing/TASK-014-WEB-GOOGLE-LIVE-EVIDENCE.json). Credential UAT/session checkpoint đã xóa độc lập. Nguồn/rule công ty/OrgLocation/ngưỡng vẫn OPEN/TBD; chỉ rule/source/snapshot fixture có nhãn giả. TASK-003 IN_REVIEW, TASK-004 DONE, TASK-005–012/014 IN_REVIEW, iOS TASK-013 TODO/execution DEFERRED_BY_USER; Android vẫn tạm dừng. Gate cũ/manual/timeout hoãn giữ, không mobile/commit/push/deploy/dữ liệu thật trong lượt. HEAD4196623, thay đổi mới chưa commit. Các checkpoint dưới là lịch sử.
+
+
 ## Lưu checkpoint Git — 2026-10-14
 
 Người dùng yêu cầu lưu toàn bộ dự án lên Git, cho phép commit/push checkpoint local TASK-010–012 và pha Web TASK-014 lên origin/main đã cấu hình. Giữ TASK-003 IN_REVIEW, TASK-004 DONE, TASK-005–012/014 IN_REVIEW; Android tạm hoãn, iOS TASK-013 TODO/execution DEFERRED_BY_USER. Các gate chưa chạy/đã hoãn không chuyển PASS hoặc DONE.

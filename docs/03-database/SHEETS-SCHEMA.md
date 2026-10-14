@@ -122,3 +122,7 @@ R03/R04 classification riêng phản ánh thiếu minimum (không suy min0 từ 
 ## TASK-014 Web registry extension — local2026-10-14
 
 TreeRegistryDetails optional: OperationId/Kind/EntityId/RecordJson. CHECKPOINT ghi beforeInventory/Mediarevision; IMPACT mộtrowmỗiownerref, khôngrawcells/DriveID. ReconciledTreeResult phảiđủcheckpoint/count/details; legacyTreeChangeskhôngreceipt vẫnđọc, unknown/partialchặn. Inventory thêmITEM_RECLASSIFY chỉCategoryId/version+1, markerINVENTORY_V1_TREE; Media DOCUMENT_RELOCATEchỉCategory/version/update metadata, markerMEDIA_V1_TREE. Headerscũ vàV1được hỗtrợ; khôngapply/migrateGooglethật tronglượt, khôngoverwriteunknown. Joint1batch, appendledger/audit/deltađúngphysicalrow, IDs/mã/stock/filebytes giữ. [Thiết kế](../02-architecture/WEB-COMPLETION-DESIGN-TASK-014.md).
+
+## Google DEV thực — TASK-014, 2026-10-14
+
+Init explicit23tab, Category7tab và tree3tab tạo qua operations, cộng2legacy thành35business tabs; system14 (13auth+Sheet1) giữ. TreeRegistryDetails và V1_TREE đã được dùng bởi joint relocation fixture/re-read/replay thật; không bypass unknown/partial/owner/ledger guard. [Evidence](../07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md). Snapshot/source/rule chỉGIẢ, không phê duyệt công ty; backup49tab mã hóa ngoài Git, actual restore NOT_RUN.

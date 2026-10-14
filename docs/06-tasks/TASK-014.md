@@ -32,7 +32,7 @@ Chỉ đạo mới thay yêu cầu iOS trước đó; không chạy acceptance t
 
 | Pha | Phạm vi | Gate |
 |---|---|---|
-| Web — IN_REVIEW/local complete; runtime BLOCKED_TLS_TRUST | Rà/sửa tích hợp TASK-005–011, menu/navigation/luồng/validation/loading/empty/409/503/giữ form, full registry tree guard, hướng dẫn web/vận hành và checks tự động/browser khả dụng | Không phụ thuộc Android/iOS; nguồn/rule/Google/backup-restore thật chưa đạt vẫn ghi đúng |
+| Web — IN_REVIEW/local + Google DEV fixture complete; strict HTTPS đạt | Rà/sửa tích hợp TASK-005–011, menu/navigation/luồng/validation/loading/empty/409/503/giữ form, full registry tree guard, hướng dẫn web/vận hành và checks tự động/browser khả dụng | Không phụ thuộc Android/iOS; nguồn/rule/Google/backup-restore thật chưa đạt vẫn ghi đúng |
 | Android — DEFERRED_BY_USER | Giữ local TASK-012; phát triển/runtime tiếp sau tổng kết Web rõ | Thiết bị/runtime/OS/TLS/Google chưa chạy |
 | iOS — DEFERRED_BY_USER | Giữ target/code TASK-013, chưa môi trường/thiết bị | Mac/Xcode/signing/device NOT_RUN, phân phối PROPOSED/TBD |
 
@@ -52,3 +52,13 @@ Build exit 0, 0 warnings/errors, 4.17 s; 126/126 selected tests pass, exit 0, 0 
 Một backend PID 23376 lắng nghe HTTPS 7008/HTTP 5211; HTTP trả 307. HTTPS client chain báo UntrustedRoot nên BLOCKED_TLS_TRUST; chưa thay trust hoặc tắt kiểm TLS. Browser/Google/schema mới/nguồn/rule/backup-restore chưa nghiệm thu. Overall IN_REVIEW, chưa DONE.
 
 Android/iOS DEFERRED_BY_USER; không tự chuyển mobile. Giữ worktree, HEAD, gates và bằng chứng lịch sử; không commit/push/deploy/dữ liệu thật/gate Google đã hoãn hoặc timeout mới.
+
+## Tiếp tục Google DEV — 2026-10-14
+
+Người dùng cho phép live DEV và migration/dữ liệu hoàn toàn giả trong pha Web; Google DEV của pha này không còn bị hoãn. Không mở lại timeout/UAT cũ, không chuyển mobile. [Report HTTPS/Google](../07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md) bổ sung bằng chứng mới; report local phía trên là lịch sử checkpoint trước. Overall giữ IN_REVIEW khi browser/source/restore chưa đủ.
+
+## Checkpoint cuối Google DEV — 2026-10-14
+
+[Report](../07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md): build0warnings/errors, selected78/78 local exit0; finish57/57 live exit0, full history giữ. HTTPS200, GoogleDEV schema/replay/module/scope/tree/bytes/restart đã có bằng chứng fixture. Sửa429 bằng pacing/cooldown, giữfreshguard/version/scope và single-writer. Credential/session checkpoint xóa đã probe. Backend13420/launcher9236 chạy một instance tại https://localhost:7008.
+
+Backup49tab DPAPI ngoài Git/plan/decrypt/preservation đã đạt, không Drive bytes/actual restore. Browser unavailable; cookie cũ302 chưa retest bằng cookie mới; rendered bearer không browser/cookiePASS. Nguồn/rule/OrgLocation/ngưỡng/workbook/hosting/performance còn OPEN/TBD/NOT_RUN. Tổng thể IN_REVIEW, không DONE; Android tạm dừng/iOS DEFERRED_BY_USER, task trước/gates hoãn giữ. Không commit/push/deploy hoặc dữ liệu thật.

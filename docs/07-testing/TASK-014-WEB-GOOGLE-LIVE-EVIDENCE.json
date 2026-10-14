@@ -1,0 +1,1440 @@
+{
+  "task": "TASK-014",
+  "date": "2026-10-14",
+  "timezone": "Asia/Saigon",
+  "source": "AI_RUN_OBSERVED",
+  "phase": "finish",
+  "fixture": "FAKE_TASK014_DRAFT_DEMO",
+  "tlsValidationEnabled": true,
+  "credentialUatDeletedVerified": true,
+  "checkpointEncryptedOutsideGit": false,
+  "backendPid": 10648,
+  "launcherPid": 15704,
+  "assertions": [
+    {
+      "case": "Razor rendered with valid bearer identity before remaining checks HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Explicit UNKNOWN report section on Google HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "UNKNOWN is distinct from zero match count",
+      "expected": 1,
+      "actual": 1,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "UNKNOWN report keeps nullable quantity",
+      "expected": null,
+      "actual": null,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "UNKNOWN unit retained",
+      "expected": "kg",
+      "actual": "kg",
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Full registry preview can commit",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Preview includes Item/stock/document/file owners",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Relocated Item count",
+      "expected": 3,
+      "actual": 3,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Relocated Document count",
+      "expected": 1,
+      "actual": 1,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Asset after registry relocation HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Relocation keeps ObjectCode",
+      "expected": "WEBDEMO-WFA-000001",
+      "actual": "WEBDEMO-WFA-000001",
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Asset moved to fake target",
+      "expected": "CAT-59e29850ab244e0ebc33f70ebaf53402",
+      "actual": "CAT-59e29850ab244e0ebc33f70ebaf53402",
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Items after registry relocation HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "All Item ownership moved",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Document after registry relocation HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Document ownership moved",
+      "expected": "CAT-59e29850ab244e0ebc33f70ebaf53402",
+      "actual": "CAT-59e29850ab244e0ebc33f70ebaf53402",
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Published demo version preserved",
+      "expected": "PUBLISHED_DEMO",
+      "actual": "PUBLISHED_DEMO",
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Photo gateway after owner scope move HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Photo bytes survive tree mutation",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Exactly one backend",
+      "expected": 1,
+      "actual": 1,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Backend Windows owner matches operator",
+      "expected": "MAY03\\May 03",
+      "actual": "MAY03\\May 03",
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "HTTPS and HTTP listeners owned by this backend",
+      "expected": "True",
+      "actual": "True",
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Actual served certificate is current Windows development certificate",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Login survives module restart HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Data persisted after restart HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Persisted version after restart",
+      "expected": 3,
+      "actual": 3,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Create fake scoped Viewer fixture HTTP",
+      "expected": 201,
+      "actual": 201,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Assign Viewer source-only scope HTTP",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Fake Viewer forced-password login HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Fake Viewer changes password through approved API HTTP",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Fake Viewer login HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Viewer cannot see relocated target /api/assets HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Viewer hidden count /api/assets",
+      "expected": 0,
+      "actual": 0,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Viewer cannot see relocated target /api/items HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Viewer hidden count /api/items",
+      "expected": 0,
+      "actual": 0,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Viewer cannot see relocated target /api/documents HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Viewer hidden count /api/documents",
+      "expected": 0,
+      "actual": 0,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Viewer scoped report aggregate HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Scope applied before report total",
+      "expected": 0,
+      "actual": 0,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Viewer blocked tree administration HTTP",
+      "expected": 403,
+      "actual": 403,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Viewer blocked target photo gateway HTTP",
+      "expected": 404,
+      "actual": 404,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Logout only fake Viewer session HTTP",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor live rendered bearer /Admin/Users HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor page renders HTML /Admin/Users",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor live rendered bearer /Categories HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor page renders HTML /Categories",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor live rendered bearer /Assets HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor page renders HTML /Assets",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor live rendered bearer /Documents HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor page renders HTML /Documents",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor live rendered bearer /Items HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor page renders HTML /Items",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor live rendered bearer /Stock HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor page renders HTML /Stock",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor live rendered bearer /Reports HTTP",
+      "expected": 200,
+      "actual": 200,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Razor page renders HTML /Reports",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    },
+    {
+      "case": "Runner logout own API session HTTP",
+      "expected": 204,
+      "actual": 204,
+      "pass": true,
+      "source": "AI_RUN_OBSERVED"
+    }
+  ],
+  "events": [],
+  "passed": 57,
+  "failed": 0,
+  "exit": 0,
+  "complete": true,
+  "browser": "NOT_RUN",
+  "restore": "NOT_RUN",
+  "previousRuns": [
+    {
+      "task": "TASK-014",
+      "date": "2026-10-14",
+      "timezone": "Asia/Saigon",
+      "source": "AI_RUN_OBSERVED",
+      "phase": "setup",
+      "fixture": "FAKE_TASK014_DRAFT_DEMO",
+      "tlsValidationEnabled": true,
+      "credentialUatDeletedVerified": true,
+      "checkpointEncryptedOutsideGit": true,
+      "backendPid": 22884,
+      "launcherPid": 17216,
+      "assertions": [
+        {
+          "case": "Exactly one backend",
+          "expected": 1,
+          "actual": 1,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Backend Windows owner matches operator",
+          "expected": "MAY03\\May 03",
+          "actual": "MAY03\\May 03",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Actual served certificate is current Windows development certificate",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "UAT credential deleted before authenticated checks",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Admin application login HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Existing admin has completed password change",
+          "expected": false,
+          "actual": false,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Razor login page HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Razor admin login HTTP",
+          "expected": 302,
+          "actual": 302,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Read existing DEV tree HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Preexisting category tree untouched/empty before fake import",
+          "expected": 0,
+          "actual": 0,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Preview fake DRAFT tree HTTP",
+          "expected": 200,
+          "actual": 400,
+          "pass": false,
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "events": [
+        {
+          "event": "runner_failure",
+          "type": "RuntimeError",
+          "message": "Unexpected integration result: Preview fake DRAFT tree HTTP",
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "passed": 10,
+      "failed": 1,
+      "exit": 1,
+      "complete": false,
+      "browser": "NOT_RUN",
+      "restore": "NOT_RUN"
+    },
+    {
+      "task": "TASK-014",
+      "date": "2026-10-14",
+      "timezone": "Asia/Saigon",
+      "source": "AI_RUN_OBSERVED",
+      "phase": "setup",
+      "fixture": "FAKE_TASK014_DRAFT_DEMO",
+      "tlsValidationEnabled": true,
+      "credentialUatDeletedVerified": true,
+      "checkpointEncryptedOutsideGit": true,
+      "backendPid": 22884,
+      "launcherPid": 17216,
+      "assertions": [
+        {
+          "case": "Read existing DEV tree HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Preexisting category tree untouched/empty before fake import",
+          "expected": 0,
+          "actual": 0,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Preview fake DRAFT tree HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Category preview valid",
+          "expected": true,
+          "actual": false,
+          "pass": false,
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "events": [
+        {
+          "event": "runner_failure",
+          "type": "RuntimeError",
+          "message": "Unexpected integration result: Category preview valid",
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "passed": 3,
+      "failed": 1,
+      "exit": 1,
+      "complete": false,
+      "browser": "NOT_RUN",
+      "restore": "NOT_RUN"
+    },
+    {
+      "task": "TASK-014",
+      "date": "2026-10-14",
+      "timezone": "Asia/Saigon",
+      "source": "AI_RUN_OBSERVED",
+      "phase": "setup",
+      "fixture": "FAKE_TASK014_DRAFT_DEMO",
+      "tlsValidationEnabled": true,
+      "credentialUatDeletedVerified": true,
+      "checkpointEncryptedOutsideGit": true,
+      "backendPid": 13828,
+      "launcherPid": 2524,
+      "assertions": [
+        {
+          "case": "Exactly one backend",
+          "expected": 1,
+          "actual": 1,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Backend Windows owner matches operator",
+          "expected": "MAY03\\May 03",
+          "actual": "MAY03\\May 03",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Actual served certificate is current Windows development certificate",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Read existing DEV tree HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Preexisting category tree untouched/empty before fake import",
+          "expected": 0,
+          "actual": 0,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Preview fake DRAFT tree HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Category preview valid",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Fixture category count",
+          "expected": 3,
+          "actual": 3,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Commit fake DRAFT tree HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Replay same category import HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Category replay same tree ID",
+          "expected": "TREE-baad4b43fbff42e7b0bc9f6541f3293b",
+          "actual": "TREE-baad4b43fbff42e7b0bc9f6541f3293b",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Read committed fake categories HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Seed labeled fake reference data exit",
+          "expected": 0,
+          "actual": 0,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Demo reference seed idempotent repeat exit",
+          "expected": 0,
+          "actual": 0,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Exactly one backend",
+          "expected": 1,
+          "actual": 1,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Backend Windows owner matches operator",
+          "expected": "MAY03\\May 03",
+          "actual": "MAY03\\May 03",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Actual served certificate is current Windows development certificate",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Admin login/session survives restart HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "events": [],
+      "passed": 18,
+      "failed": 0,
+      "exit": 0,
+      "complete": false,
+      "browser": "NOT_RUN",
+      "restore": "NOT_RUN"
+    },
+    {
+      "task": "TASK-014",
+      "date": "2026-10-14",
+      "timezone": "Asia/Saigon",
+      "source": "AI_RUN_OBSERVED",
+      "phase": "modules",
+      "fixture": "FAKE_TASK014_DRAFT_DEMO",
+      "tlsValidationEnabled": true,
+      "credentialUatDeletedVerified": true,
+      "checkpointEncryptedOutsideGit": true,
+      "backendPid": 13828,
+      "launcherPid": 2524,
+      "assertions": [
+        {
+          "case": "Razor session before module operations HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Asset scope/reference choices HTTP",
+          "expected": 200,
+          "actual": 404,
+          "pass": false,
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "events": [
+        {
+          "event": "runner_failure",
+          "type": "RuntimeError",
+          "message": "Unexpected integration result: Asset scope/reference choices HTTP",
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "passed": 1,
+      "failed": 1,
+      "exit": 1,
+      "complete": false,
+      "browser": "NOT_RUN",
+      "restore": "NOT_RUN"
+    },
+    {
+      "task": "TASK-014",
+      "date": "2026-10-14",
+      "timezone": "Asia/Saigon",
+      "source": "AI_RUN_OBSERVED",
+      "phase": "modules",
+      "fixture": "FAKE_TASK014_DRAFT_DEMO",
+      "tlsValidationEnabled": true,
+      "credentialUatDeletedVerified": true,
+      "checkpointEncryptedOutsideGit": true,
+      "backendPid": 13828,
+      "launcherPid": 2524,
+      "assertions": [
+        {
+          "case": "Runner session rotation HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Razor session before module operations HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Asset scope/reference choices HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Choices DRAFT_DEMO",
+          "expected": "DRAFT_DEMO",
+          "actual": "DRAFT_DEMO",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Create demo asset in Google HTTP",
+          "expected": 201,
+          "actual": 201,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Replay same asset key HTTP",
+          "expected": 201,
+          "actual": 201,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Asset replay same identity",
+          "expected": "AST-646d71411d9d4412a181ef17fd46f3a4",
+          "actual": "AST-646d71411d9d4412a181ef17fd46f3a4",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Asset explicit demo state",
+          "expected": "DRAFT_DEMO",
+          "actual": "DRAFT_DEMO",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Edit demo asset HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Stale asset version conflict HTTP",
+          "expected": 409,
+          "actual": 409,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Asset identity/code preserved on edit",
+          "expected": "WEBDEMO-WFA-000001",
+          "actual": "WEBDEMO-WFA-000001",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Scoped asset search/page HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Scoped asset result",
+          "expected": 1,
+          "actual": 1,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Upload fake PNG via backend HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Photo AVAILABLE",
+          "expected": "AVAILABLE",
+          "actual": "AVAILABLE",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Photo retry same key HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Photo retry same file",
+          "expected": "FILE-4371a0b903eb4271ac6bd302227cb796",
+          "actual": "FILE-4371a0b903eb4271ac6bd302227cb796",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Photo gateway download HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Photo actual bytes preserved",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Create fake document registry HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Create fake document version HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Upload fake DOCX HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Read current version for PDF upload HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Upload fake PDF HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Read registry before demo publish HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Publish explicitly PUBLISHED_DEMO HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Published PDF gateway HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "PDF actual bytes preserved",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Preview fake Items HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Item validation errors",
+          "expected": 0,
+          "actual": 0,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Start durable fake Item import HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Commit fake Item chunk HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Item job COMPLETE",
+          "expected": "COMPLETE",
+          "actual": "COMPLETE",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Retry Item chunk same key HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "No duplicate Item progress",
+          "expected": 3,
+          "actual": 3,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Read imported fake Items HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Assets distinct from three Items",
+          "expected": 3,
+          "actual": 3,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Write explicit stock 1 HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Snapshot zero/low/unknown 1",
+          "expected": "OUT",
+          "actual": "OUT",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Write explicit stock 2 HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Snapshot zero/low/unknown 2",
+          "expected": "LOW",
+          "actual": "LOW",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Write explicit stock 3 HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Snapshot zero/low/unknown 3",
+          "expected": "UNKNOWN",
+          "actual": "UNKNOWN",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Live report assets HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Report counts Assets separately",
+          "expected": 1,
+          "actual": 1,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Live report assets-by-category HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Live report stock-empty HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Report matching count stock-empty",
+          "expected": 1,
+          "actual": 1,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Live report stock-low HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Report matching count stock-low",
+          "expected": 1,
+          "actual": 1,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Scoped Unicode CSV export HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "CSV UTF8BOM",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Full registry tree preview on Google HTTP",
+          "expected": 200,
+          "actual": 400,
+          "pass": false,
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "events": [
+        {
+          "event": "problem",
+          "case": "Full registry tree preview on Google",
+          "status": 400,
+          "title": "Loại thao tác cây không hợp lệ."
+        },
+        {
+          "event": "runner_failure",
+          "type": "RuntimeError",
+          "message": "Unexpected integration result: Full registry tree preview on Google HTTP",
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "passed": 52,
+      "failed": 1,
+      "exit": 1,
+      "complete": false,
+      "browser": "NOT_RUN",
+      "restore": "NOT_RUN"
+    },
+    {
+      "task": "TASK-014",
+      "date": "2026-10-14",
+      "timezone": "Asia/Saigon",
+      "source": "AI_RUN_OBSERVED",
+      "phase": "finish",
+      "fixture": "FAKE_TASK014_DRAFT_DEMO",
+      "tlsValidationEnabled": true,
+      "credentialUatDeletedVerified": true,
+      "checkpointEncryptedOutsideGit": true,
+      "backendPid": 13828,
+      "launcherPid": 2524,
+      "assertions": [
+        {
+          "case": "Explicit UNKNOWN report section on Google HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "UNKNOWN is distinct from zero match count",
+          "expected": 1,
+          "actual": 1,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "UNKNOWN report keeps nullable quantity",
+          "expected": null,
+          "actual": null,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "UNKNOWN unit retained",
+          "expected": "kg",
+          "actual": "kg",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Full registry tree preview on Google HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Full registry preview can commit",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Preview includes Item/stock/document/file owners",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Atomic relocate all four registries HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Relocated Item count",
+          "expected": 3,
+          "actual": 3,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Relocated Document count",
+          "expected": 1,
+          "actual": 1,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Retry tree commit same key HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Tree replay same tree ID",
+          "expected": "TREE-615321e427e744f79a28487a02cce356",
+          "actual": "TREE-615321e427e744f79a28487a02cce356",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Asset after registry relocation HTTP",
+          "expected": 200,
+          "actual": 503,
+          "pass": false,
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "events": [
+        {
+          "event": "problem",
+          "case": "Asset after registry relocation",
+          "status": 503,
+          "title": "Không xác nhận được dữ liệu Google Sheets. Giữ dữ liệu đang nhập và thử lại cùng yêu cầu; chưa báo lưu thành công."
+        },
+        {
+          "event": "runner_failure",
+          "type": "RuntimeError",
+          "message": "Unexpected integration result: Asset after registry relocation HTTP",
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "passed": 12,
+      "failed": 1,
+      "exit": 1,
+      "complete": false,
+      "browser": "NOT_RUN",
+      "restore": "NOT_RUN"
+    },
+    {
+      "task": "TASK-014",
+      "date": "2026-10-14",
+      "timezone": "Asia/Saigon",
+      "source": "AI_RUN_OBSERVED",
+      "phase": "finish",
+      "fixture": "FAKE_TASK014_DRAFT_DEMO",
+      "tlsValidationEnabled": true,
+      "credentialUatDeletedVerified": true,
+      "checkpointEncryptedOutsideGit": true,
+      "backendPid": 15528,
+      "launcherPid": 21868,
+      "assertions": [
+        {
+          "case": "Exactly one backend",
+          "expected": 1,
+          "actual": 1,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Backend Windows owner matches operator",
+          "expected": "MAY03\\May 03",
+          "actual": "MAY03\\May 03",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "HTTPS and HTTP listeners owned by this backend",
+          "expected": "True",
+          "actual": "True",
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Actual served certificate is current Windows development certificate",
+          "expected": true,
+          "actual": true,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Runner session rotation HTTP",
+          "expected": 200,
+          "actual": 200,
+          "pass": true,
+          "source": "AI_RUN_OBSERVED"
+        },
+        {
+          "case": "Razor session before remaining checks HTTP",
+          "expected": 200,
+          "actual": 302,
+          "pass": false,
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "events": [
+        {
+          "event": "runner_failure",
+          "type": "RuntimeError",
+          "message": "Unexpected integration result: Razor session before remaining checks HTTP",
+          "source": "AI_RUN_OBSERVED"
+        }
+      ],
+      "passed": 5,
+      "failed": 1,
+      "exit": 1,
+      "complete": false,
+      "browser": "NOT_RUN",
+      "restore": "NOT_RUN"
+    }
+  ],
+  "finalRuntime": {
+    "launcherPid": 9236,
+    "backendPid": 13420,
+    "instances": 1,
+    "url": "https://localhost:7008",
+    "strictHttps": {
+      "root": 200,
+      "help": 200,
+      "configStatus": 200
+    },
+    "httpRedirect": 307,
+    "configurationPresent": true,
+    "statusEndpointConfigOnly": true,
+    "serverExitCodeObserved": null
+  },
+  "backup": {
+    "source": "AI_RUN_OBSERVED",
+    "preWrite": {
+      "businessTables": 2,
+      "systemTables": 14,
+      "encryptedOutsideGit": true,
+      "decryptRoundTrip": true
+    },
+    "postRun": {
+      "businessTables": 35,
+      "systemTables": 14,
+      "encryptedOutsideGit": true,
+      "decryptRoundTrip": true,
+      "writerStopped": true
+    },
+    "restorePlanExit": 0,
+    "restorePlanTables": 49,
+    "actualRestore": "NOT_RUN",
+    "driveBytesBackupComplete": false,
+    "pocRowsUnchanged": true,
+    "existingUserCredentialStatePreserved": true,
+    "existingRolesAssignmentsScopesPreserved": true,
+    "originalUserCount": 12,
+    "currentUserCount": 13
+  },
+  "finalCredentialVerification": {
+    "uatKeyAbsent": true,
+    "sessionCheckpointAbsent": true,
+    "source": "AI_RUN_OBSERVED"
+  },
+  "scopeOfCounts": "Final finish 57/57 exit0; historical runs retained. Do not sum checkpoints; one old-cookie302 expectation remains unretested with a fresh cookie. Cached checkpoint values are not new Google writes.",
+  "repositoryChecks": {
+    "source": "AI_RUN_OBSERVED",
+    "files": 26,
+    "localLinks": 103,
+    "issues": 0,
+    "diffCheckExit": 0,
+    "indexEmptyExit": 0,
+    "authMobileUnchangedExit": 0,
+    "historyReportsUnchangedExit": 0,
+    "head": "419662308a8395c37d45bafe7a281c1cb52748bc",
+    "powershellParseErrors": 0,
+    "pythonAstValid": true,
+    "gitMutation": "none"
+  }
+}
