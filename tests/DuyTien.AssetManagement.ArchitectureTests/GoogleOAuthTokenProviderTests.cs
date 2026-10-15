@@ -52,6 +52,48 @@ public sealed class GoogleOAuthTokenProviderTests
         Assert.Contains("exactly drive.file", exception.Message, StringComparison.Ordinal);
     }
 
+    [Theory]
+    [InlineData("invalid_grant", "invalid_grant")]
+    [InlineData("invalid_client", "invalid_client")]
+    [InlineData("access_denied", "access_denied")]
+    [InlineData("secret-body-must-not-leak", "unclassified")]
+    public async Task Refresh_failure_reports_only_allowlisted_code_and_status(string error, string expected)
+    {
+        using var client = new HttpClient(new FailureHandler("{\"error\":\"" + error + "\",\"error_description\":\"secret-body-must-not-leak\"}"));
+        using var provider = new GoogleOAuthTokenProvider(CompleteOptions(), client);
+        var failure = await Assert.ThrowsAsync<ExternalStorageAuthenticationException>(() => provider.GetAccessTokenAsync());
+        Assert.Equal(400, failure.StatusCode); Assert.Equal(expected, failure.FailureCode);
+        Assert.DoesNotContain("secret-body", failure.ToString());
+        Assert.DoesNotContain("refresh-token", failure.ToString());
+    }
+
+    [Theory]
+    [InlineData("not-json")]
+    [InlineData("[]")]
+    [InlineData("{\"error\":42}")]
+    public async Task Invalid_error_body_is_not_retained_or_exposed(string body)
+    {
+        using var client = new HttpClient(new FailureHandler(body));
+        using var provider = new GoogleOAuthTokenProvider(CompleteOptions(), client);
+        var failure = await Assert.ThrowsAsync<ExternalStorageAuthenticationException>(() => provider.GetAccessTokenAsync());
+        Assert.Equal(400, failure.StatusCode); Assert.Equal("unclassified", failure.FailureCode);
+    }
+
+    [Fact]
+    public async Task Oversize_error_body_is_bounded_and_cannot_supply_a_code()
+    {
+        using var client = new HttpClient(new FailureHandler("{\"error\":\"invalid_grant\",\"error_description\":\"" + new string('x', 5000) + "\"}"));
+        using var provider = new GoogleOAuthTokenProvider(CompleteOptions(), client);
+        var failure = await Assert.ThrowsAsync<ExternalStorageAuthenticationException>(() => provider.GetAccessTokenAsync());
+        Assert.Equal("unclassified", failure.FailureCode);
+    }
+
+    private sealed class FailureHandler(string body) : HttpMessageHandler
+    {
+        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct) =>
+            Task.FromResult(new HttpResponseMessage(HttpStatusCode.BadRequest) { Content = new StringContent(body, Encoding.UTF8, "application/json") });
+    }
+
     private static GoogleWorkspaceOptions CompleteOptions() => new()
     {
         OAuthClientId = "client-id",

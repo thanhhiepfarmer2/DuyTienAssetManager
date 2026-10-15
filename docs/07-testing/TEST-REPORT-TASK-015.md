@@ -1,3 +1,5 @@
+> **Lịch sử v1, superseded 2026-10-15:** các số đo/assertions bên dưới thuộc LocalOffline ghi độc lập. Thiết kế hiện hành là REQ-002/ADR-002 v2, online mặc định/offline chỉ đọc. Xem [report v2](TEST-REPORT-TASK-015-ONLINE.md); không tái gán PASS v1 cho v2.
+
 # TEST-REPORT — TASK-015 LocalOffline
 
 2026-10-14 (Asia/Saigon), D:\Dev\QuanLyTaiSan_DuyTien. Nguồn: AI chạy/quan sát trực tiếp, trừ phân tích HTML do người dùng cung cấp. Không đọc HTML/dataset công ty. HEAD đầu lượt139155f; worktree sạch. Không commit/push/deploy/mobile hoặc ghi Google trong lượt này.

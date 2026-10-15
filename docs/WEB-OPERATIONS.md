@@ -1,3 +1,16 @@
+# Vận hành hiện hành — TASK-015 v2 (2026-10-15)
+
+Một backend duy nhất, Google DEV online mặc định + protected readonly cache ngoài Git. Chuẩn bị Release một lần theo COMMANDS rồi chạy DuyTien-Web.cmd; launcher không restore/build/download mỗi lần. Start-Web.ps1 dùng mutex, kiểm port/process record/executable/start time và HTTPS strict, reuse đúng instance; không stop process lạ. Stop-Web.ps1 chỉ dừng PID/exe/start time đã ghi.
+
+Không chạy Start-LocalOffline để sửa lỗi login. Không reset admin hoặc xóa workspace/cache/journal khi gặp lỗi. `/api/connection` cho state/asOf/coverage/UNKNOWN của đúng phiên; `/api/connection/files` phân biệt bytes offline. SERVICE_UNAVAILABLE khác OFFLINE_READ_ONLY. Cache không đầy đủ thì kết nối và đọc trang/query/file trung tâm khi được phép; không tự seed/import.
+
+UNKNOWN không phải queue: intent method/path/key/payload hash được lưu trước gửi, chia sẻ theo user trung tâm qua login mới. `/api/connection/reconcile` POST yêu cầu auth/anti-forgery (cookie), đọc journal dưới coordinator, media PENDING dùng service reconcile hiện có, không upload local. Không có journal hoàn tất/key thì vẫn UNKNOWN; không suy diễn chưa ghi và không retry bằng key mới. Reconcile lỗi/quyền thu hẹp giữ chặn và form. Quá trình online tiếp tục áp dụng scope/version/idempotency/metadata guard và Google pacing.
+
+Backup cache/auth v1/key DPAPI ngoài Git; không sao chép phiên/cache sang user Windows/resource khác hoặc nhập v1 vào Google. Các bằng chứng Google/backup cũ giữ đúng phiên bản, không là runtime pass v2. Chưa có backup/restore cache v2 thực tế được nghiệm thu.
+
+---
+## Vận hành lịch sử v1
+
 # Vận hành web dev — 2026-10-14
 
 ## Vận hành LocalOffline — TASK-015

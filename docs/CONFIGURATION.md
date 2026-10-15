@@ -1,3 +1,25 @@
+## Login Google DEV — lưu ý 15/10/2026
+
+Launcher hiện hành dùng Google/Development và đặt cả DOTNET_ENVIRONMENT để không bị môi trường Production kế thừa làm mất user-secrets. Technical status cho biết buildId/environment/storage, không public resource IDs. `invalid_grant` là Google từ chối refresh token, không là sai password admin/mất Internet; chỉ consent lại cùng Desktop app/drive.file sau diagnostic chứng minh. Dùng `scripts/Reconnect-GoogleLogin.ps1` từ PowerShell desktop khi cửa sổ do agent mở không xuất hiện. Script không init/bootstrap/reset hoặc đổi resource. Xem COMMANDS và Test Report v2; success của consent vẫn cần auth-read rồi login form hiện có.
+
+> Bổ sung v2 — scope/coherence: observed adapters chỉ lấy checkpoint từ state trung tâm đã đọc, không thêm RPC hoặc thay guard. Cache lưu dependency nội bộ, purge query/bytes khi checkpoint đã quan sát đổi, không cho revision cũ quay lại. Sang connection epoch mới phải bỏ corpus cũ trước refresh; mixed-version/cross-epoch read409, không publish/cache dưới nhãn current. Không public global revision counters. Ticket bind credential digest; ciphertext bytes và RAM index bind phiên+snapshot. Cache prototype chưa có binding cần online xác minh lại, không dùng để cấp quyền offline; không reset admin hoặc đụng workspace LocalOffline v1.
+
+> Tác vụ HTTP/CLI có operation lease: sau vòng mất/kết nối lại, RPC cũ dừng trước OAuth/transport (kiểm lại sau pacing), giữ UNKNOWN/key nếu business đã bắt đầu; request mới cần revalidate+fresh data/reconcile. Người có proof/cookie còn hạn mở launcher offline được chuyển từ Login tới /Offline, không tạo tài khoản hoặc xác thực password local.
+
+> Hardening v2: probe hosted background, known-offline snapshot reads không chờ network timeout. Request và write-ready bind connection epoch; timestamp proof lấy trước validation, SecurityVersion cũ không ghi đè mới. Memo Sheets properties chỉ trong request GET/HEAD, invalidate sau ghi và không cache values/file/auth xuyên request. Intent bền sau auth, trước business handler; auth chưa gửi nghiệp vụ không tự thành UNKNOWN.
+
+# Cấu hình hiện hành — REQ-002 v2 (2026-10-15)
+
+Runtime mặc định `Storage:Mode=Google`, `ConnectedCache:Enabled=true` là guard bắt buộc; false hoặc LocalOffline ở Program sẽ fail closed, không fallback. Tài khoản admin và dữ liệu trung tâm dùng lại cấu hình Google DEV hiện có; không init/bootstrap/reset hoặc copy auth của workspace v1. OAuth Desktop/drive.file không đổi; không có Google OAuth token ở client/cache. Chính sách password min8/session giữ.
+
+`ConnectedCache:Path` mặc định `%LOCALAPPDATA%\DuyTienAssets\ConnectedCache`, absolute local/outside Git, không UNC/reparse; root private Windows owner+SYSTEM. Subdir central identity hash từ endpoint và resource IDs; proof/token hash/response bytes dùng DataProtection, key DPAPI CurrentUser tại keys/. Cookie dt_session HttpOnly/Secure/SameSite vẫn của trung tâm; dt_local_* cũ không được đọc. Không lưu password/hash đăng nhập/token OAuth; các khóa/idempotency intent kỹ thuật mã hóa ngoài Git.
+
+Cache tối đa200query/64MiB mỗi phiên; bytes mỗi response26MiB, RAM bytes/index giới hạn128MiB. Ticket hết hạn theo min idle/absolute/grant end đã xác minh, không touch/extend offline. Mỗi snapshot có asOf riêng; không cache toàn store hoặc phê duyệt nguồn. Logout tombstone và UNKNOWN intent theo user vẫn bền qua restart; central user khác không dùng được proof/query của user trước. Quyền thay đổi xóa views/bytes được tham chiếu cũ. Cache corrupt/thiếu không thành dữ liệu rỗng/0 hoặc quyền ghi.
+
+Probe HTTPS HEAD Microsoft/Google, fallback public Sheets HEAD không OAuth (không OAuth/cookie), timeout3s/host, coalesce; connected15s, disconnected/unknown backoff2–60s. HTTP401/403/429/503 của probe chứng minh transport, không chứng minh phiên/trung tâm. Tất cả probe không trả HTTP và có ít nhất hai lỗi network-unreachable, hoặc ba timeout độc lập (gồm public Sheets) hoặc tất cả probe thất bại kèm mất link mới cho offline; DNS/TLS/timeout đơn lẻ hoặc bằng chứng không đủ là SERVICE_UNAVAILABLE. navigator.onLine không quyết định quyền. Khi offline chỉ các probe nhỏ này được outbound; business/CLI qua Google executor bị chặn trước OAuth/pacing/transport. Google budget1250ms/cooldown60s giữ nguyên.
+
+Workspace `%LOCALAPPDATA%\DuyTienAssets\LocalOffline\default` v1 bảo toàn, không nhập vào trung tâm. Launcher cũ CMD chuyển sang DuyTien-Web.cmd; script Start-LocalOffline.ps1 cũ bị chặn rõ ràng. Các cấu hình/commands LocalOffline phía dưới là lịch sử v1, không luồng hiện hành.
+
 # Cấu hình môi trường
 
 Ứng dụng dùng cấu hình phân cấp của ASP.NET Core. File trong repo chỉ chứa giá trị

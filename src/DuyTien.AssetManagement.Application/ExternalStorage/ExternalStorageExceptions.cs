@@ -15,7 +15,12 @@ public sealed class ExternalStorageTransientException(
 public sealed class ExternalStorageAuthenticationException(
     string message,
     Exception? innerException = null)
-    : ExternalStorageException(message, innerException);
+    : ExternalStorageException(message, innerException)
+{
+    public int? StatusCode { get; init; }
+    // Set only to an allowlisted protocol code; never copy an arbitrary response field.
+    public string FailureCode { get; init; } = "unclassified";
+}
 
 public sealed class ExternalStorageAccessDeniedException(
     string message,

@@ -1,3 +1,5 @@
+> 2026-10-15: REQ-002/ADR-002 v2 dùng Google schema trung tâm hiện có; filesystem chỉ là protected response/bytes cache, không database ghi độc lập. LocalOffline v1 phía dưới là lịch sử; không merge schema12/20cột hoặc nhập dữ liệu legacy vào trung tâm.
+
 # Schema logic đề xuất cho Google Sheets
 
 Ngoại lệ lưu trữ mới2026-10-14: [ADR-002](../02-architecture/ADR-002-local-offline.md) / REQ-002 thêm LocalOffline filesystem/JSON, không thay schema Sheets này hoặc migrate Google tự động. Bốn module/journals giữ logical contracts, auth/session/workspace riêng. Reference HTML12cột không thay VTHH20cột hoặc nguồn authoritative.

@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-15",
+  "mode": "Connected",
+  "launcherExitCodes": [
+    0,
+    0
+  ],
+  "launcherReusedSamePid": true,
+  "previousOwnedPidsStopped": [
+    21900,
+    17388,
+    19468
+  ],
+  "backendPid": 24384,
+  "url": "https://localhost:7008",
+  "tlsValidation": true,
+  "checks": [
+    {
+      "route": "/api/system/status",
+      "expected": 200,
+      "actual": 200,
+      "passed": true,
+      "status": {
+        "mode": "Connected",
+        "state": "RECONNECTING",
+        "singleWriterMode": true
+      }
+    },
+    {
+      "route": "/api/connection",
+      "expected": 200,
+      "actual": 200,
+      "passed": true,
+      "status": {
+        "mode": "Connected",
+        "state": "RECONNECTING",
+        "lastSyncedAt": null,
+        "hasOfflineSession": false,
+        "viewerId": null,
+        "sessionId": null,
+        "authorityHash": null,
+        "cacheId": null,
+        "cachedViews": 0,
+        "pendingWrite": false,
+        "writeRetryPermitted": false,
+        "refreshPath": "/Assets",
+        "nextProbeLimited": true
+      }
+    },
+    {
+      "route": "/Account/Login",
+      "expected": 200,
+      "actual": 200,
+      "passed": true
+    },
+    {
+      "route": "/Account/LocalSetup",
+      "expected": 410,
+      "actual": 410,
+      "passed": true
+    },
+    {
+      "route": "/js/connection.js",
+      "expected": 200,
+      "actual": 200,
+      "passed": true,
+      "servedSourceMatches": true
+    },
+    {
+      "route": "/api/assets",
+      "expected": 401,
+      "actual": 401,
+      "passed": true
+    }
+  ],
+  "process": {
+    "ownerMatches": true,
+    "pid": 24384,
+    "count": 1,
+    "exeMatches": true
+  },
+  "legacyWorkspacePreserved": true,
+  "legacyFileCount": 36,
+  "protectedCentralLogin": "NOT_RUN",
+  "googleLiveBusiness": "NOT_RUN",
+  "realNetworkTransitions": "NOT_RUN",
+  "browser": "NOT_RUN_PROVIDER_UNAVAILABLE"
+}

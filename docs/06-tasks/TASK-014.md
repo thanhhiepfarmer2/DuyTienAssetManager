@@ -62,3 +62,8 @@ Người dùng cho phép live DEV và migration/dữ liệu hoàn toàn giả tr
 [Report](../07-testing/TEST-REPORT-TASK-014-GOOGLE-DEV.md): build0warnings/errors, selected78/78 local exit0; finish57/57 live exit0, full history giữ. HTTPS200, GoogleDEV schema/replay/module/scope/tree/bytes/restart đã có bằng chứng fixture. Sửa429 bằng pacing/cooldown, giữfreshguard/version/scope và single-writer. Credential/session checkpoint xóa đã probe. Backend13420/launcher9236 chạy một instance tại https://localhost:7008.
 
 Backup49tab DPAPI ngoài Git/plan/decrypt/preservation đã đạt, không Drive bytes/actual restore. Browser unavailable; cookie cũ302 chưa retest bằng cookie mới; rendered bearer không browser/cookiePASS. Nguồn/rule/OrgLocation/ngưỡng/workbook/hosting/performance còn OPEN/TBD/NOT_RUN. Tổng thể IN_REVIEW, không DONE; Android tạm dừng/iOS DEFERRED_BY_USER, task trước/gates hoãn giữ. Không commit/push/deploy hoặc dữ liệu thật.
+
+
+## Kế hoạch trải nghiệm web tiếp theo — 2026-10-15
+
+[REQ-003](../01-requirements/REQ-003-web-experience.md) / [PLAN-003](../02-architecture/PLAN-003-web-experience.md) / [thiết kế DRAFT](../02-architecture/WEB-UI-DESIGN.md) bổ sung TASK-016–021 TODO theo thứ tự. Đây là lập kế hoạch UI cho web hiện có; không hoàn tất hoặc thay acceptance/restore/Google/browser gate TASK-014. Người dùng xác nhận login hiện có PASS_MANUAL riêng case đó, không các gate TASK-015 khác. Giữ IN_REVIEW, Android tạm dừng/iOS DEFERRED_BY_USER; không tự chuyển mobile. Lượt này không sửa UI/runtime hoặc chạy nghiệm thu.

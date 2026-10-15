@@ -1,3 +1,13 @@
+# Ưu tiên hiện hành — kế hoạch trải nghiệm web 2026-10-15
+
+[REQ-003](../01-requirements/REQ-003-web-experience.md) → [PLAN-003](PLAN-003-web-experience.md) → [WEB-UI-DESIGN](WEB-UI-DESIGN.md), bổ sung TASK-016→017→018→019→020→021, tất cả **TODO**. Thứ tự: kiểm kê/HTML/quy chuẩn → nền/layout/account → cây/Assets → hồ sơ/import/Items/snapshot/reports → admin/home/help/content → tổng kết UX/online-offline/performance. Chưa triển khai task mới trong lượt lập kế hoạch.
+
+Người dùng xác nhận login tài khoản hiện có **PASS_MANUAL**, không tự đóng gate TASK-015 khác; TASK-015 IN_REVIEW. HTML gốc chưa có trong workspace/attachments; thiết kế DRAFT dựa trên chỉ đạo, cần TASK-016 đối chiếu trước chốt. Giữ role/scope/freshness/guard, trạng thái dữ liệu và tất cả gate hoãn. Android tiếp tục tạm dừng, iOS DEFERRED_BY_USER; mobile không chặn web. Không thay stack/migration/code, không Google live/real writes/deploy/commit/push. Các phần dưới là quyết định/checkpoint lịch sử; REQ-002/ADR-002 v2 tiếp tục áp dụng online/offline.
+
+# Điều chỉnh hiện hành 2026-10-15 — Web/TASK-015 v2
+
+REQ-002/ADR-002/PLAN-002 v2 thay thế LocalOffline có quyền ghi: một backend Google online mặc định, cache scope-bound ngoại tuyến chỉ đọc, tự revalidate/reload trước ghi. Bảo toàn legacy workspace, không admin local/reset/migration. Giữ trạng thái/gate các task trước, Android tạm dừng/iOS DEFERRED_BY_USER; mobile không chặn Web. TASK-015 IN_REVIEW sau46local/35regression/3logout và executable public/HTTPS v2, authenticated Google/browser/network thật vẫn thiếu, không dùng PASS v1 làm PASS v2. Các đoạn phía dưới là checkpoint lịch sử.
+
 # PLAN-001 — Demo quản lý tài sản dựa trên Google Sheets/Drive
 
 ## Quyết định LocalOffline mới — 2026-10-14

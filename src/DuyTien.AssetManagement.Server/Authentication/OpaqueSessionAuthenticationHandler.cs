@@ -32,7 +32,10 @@ public sealed class OpaqueSessionAuthenticationHandler(
         try
         {
             using var metric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure("auth");
+            Context.Items[DuyTien.AssetManagement.Server.ConnectedCache.ConnectedRuntime.ValidationStartedItem] = (Context.RequestServices.GetService<TimeProvider>() ?? TimeProvider.System).GetUtcNow();
             session = await authService.ValidateAccessTokenAsync(token, Context.RequestAborted);
+            if (session is not null && Context.RequestServices.GetService<DuyTien.AssetManagement.Server.ConnectedCache.ConnectedRuntime>() is { } runtime)
+                await runtime.RememberAsync(Context, token, session);
         }
         catch (OperationCanceledException) when (Context.RequestAborted.IsCancellationRequested)
         {

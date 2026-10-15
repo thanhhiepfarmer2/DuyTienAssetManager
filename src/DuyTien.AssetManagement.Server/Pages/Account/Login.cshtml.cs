@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 namespace DuyTien.AssetManagement.Server.Pages.Account;
 
 [AllowAnonymous]
-public sealed class LoginModel(AuthApplicationService authService) : PageModel
+public sealed class LoginModel(AuthApplicationService authService, ILogger<LoginModel> logger) : PageModel
 {
     [BindProperty]
     public InputModel Input { get; set; } = new();
@@ -44,9 +44,14 @@ public sealed class LoginModel(AuthApplicationService authService) : PageModel
                 HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown"),
                 cancellationToken);
         }
-        catch
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+        catch (Exception exception)
         {
-            ModelState.AddModelError(string.Empty, "Dịch vụ đăng nhập hiện chưa sẵn sàng.");
+            var failure = AuthFailureDiagnostics.Describe(exception, HttpContext.TraceIdentifier);
+            logger.LogWarning("Login unavailable: {ExceptionType}; status {StatusCode}; code {FailureCode}; correlation {CorrelationId}.",
+                failure.ExceptionType, failure.StatusCode, failure.FailureCode, failure.CorrelationId);
+            Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+            ModelState.AddModelError(string.Empty, "Dịch vụ đăng nhập hiện chưa sẵn sàng. Mã đối chiếu: " + failure.CorrelationId);
             return Page();
         }
 

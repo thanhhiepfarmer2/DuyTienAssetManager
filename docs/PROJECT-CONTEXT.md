@@ -1,3 +1,31 @@
+# Kế hoạch web hiện hành — 2026-10-15 (Asia/Saigon)
+
+Người dùng xác nhận đăng nhập thành công bằng tài khoản hiện có: **PASS_MANUAL riêng case login**, không AI auth-read/schema/consent hoặc các gate TASK-015 khác PASS. [Bằng chứng](07-testing/TEST-REPORT-TASK-015-ONLINE.md); TASK-015 vẫn IN_REVIEW. Các thông báo invalid_grant/PID/build dưới đây là checkpoint lịch sử, không là runtime mới kiểm trong lượt lập kế hoạch.
+
+Ưu tiên web thành công cụ làm việc với nhận diện **Duy Tiến Assets**, theo [REQ-003](01-requirements/REQ-003-web-experience.md), [PLAN-003](02-architecture/PLAN-003-web-experience.md) và [thiết kế giao diện DRAFT](02-architecture/WEB-UI-DESIGN.md). TASK-016–021 mới tạo, **đều TODO**; task đầu là TASK-016 kiểm kê/đối chiếu nguồn/quy chuẩn, chưa thực hiện. Giữ toàn bộ code/worktree chưa commit, Task003 IN_REVIEW/004 DONE/các gate cũ; Android tạm dừng, iOS DEFERRED_BY_USER.
+
+HTML `QuanLyVatTu_DuyTien_v4_Offline.html` **chưa tìm thấy trong repository/attachments**, NOT_REVIEWED_HTML. Màu/định hướng theo người dùng; không tuyên bố AI đối chiếu file hoặc nhập dataset. TASK-016 cần đúng file để chốt; không chặn việc lập plan. Branding không gọi ứng dụng demo/PoC/scaffold; nguồn/test-data/DRAFT vẫn nhận biết đúng. Không đổi enum/ID/mã/schema hoặc rule OPEN/TBD.
+
+Giữ online mặc định, offline tự động chỉ đọc, server auth/scope/freshness/guard/version/idempotency/single-writer/drive.file. Lượt này chỉ docs/consistency, không code UI/build/test/runtime/Google/commit/push/deploy hoặc chuyển mobile. [Report lập kế hoạch](07-testing/TEST-REPORT-WEB-UI-PLANNING.md).
+
+---
+## Các checkpoint trước — giữ nguyên lịch sử
+
+## Chẩn đoán đăng nhập Google DEV — 2026-10-15
+
+> Login fix 15/10: Google thật trả OAuth HTTP400/`invalid_grant` trước Sheets; config Google/Development và guard first-login đã kiểm. Bản sửa log an toàn/CLI read-only +78/78tests, Release sạch; đang chờ consent desktop cùng app `drive.file`, chưa Google auth-read/login PASS. Xem [báo cáo](07-testing/TEST-REPORT-TASK-015-ONLINE.md). Giữ IN_REVIEW, không reset admin.
+
+# Checkpoint hiện hành — TASK-015 v2, 2026-10-15
+
+Người dùng thay thế LocalOffline ghi độc lập: một backend Google online mặc định, cache ngoại tuyến chỉ đọc và reconnect xác minh lại phiên/quyền/dữ liệu trước ghi. TASK-015 IN_REVIEW theo REQ-002/ADR-002/PLAN-002 v2. HEAD d8a508d đã push ở lượt trước; lượt này không commit/push. Workspace v1 bảo toàn, không reset admin hoặc yêu cầu LocalSetup; Android dừng/iOS DEFERRED_BY_USER. Các checkpoint/bằng chứng v1 bên dưới là lịch sử, không PASS v2.
+
+V2 local46/46 + selected35/35 +3/3logout exit0, Release0warning/error exit0; [report](07-testing/TEST-REPORT-TASK-015-ONLINE.md). Một backend **PID 24384** Google/Connected tại **https://localhost:7008**, owner/exe đúng, TLS strict/public6checks, start/reuse0/0. Anonymous status RECONNECTING không là session ONLINE; chưa kiểm authenticated Google/login admin thật, Internet transitions thật hoặc browser (provider unavailable). Legacy workspace36files fingerprint không đổi; không reset admin/seed/migration/Google writes. Cache partial query/bytes theo phiên, không mirror toàn dataset; OPEN/TBD và task/gate cũ giữ. Launcher DuyTien-Web.cmd; CMD cũ forward, không LocalSetup. Mã/tài liệu lượt này chưa commit.
+
+
+Scope/coherence cuối: store checkpoint/dependency private, purge cache khi dữ liệu đã quan sát đổi và khi epoch đổi; mixed/cross-epoch read409. Cipher/RAM/ticket bind phiên; operation lease dừng RPC cũ qua reconnect. Google/browser/mạng thật vẫn NOT_RUN.
+
+
+
 # Bối cảnh dự án
 
 ## Checkpoint LocalOffline hiện hành — 2026-10-14

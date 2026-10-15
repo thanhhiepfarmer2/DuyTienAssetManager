@@ -1,3 +1,15 @@
+# Kế hoạch hoàn thiện giao diện web — 2026-10-15
+
+Theo [REQ-003](docs/01-requirements/REQ-003-web-experience.md), [PLAN-003](docs/02-architecture/PLAN-003-web-experience.md) bổ sung TASK-016–021 **TODO**, bắt đầu từ kiểm kê và quy chuẩn. [Thiết kế giao diện](docs/02-architecture/WEB-UI-DESIGN.md) còn DRAFT: HTML tham chiếu chưa có trong repo/attachments, chưa AI đối chiếu. Lượt này chỉ lập kế hoạch, chưa đổi UI/code. Người dùng xác nhận login tài khoản hiện có PASS_MANUAL; TASK-015 IN_REVIEW, gate khác giữ nguyên. Android tạm dừng/iOS DEFERRED_BY_USER; [trạng thái authoritative](docs/PROJECT-CONTEXT.md).
+
+# Chạy web hiện hành — TASK-015 v2
+
+Mở **DuyTien-Web.cmd** → https://localhost:7008/Account/Login, tài khoản trung tâm đang có. Online mặc định; mất Internet đã xác định thì chỉ đọc các snapshot/file đã cache theo phiên. Có mạng: xác minh lại quyền và tải mới trước ghi. Không LocalSetup/admin local; workspace LocalOffline v1 giữ nguyên. Xem [hướng dẫn](docs/WEB-USER-GUIDE.md), [vận hành](docs/WEB-OPERATIONS.md) và [report v2](docs/07-testing/TEST-REPORT-TASK-015-ONLINE.md). Các mô tả LocalOffline v1 bên dưới là lịch sử.
+
+## Lịch sử scaffold và LocalOffline v1 — không phải trạng thái hiện hành
+
+Các mô tả chưa có Git, TASK-004 còn review và LocalOffline độc lập dưới đây thuộc checkpoint cũ. Dùng PROJECT-CONTEXT/INDEX và REQ-002 v2 cho trạng thái hiện hành; giữ phần này làm lịch sử.
+
 # QuanLyTaiSan_DuyTien
 
 Web LocalOffline (TASK-015): sau prepare Release một lần, chạy [DuyTien-LocalOffline.cmd](DuyTien-LocalOffline.cmd) để mở https://localhost:7008, không build/download mỗi lần và không cần Google/Internet. Workspace ở `%LOCALAPPDATA%\DuyTienAssets\LocalOffline\default` ngoài Git. Xem [cấu hình](docs/CONFIGURATION.md), [hướng dẫn](docs/WEB-USER-GUIDE.md), [lệnh](docs/COMMANDS.md), [bằng chứng và giới hạn](docs/07-testing/TEST-REPORT-TASK-015.md). Không tự seed/reset/sync; Android tạm dừng, iOS DEFERRED_BY_USER.

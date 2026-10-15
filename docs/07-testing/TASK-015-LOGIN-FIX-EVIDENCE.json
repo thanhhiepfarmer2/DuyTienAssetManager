@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-15",
+  "source": "AI_DIRECT",
+  "oauthHttpStatusBefore": 400,
+  "oauthErrorBefore": "invalid_grant",
+  "tlsValidation": true,
+  "releaseDiagnosticExit": 1,
+  "recordsBeforeConsent": [
+    {
+      "diagnostic": "auth-read",
+      "stage": "configuration",
+      "environment": "Development",
+      "storage": "Google",
+      "cacheEnabled": true,
+      "oauthAndSystemSettingsPresent": true,
+      "systemSeparateFromBusiness": true,
+      "build": "cc896f93-d1c4-4a57-84e7-b322f38f2659"
+    },
+    {
+      "diagnostic": "auth-read",
+      "stage": "connectivity",
+      "state": "Connected"
+    },
+    {
+      "command": "auth",
+      "failure": {
+        "ExceptionType": "ExternalStorageAuthenticationException",
+        "StatusCode": 400,
+        "FailureCode": "invalid_grant",
+        "CorrelationId": "91ed6ae6c61c4d69aa28fde146ebf50a"
+      }
+    }
+  ],
+  "consentCompleted": false,
+  "googleAuthRead": "BLOCKED_OAUTH_INVALID_GRANT",
+  "passwordLogin": "NOT_RUN",
+  "credentialBodyOmitted": true,
+  "publicChecksBeforeConsent": [
+    {
+      "route": "/api/system/status",
+      "status": 200,
+      "tlsValidation": true,
+      "runtime": {
+        "mode": "Connected",
+        "state": "RECONNECTING",
+        "singleWriterMode": true,
+        "buildId": "cc896f93-d1c4-4a57-84e7-b322f38f2659",
+        "environment": "Development",
+        "storage": "Google"
+      },
+      "matchesDiagnosticBuild": true
+    },
+    {
+      "route": "/Account/Login",
+      "status": 200,
+      "tlsValidation": true
+    },
+    {
+      "route": "/Account/LocalSetup",
+      "status": 410,
+      "tlsValidation": true
+    }
+  ],
+  "backendPidBeforeConsent": 21540,
+  "tests": {
+    "filter": "GoogleOAuthTokenProviderTests|LoginFailureDiagnosticsTests|ConnectedCacheTests|GoogleAuthSystemStoreTests",
+    "passed": 78,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "durationSeconds": 16
+  },
+  "releaseBuild": {
+    "exitCode": 0,
+    "warnings": 0,
+    "errors": 0,
+    "elapsed": "00:00:05.17"
+  },
+  "backendOwnerMatchesCurrent": true,
+  "backendExecutableAndStartMatch": true,
+  "backendCountBeforeConsent": 1,
+  "pendingAgentOAuthPidStopped": 24228,
+  "pendingAgentOAuthObservedExit": -1,
+  "desktopHelper": "scripts/Reconnect-GoogleLogin.ps1",
+  "adminReset": false,
+  "schemaInit": false,
+  "googleBusinessWrites": false,
+  "finalLogin": "NOT_RUN_USER_FORM_REQUIRED",
+  "apiAndLoggingRegression": {
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "durationSeconds": 1
+  },
+  "preservationCheck": {
+    "baselineFiles": 465,
+    "changedExistingFiles": 15,
+    "unexpectedChanges": [],
+    "missingLocalLinks": [],
+    "indexEmpty": true,
+    "head": "d8a508dc30435133acbc81a76b1acafd8715c37b"
+  }
+}

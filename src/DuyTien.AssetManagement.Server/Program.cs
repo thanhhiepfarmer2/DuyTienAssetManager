@@ -1,3 +1,4 @@
+using DuyTien.AssetManagement.Server.ConnectedCache;
 using DuyTien.AssetManagement.Server.LocalOffline;
 using DuyTien.AssetManagement.Application.Reports;
 using DuyTien.AssetManagement.Server.Reports;
@@ -29,6 +30,10 @@ var builder = WebApplication.CreateBuilder(args);
 var storageMode = builder.Configuration["Storage:Mode"] ?? "Google";
 if (storageMode is not ("Google" or "LocalOffline")) throw new InvalidOperationException("Storage:Mode phải là Google hoặc LocalOffline, không fallback.");
 var localOffline = storageMode == "LocalOffline";
+if (localOffline) throw new InvalidOperationException("LocalOffline ghi độc lập đã ngừng theo REQ-002 v2. Dùng DuyTien-Web.cmd; workspace cũ được bảo toàn, không LocalSetup.");
+var connectedCache = builder.Configuration.GetValue<bool?>("ConnectedCache:Enabled") ?? true;
+if (!connectedCache) throw new InvalidOperationException("Connection/read-only guard bắt buộc theo REQ-002 v2.");
+if (connectedCache) builder.AddConnectedCache();
 if (localOffline)
 {
     foreach (var source in builder.Configuration.Sources.OfType<Microsoft.Extensions.Configuration.Json.JsonConfigurationSource>().Where(s => Path.GetFileName(s.Path) == "secrets.json").ToArray()) builder.Configuration.Sources.Remove(source);
@@ -68,26 +73,27 @@ if (!localOffline)
             serviceProvider.GetRequiredService<GoogleWorkspaceOptions>(),
             serviceProvider.GetRequiredService<IGoogleAccessTokenProvider>(),
             serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleApi"),
-            sheetsBudget: serviceProvider.GetRequiredService<GoogleSheetsRequestBudget>()));
+            sheetsBudget: serviceProvider.GetRequiredService<GoogleSheetsRequestBudget>(),
+            connectivity: serviceProvider.GetService<IGoogleConnectivityGuard>()));
     builder.Services.AddSingleton<GoogleSheetsDataStore>();
     builder.Services.AddSingleton<GoogleAuthSystemStore>();
     builder.Services.AddSingleton<GoogleAssetCatalogStore>();
-    builder.Services.AddSingleton<IAssetCatalogStore>(p => p.GetRequiredService<GoogleAssetCatalogStore>());
+    builder.Services.AddSingleton<IAssetCatalogStore>(p => p.GetRequiredService<ObservedBusinessStores>());
     builder.Services.AddSingleton<AssetCrudService>();
     builder.Services.AddSingleton<GoogleInventoryStore>();
-    builder.Services.AddSingleton<IInventoryStore>(p => p.GetRequiredService<GoogleInventoryStore>());
+    builder.Services.AddSingleton<IInventoryStore>(p => p.GetRequiredService<ObservedBusinessStores>());
     builder.Services.AddSingleton<InventoryService>();
     builder.Services.AddSingleton<ReportService>();
     builder.Services.AddSingleton<GoogleCategoryCatalogStore>();
-    builder.Services.AddSingleton<ICategoryCatalogStore>(p => p.GetRequiredService<GoogleCategoryCatalogStore>());
+    builder.Services.AddSingleton<ICategoryCatalogStore>(p => p.GetRequiredService<ObservedBusinessStores>());
     builder.Services.AddSingleton<GoogleTreeMutationStore>();
-    builder.Services.AddSingleton<ITreeMutationStore>(p => p.GetRequiredService<GoogleTreeMutationStore>());
+    builder.Services.AddSingleton<ITreeMutationStore>(p => p.GetRequiredService<ObservedBusinessStores>());
     builder.Services.AddSingleton<GoogleWebDevInitializer>();
     builder.Services.AddSingleton<TreeMutationService>();
     builder.Services.Configure<MediaUploadOptions>(builder.Configuration.GetSection(MediaUploadOptions.SectionName));
     builder.Services.AddSingleton(p => p.GetRequiredService<IOptions<MediaUploadOptions>>().Value);
     builder.Services.AddSingleton<GoogleMediaCatalogStore>();
-    builder.Services.AddSingleton<IMediaCatalogStore>(p => p.GetRequiredService<GoogleMediaCatalogStore>());
+    builder.Services.AddSingleton<IMediaCatalogStore>(p => p.GetRequiredService<ObservedBusinessStores>());
     builder.Services.AddSingleton<IManagedMediaContentStore, GoogleManagedMediaContentStore>();
     builder.Services.AddSingleton<MediaLibraryService>();
     builder.Services.AddSingleton<CategoryCatalogService>();
@@ -105,6 +111,7 @@ if (!localOffline)
         serviceProvider.GetRequiredService<GoogleDriveFileStore>());
     builder.Services.AddSingleton<GoogleDriveAccessVerifier>();
     builder.Services.AddSingleton<GoogleWorkspaceProvisioner>();
+    builder.Services.AddSingleton<ObservedBusinessStores>(p => new(p.GetRequiredService<GoogleAssetCatalogStore>(), p.GetRequiredService<GoogleCategoryCatalogStore>(), p.GetRequiredService<GoogleInventoryStore>(), p.GetRequiredService<GoogleMediaCatalogStore>(), p.GetRequiredService<GoogleTreeMutationStore>()));
     builder.Services.AddSingleton<ISingleWriterCoordinator, InProcessSingleWriterCoordinator>();
 }
 else builder.AddLocalOffline();
@@ -151,6 +158,7 @@ if (!localOffline) builder.Services.AddSingleton(serviceProvider =>
         serviceProvider.GetRequiredService<IHttpClientFactory>().CreateClient("GoogleOAuth")));
 
 var app = builder.Build();
+using var commandOperation = ConnectionGate.BeginOperation();
 
 if (!localOffline && await GoogleWorkspaceCommandRunner.TryRunAsync(args, app.Services))
 {
@@ -175,10 +183,13 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 app.UsePerformanceTrace();
-app.Use(async (context, next) => { using var scope = RequestAuthStore.Begin(); await next(); });
+app.Use(async (context, next) => { using var scope = RequestAuthStore.Begin(); using var business = BusinessReadProof.Begin(HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method)); using var metadata = GoogleMetadataReadMemo.Begin(HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method)); await next(); });
+if (connectedCache) app.UseConnectedCache();
 app.UseTask005SessionAuthentication();
+if (connectedCache) app.UseConnectedWriteGate();
 app.Use(async (context, next) =>
 {
     var mustChange = context.User.Identity?.IsAuthenticated == true &&
@@ -224,6 +235,7 @@ app.MapTask008TreeApi();
 app.MapTask009MediaApi();
 app.MapTask010InventoryApi();
 app.MapTask011ReportApi();
+if (connectedCache) app.MapConnectedCache();
 
 if (localOffline)
 {

@@ -102,3 +102,8 @@ AI đọc lại staging trong repository: 665/15/98/552, 39 tên nhiều code, k
 Nguồn bằng chứng: phân tích tĩnh **người dùng cung cấp**, không phải AI đọc lại file hoặc benchmark. [QuanLyVatTu_DuyTien_v4_Offline.html](https://drive.google.com/file/d/1ilMyTYJnKNbsvhie919cAElKZxBB9hh_/view): khoảng7,19MB tự chứa JS/CSS, không script src/stylesheet ngoài; dataset20744x12; IndexedDB duy-tien-material-manager/application/state-v1; snapshot RAM/Map/searchIndex chuẩn hóa/memoization/deferred search, render60tăng dần; autosave debounce900ms; XLSX/file người dùng chọn. V4 vẫn gọi Apps Script cho login/resume/mutations, offline cached user chỉ đọc và lần đầu cần Internet.
 
 Dùng làm UX/performance reference của REQ-002, không nguồn nghiệp vụ authoritative/benchmark/đề xuất rule mã theo name/path. Không tải hoặc commit HTML/dataset, không seed tự động. Không ép12cột vào contract VTHH20cột hoặc bỏ mô tả; workbook gốc/provenance/rule vẫn OPEN/TBD. LocalOffline mới cần đọc/ghi thật qua backend/JSON durable, không sao chép giới hạn offline-read-only hoặc báo đã lưu theo debounce.
+
+
+## Nguồn giao diện yêu cầu15/10/2026 — chưa có file gốc
+
+`QuanLyVatTu_DuyTien_v4_Offline.html`: AI tìm filename (không phân biệt hoa/thường) trong workspace kể cả hidden/ignored, loại .git, và thư mục attachments hiện có: **0/0 file**. Chỉ đọc file yêu cầu Pasted text.txt; không đọc HTML/dataset, không tải từ Drive hoặc nhập vào Git. Trạng thái **MISSING_REFERENCE / NOT_REVIEWED_HTML**. Phân tích tĩnh trên vẫn là thông tin do người dùng cung cấp. [REQ-003](REQ-003-web-experience.md), [thiết kế DRAFT](../02-architecture/WEB-UI-DESIGN.md) và TASK-016 ghi rõ phần đối chiếu còn thiếu; màu/định hướng là chỉ đạo người dùng, không suy là đã quan sát tool.

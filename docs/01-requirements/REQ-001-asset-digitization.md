@@ -1,3 +1,5 @@
+> Chỉ đạo hiện hành15/10/2026: [REQ-002 v2](REQ-002-local-offline.md) là online Google mặc định và cache ngoại tuyến chỉ đọc; LocalOffline có quyền ghi của14/10 đã bị thay thế, giữ lịch sử. [REQ-003](REQ-003-web-experience.md) bổ sung trải nghiệm web/branding Duy Tiến Assets, không đổi enum/ID/schema/rule hoặc phê duyệt dữ liệu. Kế hoạch [PLAN-003](../02-architecture/PLAN-003-web-experience.md), TASK-016–021 TODO. Android tạm dừng/iOS DEFERRED_BY_USER. Bổ sung14/10 dưới đây là quyết định lịch sử.
+
 # REQ-001 — Mã số hóa tài sản Công ty TNHH Duy Tiến
 
 Bổ sung hiện hành2026-10-14: [REQ-002](REQ-002-local-offline.md) và ADR-002 cho phép LocalOffline filesystem/JSON thực, offline đọc/ghi, không SQL/SQLite/auto-sync. Thay online-first cho mode này; giữ Google mode và yêu cầu nghiệp vụ/source/rule OPEN/TBD dưới đây. Android tạm dừng/iOS DEFERRED_BY_USER.

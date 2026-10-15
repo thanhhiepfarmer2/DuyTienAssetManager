@@ -1,3 +1,11 @@
+# Điều hướng kiến trúc hiện hành — 2026-10-15
+
+Xem [PROJECT-CONTEXT](../PROJECT-CONTEXT.md)/[INDEX](../06-tasks/INDEX.md) để biết trạng thái mới nhất. Kiến trúc giữ .NET10/Razor/Sheets/Drive/drive.file và single-writer; [REQ-002 v2](../01-requirements/REQ-002-local-offline.md)/[ADR-002](ADR-002-local-offline.md) thay LocalOffline ghi độc lập. Người dùng xác nhận login tài khoản hiện có PASS_MANUAL, không là các gate khác PASS.
+
+Trải nghiệm web: [REQ-003](../01-requirements/REQ-003-web-experience.md), [PLAN-003](PLAN-003-web-experience.md), [WEB-UI-DESIGN DRAFT](WEB-UI-DESIGN.md), TASK-016–021 TODO; thiếu HTML gốc nên chưa đối chiếu reference. Android tạm dừng/iOS hoãn. Bảng scaffold dưới đây giữ như checkpoint lịch sử, không phải tình trạng triển khai hiện tại.
+
+---
+
 # Kiến trúc
 
 [ADR-001](ADR-001-proposed-sheets-drive-web-mobile.md) đã được chấp nhận ngày

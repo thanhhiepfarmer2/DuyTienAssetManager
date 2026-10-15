@@ -8,9 +8,13 @@
     <link rel="stylesheet" href="~/DuyTien.AssetManagement.Server.styles.css" asp-append-version="true" />
 </head>
 <body>
-    @{var localWorkspace=Context.RequestServices.GetService(typeof(DuyTien.AssetManagement.Infrastructure.Local.LocalWorkspace)) as DuyTien.AssetManagement.Infrastructure.Local.LocalWorkspace;}
-    <div class="container small py-2" data-workspace="@(localWorkspace?.WorkspaceId ?? "Google")" data-viewer="@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous")" data-session="@(User.FindFirst("session_id")?.Value ?? "none")">@(localWorkspace is null?"Google DEV · DRAFT/demo":"LocalOffline · workspace "+localWorkspace.WorkspaceId[..8]+" · DRAFT/demo · dữ liệu lưu trên máy")
-    @if(localWorkspace is not null && User.Identity?.IsAuthenticated!=true){<a href="/Account/LocalSetup">Khởi tạo workspace mới</a>}</div>
+    <div class="container py-2" id="connection-state" role="status" aria-live="polite">Đang xác minh trạng thái trung tâm…</div>
+    <script src="/js/connection.js" defer></script>
+    @{var localWorkspace=Context.RequestServices.GetService(typeof(DuyTien.AssetManagement.Infrastructure.Local.LocalWorkspace)) as DuyTien.AssetManagement.Infrastructure.Local.LocalWorkspace;
+    var connectedCache=Context.RequestServices.GetService(typeof(DuyTien.AssetManagement.Server.ConnectedCache.ProtectedQueryCache)) as DuyTien.AssetManagement.Server.ConnectedCache.ProtectedQueryCache;
+    var centralProof=connectedCache?.Read(DuyTien.AssetManagement.Server.ConnectedCache.ConnectedRuntime.Credential(Context))?.Proof;}
+    <div class="container small py-2" data-workspace="@(localWorkspace?.WorkspaceId ?? "Google")" data-central="@(connectedCache?.CentralId ?? "")" data-authority="@(centralProof?.AuthorityHash ?? "")" data-viewer="@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous")" data-session="@(User.FindFirst("session_id")?.Value ?? "none")">@(localWorkspace is null?"Google DEV · DRAFT/demo":"LocalOffline · workspace "+localWorkspace.WorkspaceId[..8]+" · DRAFT/demo · dữ liệu lưu trên máy")
+    </div>
     <a class="visually-hidden-focusable" href="#main-content">Đến nội dung chính</a>
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-3" aria-label="Điều hướng chính">

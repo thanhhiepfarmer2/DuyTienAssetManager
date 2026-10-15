@@ -1,3 +1,5 @@
+> REQ-002 v2 (2026-10-15): khi OFFLINE_READ_ONLY mọi quyền mutation đều bị server chặn, kể cả Admin/baALL; chỉ đọc snapshot đã xác nhận đúng scope và còn hạn. RECONNECTING chưa mở ghi cho tới revalidate authority và đọc dữ liệu nghiệp vụ mới. Logout/thu hồi cache là kỹ thuật; không cấp role/quyền mới. Bảng quyền bên dưới vẫn áp dụng online ở trung tâm.
+
 # Ma trận quyền và phạm vi — TASK-005
 
 Status: `ACCEPTED` ngày 2026-10-07; implementation local đã qua review; live DEV provisioning/ACL/schema pass 2026-10-09, quyền/phiên live và UI UAT còn thiếu.

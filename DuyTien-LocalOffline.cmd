@@ -1,3 +1,3 @@
 @echo off
-powershell.exe -NoProfile -File "%~dp0scripts\Start-LocalOffline.ps1"
-if errorlevel 1 pause
+rem Compatibility launcher: online default; existing LocalOffline workspace is preserved.
+call "%~dp0DuyTien-Web.cmd"

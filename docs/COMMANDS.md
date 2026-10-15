@@ -669,3 +669,155 @@ Run: `.\scripts\Start-LocalOffline.ps1` hoặc double-click `DuyTien-LocalOfflin
 4. Start default qua `Start-LocalOffline.ps1 -NoBrowser` từ subprocess stdio→private file/stdin DEVNULL khi automation; không dùng capture_output pipe giữ sống bởi child background. Thao tác người dùng chạy CMD/PS bình thường mở URL theo default browser, không build/restore/download.
 
 Scoped whitespace formatter5projects --no-restore --include exact files trong TASK-015-FORMAT-EVIDENCE.json. `node --check src/DuyTien.AssetManagement.Server/wwwroot/js/site.js`; PowerShell Parser.ParseFile cho start/stop; Python ast.parse runner không pyc. Regression filter207cases gồm AuthApplicationServiceTests/AuthSessionTimeoutTests/ScopeAuthorizationTests/AuthApiIntegrationTests/AuthRazorUserDetailTests/GoogleAssetCatalogTests/GoogleTreeMutationTests/InventoryTests/InventoryHttpRazorTests/ReportTests/ReportHttpRazorTests/WebIntegrationTests/InProcessSingleWriterCoordinatorTests/CategoryHttpRazorTests/ManagedMediaHttpRazorTests/TreeMutationHttpRazorTests/GoogleSheetsRequestBudgetTests, ghép `FullyQualifiedName~...` bằng `|`; không Google live/timeout dài/mobile.
+
+
+## TASK-015 v2 — online/offline read-only, 2026-10-15
+
+Các lệnh LocalOffline v1 phía trên là lịch sử; không dùng launcher v1 để khởi tạo admin/ghi local nữa.
+
+```powershell
+dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~ConnectedCache"
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~AuthApiIntegrationTests|FullyQualifiedName~GoogleSheetsRequestBudgetTests|FullyQualifiedName~LocalOfflineTests|FullyQualifiedName~WebIntegrationTests"
+node --check src/DuyTien.AssetManagement.Server/wwwroot/js/connection.js
+```
+
+Build/test tuần tự khi chung output. Tests v2 dùng transport/auth GIẢ và cache filesystem thật, không phải Google/browser pass. Launcher mới DuyTien-Web.cmd dùng Release output đã chuẩn bị, không build/restore mỗi lần. Không chạy lệnh Google mutation/CLI để nghiệm thu dữ liệu thật.
+
+
+```powershell
+# Chuẩn bị Release một lần, sau khi build/test khác đã exit:
+dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj -c Release --no-restore --nologo -v:minimal
+.\scripts\Start-Web.ps1 -NoBrowser
+.\scripts\Stop-Web.ps1
+# Sau đó người dùng mở DuyTien-Web.cmd; không restore/build/download mỗi lần.
+# Benchmark chỉ central GIẢ/loopback, không Google live:
+$env:DUYTIEN_CONNECTED_BENCHMARK = Join-Path (Get-Location) 'docs/07-testing/TASK-015-ONLINE-OFFLINE-BENCHMARK.json'
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~ConnectedCache"
+$checkpointTestExit = $LASTEXITCODE
+Remove-Item Env:DUYTIEN_CONNECTED_BENCHMARK
+# Quan sát/report $checkpointTestExit, không suy diễn từ lệnh sau.
+```
+
+
+Metadata request memo (GIẢ transport, không Google live):
+```powershell
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~ConnectedCache|FullyQualifiedName~GoogleAdapterHttpTests|FullyQualifiedName~SafeGoogleHttpClientLoggingTests"
+```
+
+
+Chốt hardening v2 (đã chạy tuần tự; stdout exit từng nhóm trong report):
+```powershell
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~ConnectedCache"
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-build --no-restore --nologo -v:minimal --filter "FullyQualifiedName~GoogleAdapterHttpTests|FullyQualifiedName~SafeGoogleHttpClientLoggingTests|FullyQualifiedName~AuthApiIntegrationTests|FullyQualifiedName~WebIntegrationTests"
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~Idle_expiry_cannot_be_extended_by_offline_reads|FullyQualifiedName~Expiry_offline_does_not_extend_and_logout_revokes_across_cache_restart|FullyQualifiedName~Cookie_offline_logout_requires_antiforgery_and_clears_offline_access"
+# Sau test exit0, dừng đúng instance trước ghi Release output:
+.\scripts\Stop-Web.ps1
+dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj -c Release --no-restore --nologo -v:minimal
+.\scripts\Start-Web.ps1 -NoBrowser
+# Chạy lại Start-Web -NoBrowser phải reuse cùng PID; không build/download.
+```
+
+
+## TASK-015 v2 — chẩn đoán đăng nhập Google (2026-10-15)
+
+`auth-diagnose` chỉ đọc bằng GoogleAuthSystemStore thật, không init/bootstrap/mutation/password check.
+Dừng đúng backend bằng Stop-Web trước CLI; CLI dùng system-writer lease. Kết quả chỉ bool/type/status/code/correlation/build,
+không in row/hash/credential/resource ID. Chạy từ thư mục Server, đúng Windows operator đang có user-secrets.
+
+```powershell
+$env:ASPNETCORE_ENVIRONMENT = 'Development'
+$env:DOTNET_ENVIRONMENT = 'Development'
+$env:Storage__Mode = 'Google'
+.\bin\Release\net10.0\DuyTien.AssetManagement.Server.exe auth-diagnose
+# Chỉ khi Google đã xác nhận invalid_grant: consent lại cùng Desktop app, đúng drive.file.
+.\bin\Release\net10.0\DuyTien.AssetManagement.Server.exe google-oauth-bootstrap
+```
+
+Từ repo root, tuần tự:
+```powershell
+dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj -c Release --no-restore --nologo -v:minimal
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~GoogleOAuthTokenProviderTests|FullyQualifiedName~LoginFailureDiagnosticsTests|FullyQualifiedName~ConnectedCacheTests|FullyQualifiedName~GoogleAuthSystemStoreTests"
+.\scripts\Start-Web.ps1 -NoBrowser
+```
+Không tự gọi login bằng mật khẩu đoán/giả lên Google. Bước login thật do người dùng nhập trực tiếp form, không secret UAT.
+
+Nếu cửa sổ consent do agent mở không xuất hiện, chạy từ PowerShell desktop tại repo root:
+`.\scripts\Reconnect-GoogleLogin.ps1`. Script dừng đúng backend đã ghi nhận, chạy auth-diagnose,
+chỉ consent khi mã là invalid_grant, đọc lại auth store và khởi động lại một backend trong finally.
+Không bootstrap admin/schema/resource, không nhập password vào CLI; password cũ chỉ nhập trên form HTTPS.
+`dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-build --no-restore --nologo -v:minimal --filter "FullyQualifiedName~AuthApiIntegrationTests|FullyQualifiedName~SafeGoogleHttpClientLoggingTests"`: hồi quy API auth và logger liên quan sau sửa Login/OAuth; không full UAT.
+
+
+## Lập kế hoạch trải nghiệm web — 2026-10-15
+
+Chỉ kiểm docs, không build/test/runtime. Baseline fingerprints ngoài Git của lượt này; không có baseline thì không tự báo đã kiểm bảo toàn. Working directory repo root; task mới TODO.
+
+```powershell
+$OutputEncoding = [Text.UTF8Encoding]::new($false)
+@'
+import os,json,re,hashlib,subprocess
+from pathlib import Path
+root=Path.cwd()
+private=Path(os.environ['LOCALAPPDATA'])/'DuyTienAssets/ConnectedCache/ui-plan-baseline.private.json'
+before=json.loads(private.read_text(encoding='utf-8'))
+allow={'README.md','docs/COMMANDS.md','docs/PROJECT-CONTEXT.md','docs/01-requirements/REQ-001-asset-digitization.md','docs/01-requirements/SOURCE-AUDIT.md','docs/02-architecture/README.md','docs/02-architecture/PLAN-001.md','docs/02-architecture/PLAN-002-local-offline.md','docs/06-tasks/INDEX.md','docs/06-tasks/TASK-014.md','docs/06-tasks/TASK-015.md','docs/07-testing/TEST-REPORT-TASK-015-ONLINE.md'}
+new={'docs/01-requirements/REQ-003-web-experience.md','docs/02-architecture/PLAN-003-web-experience.md','docs/02-architecture/WEB-UI-DESIGN.md','docs/07-testing/TEST-REPORT-WEB-UI-PLANNING.md'}|{f'docs/06-tasks/TASK-{n:03}.md' for n in range(16,22)}
+issues=[]
+changed=[p for p,h in before.items() if not (root/p).is_file() or hashlib.sha256((root/p).read_bytes()).hexdigest()!=h]
+issues += ['outside-docs-allowlist:'+p for p in changed if p not in allow]
+current=set(filter(None,subprocess.check_output(['git','ls-files','--cached','--others','--exclude-standard','-z']).decode().split('\0')))
+issues += ['unexpected-new-file:'+p for p in current-set(before)-new]
+issues += ['expected-new-file-absent:'+p for p in new-current]
+index=(root/'docs/06-tasks/INDEX.md').read_text(encoding='utf-8-sig')
+rows=re.findall(r'^\| (TASK-\d{3}) \|.*?\| (TODO|IN_PROGRESS|IN_REVIEW|DONE|BLOCKED) \|',index,re.M)
+ids=[a for a,b in rows];statuses=dict(rows)
+if len(ids)!=len(set(ids)):issues.append('duplicate-index-id')
+for n in range(3,22):
+ expected='DONE' if n==4 else 'TODO' if n==13 or n>=16 else 'IN_REVIEW'
+ if statuses.get(f'TASK-{n:03}')!=expected:issues.append(f'status-{n}')
+sections=['Mục tiêu và phạm vi','Ngoài phạm vi','Đầu vào, phụ thuộc và giả định','Màn hình bị ảnh hưởng','Acceptance criteria','Routing','Các bước','Cách kiểm và bằng chứng','Review và checkpoint']
+ac_count=0
+for n in range(16,22):
+ p=root/f'docs/06-tasks/TASK-{n:03}.md';text=p.read_text(encoding='utf-8-sig')
+ if p.relative_to(root).as_posix() in before:issues.append(f'overwrote-task-{n}')
+ if '- Status: TODO' not in text or f'# TASK-{n:03} ' not in text:issues.append(f'task-header-{n}')
+ for heading in sections:
+  if '## '+heading not in text:issues.append(f'task-section-{n}')
+ acs=re.findall(r'^- \[ \] (AC-\d{2}):',text,re.M);ac_count+=len(acs)
+ if len(acs)<4 or len(acs)!=len(set(acs)):issues.append(f'task-ac-{n}')
+ if n>16 and f'TASK-{n-1:03}' not in text.split('## Đầu vào, phụ thuộc và giả định')[1].split('## Màn hình')[0]:issues.append(f'dependency-{n}')
+ if '| NOT_RUN' not in text:issues.append(f'planned-evidence-{n}')
+graph={}
+for n in range(16,22):
+ text=(root/f'docs/06-tasks/TASK-{n:03}.md').read_text(encoding='utf-8-sig')
+ dependencies=text.split('## Đầu vào, phụ thuộc và giả định')[1].split('## Màn hình')[0]
+ graph[n]=[int(m) for m in re.findall(r'TASK-(\d{3})',dependencies) if 16<=int(m)<=21]
+visiting=set();visited=set()
+def visit(node):
+ if node in visiting:issues.append('dependency-cycle');return
+ if node in visited:return
+ visiting.add(node)
+ for parent in graph[node]:visit(parent)
+ visiting.remove(node);visited.add(node)
+for node in graph:visit(node)
+links=0
+for rel in sorted(new|allow):
+ p=root/rel;text=p.read_text(encoding='utf-8-sig')
+ if not text.endswith('\n') or any(line.rstrip()!=line for line in text.splitlines()):issues.append('markdown-whitespace:'+rel)
+ text=re.sub(r'(?ms)^```[^\n]*\n.*?^```[^\n]*','',text)
+ for target in re.findall(r'\]\(([^\s)]+)\)',text):
+  if '://' in target or target.startswith('#'):continue
+  target=target.strip('<>').split('#')[0]
+  if not target:continue
+  links+=1
+  if not (p.parent/target).exists():issues.append('missing-link:'+rel+'->'+target)
+staged=subprocess.check_output(['git','diff','--cached','--name-only']).decode().strip()
+if staged:issues.append('staged-index-changed')
+result={'baselineFiles':len(before),'existingDocsChanged':len(changed),'newDocs':len(new),'taskStatusChecks':19,'tasksCreatedTodo':6,'dependencyGraphAcyclic':not any('cycle' in issue for issue in issues),'plannedAcceptanceCriteria':ac_count,'localLinksChecked':links,'sourceTestScriptFilesUnchanged':all(p in allow for p in changed),'indexEmpty':not bool(staged),'head':subprocess.check_output(['git','rev-parse','HEAD']).decode().strip(),'issues':issues}
+print(json.dumps(result,ensure_ascii=True))
+raise SystemExit(1 if issues else 0)
+'@ | python -B -
+# Quan sát exit python trước lệnh kế.
+git diff --check
+```

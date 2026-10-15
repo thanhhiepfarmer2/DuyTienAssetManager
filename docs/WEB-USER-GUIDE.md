@@ -1,3 +1,16 @@
+# Web hiện hành — online mặc định / ngoại tuyến chỉ đọc (2026-10-15)
+
+Mở **DuyTien-Web.cmd** (DuyTien-LocalOffline.cmd cũ cũng chuyển tới cùng launcher), URL https://localhost:7008/Account/Login. Dùng tài khoản trung tâm hiện có, gồm admin Google DEV với mật khẩu đang dùng; không LocalSetup hoặc admin riêng. Backend phải còn chạy trên máy.
+
+Sau khi đăng nhập online, các trang/query/file đã đọc thành công được lưu riêng cho phiên. Mở launcher khi mất Internet sẽ tự tới /Offline nếu cookie/proof còn hạn; chưa có hoặc hết hạn thì cần kết nối online. Mất Internet đã xác định: chỉ đọc, có banner Ngoại tuyến — chỉ đọc và asOf từng trang. `/Offline` tìm không dấu/lọc module và phân trang60 trong các snapshot đã lưu. Không là bản sao toàn bộ dataset; query mới hoặc file chưa tải bytes báo thiếu. AVAILABLE là trạng thái file trung tâm tại asOf, nhãn Có offline/Chưa có file offline nói rõ bytes tại máy.
+
+Có mạng lại: tự xác minh phiên/quyền và tải mới trang nghiệp vụ, rồi mới bật ghi. Hết hạn/revoke/khóa cần đăng nhập online lại. Quyền đổi loại cache cũ. Form đã nhập được giữ; version conflict vẫn cần xử lý theo dữ liệu mới. Nếu kết quả ghi chưa rõ: giữ form/key/payload; nút **Đối soát kết quả ghi** đọc journal và dùng reconcile media có quyền khi cần, không tự upload lại. Chỉ sau journal xác nhận mới retry form cũ; thiếu key/journal/bytes thì tiếp tục chặn, không đổi key để lách.
+
+Đăng xuất online/offline làm mất khả năng truy cập offline của phiên trên máy. Chưa từng có phiên online hợp lệ thì không đăng nhập offline. Android dừng, iOS hoãn. Đây là hướng dẫn dùng, không yêu cầu thêm UAT thủ công.
+
+---
+## Hướng dẫn lịch sử v1
+
 # Hướng dẫn web demo Duy Tiến
 
 ## LocalOffline trên Windows — 2026-10-14

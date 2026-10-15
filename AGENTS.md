@@ -11,11 +11,13 @@
 - Requirement authoritative hiện tại là `docs/01-requirements/REQ-001-asset-digitization.md`; đọc cùng `SOURCE-AUDIT.md` và các quyết định mới hơn của người dùng.
 - Cây demo lấy từ Excel hiện tại gồm 15 nhóm F1 và vẫn ở trạng thái `DRAFT`; không âm thầm thay bằng cây 13 F1 trong DOCX, không coi STT/row/mã đoạn là ID hệ thống.
 - Google Sheets là CSDL nghiệp vụ, Google Drive công ty lưu ảnh/DOCX/PDF. Không tự thay CSDL chính bằng SQL/SQLite; adapter giả chỉ dùng cho test và phải ghi rõ giới hạn bằng chứng.
-- Ngoại lệ được người dùng duyệt 2026-10-14: LocalOffline filesystem/JSON thật theo REQ-002/ADR-002, workspace ngoài Git; Google mode vẫn giữ riêng, không tự fallback hoặc sync. Không SQL/SQLite; fixture GIẢ không là dữ liệu công ty.
+- Lịch sử superseded bởi chỉ đạo 2026-10-15: LocalOffline filesystem/JSON thật theo REQ-002/ADR-002, workspace ngoài Git; Google mode vẫn giữ riêng, không tự fallback hoặc sync. Không SQL/SQLite; fixture GIẢ không là dữ liệu công ty.
 - Sản phẩm có web và ứng dụng Android/iOS riêng, không coi web responsive là đã hoàn thành mobile. ADR-001 đã chốt ASP.NET Core .NET 10, Razor Pages, .NET MAUI và một backend instance cho demo; nhà cung cấp host/domain vẫn chưa xác lập.
 - Không tự nhập nhân sự thành tài khoản, Item thành Asset, BOM thành tồn kho hoặc số lượng chưa biết thành 0.
 - Bí mật khởi tạo admin phải đi qua cấu hình ngoài repo; không ghi giá trị nguyên văn vào tài liệu, mã nguồn, client, log hay build artifact.
 - Task tích hợp Google và iOS chỉ được `DONE` khi có bằng chứng trên môi trường tương ứng; fake adapter hoặc Android pass không chứng minh Google/iOS pass.
+
+- Chỉ đạo hiện hành 2026-10-15 theo REQ-002/ADR-002 v2: Google online mặc định, cache ngoại tuyến chỉ đọc tự động, không admin/ghi local riêng; giữ workspace cũ và mọi gate lịch sử.
 
 ## Bắt đầu mỗi công việc
 1. Xác định thư mục gốc và đọc hướng dẫn có hiệu lực, kể cả AGENTS.override.md và hướng dẫn gần file sẽ sửa.

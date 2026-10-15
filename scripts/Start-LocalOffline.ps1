@@ -1,4 +1,5 @@
 ﻿param([string]$Workspace=(Join-Path $env:LOCALAPPDATA 'DuyTienAssets\LocalOffline\default'),[ValidateRange(1024,65535)][int]$Port=7008,[switch]$NoBrowser)
+throw 'Legacy writable LocalOffline has been retired. Run DuyTien-Web.cmd. Old workspace is preserved; do not run LocalSetup.'
 $ErrorActionPreference='Stop'
 $repoRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $workspacePath=[IO.Path]::GetFullPath($Workspace)

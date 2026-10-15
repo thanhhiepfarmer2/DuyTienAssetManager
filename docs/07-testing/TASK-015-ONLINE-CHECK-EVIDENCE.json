@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-15",
+  "source": "AI direct checks; pattern scan is not a full security audit",
+  "filesChecked": 39,
+  "localLinksChecked": 127,
+  "jsonParsed": 4,
+  "protectedCoreHistoryDiffExit": 0,
+  "history": [
+    {
+      "path": "docs/01-requirements/REQ-002-local-offline.md",
+      "preserved": true
+    },
+    {
+      "path": "docs/02-architecture/ADR-002-local-offline.md",
+      "preserved": true
+    },
+    {
+      "path": "docs/02-architecture/PLAN-002-local-offline.md",
+      "preserved": true
+    },
+    {
+      "path": "docs/06-tasks/TASK-015.md",
+      "preserved": true
+    },
+    {
+      "path": "docs/07-testing/TEST-REPORT-TASK-015.md",
+      "preserved": true
+    }
+  ],
+  "head": "d8a508dc30435133acbc81a76b1acafd8715c37b",
+  "indexEmpty": true,
+  "servedJSMatchesSource": true,
+  "issues": []
+}

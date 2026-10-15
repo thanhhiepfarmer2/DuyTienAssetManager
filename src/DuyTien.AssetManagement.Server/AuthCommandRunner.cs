@@ -14,7 +14,7 @@ internal static class AuthCommandRunner
         CancellationToken cancellationToken = default)
     {
         var command = args.FirstOrDefault();
-        if (command is not ("auth-system-init" or "auth-bootstrap-admin" or "auth-recover-admin"))
+        if (command is not ("auth-system-init" or "auth-bootstrap-admin" or "auth-recover-admin" or "auth-diagnose"))
         {
             return false;
         }
@@ -25,6 +25,9 @@ internal static class AuthCommandRunner
                 .AcquireAsync(command, cancellationToken);
             switch (command)
             {
+                case "auth-diagnose":
+                    await AuthReadDiagnostic.RunAsync(services, cancellationToken);
+                    break;
                 case "auth-system-init":
                     var initialized = await services.GetRequiredService<IAuthSystemStore>()
                         .InitializeAsync("operator-cli", cancellationToken);
@@ -43,8 +46,8 @@ internal static class AuthCommandRunner
         catch (Exception exception)
         {
             Environment.ExitCode = 1;
-            Console.Error.WriteLine(
-                $"TASK-005 auth command failed: {exception.GetType().Name}. No password, token, resource id or response body was logged.");
+            var failure = AuthFailureDiagnostics.Describe(exception, Guid.NewGuid().ToString("N"));
+            Console.Error.WriteLine(System.Text.Json.JsonSerializer.Serialize(new { command = "auth", failure }));
         }
 
         return true;

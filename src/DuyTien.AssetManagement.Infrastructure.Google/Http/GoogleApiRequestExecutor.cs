@@ -11,7 +11,8 @@ public sealed class GoogleApiRequestExecutor(
     IGoogleAccessTokenProvider tokenProvider,
     HttpClient httpClient,
     Func<TimeSpan, CancellationToken, Task>? delayAsync = null,
-    GoogleSheetsRequestBudget? sheetsBudget = null)
+    GoogleSheetsRequestBudget? sheetsBudget = null,
+    IGoogleConnectivityGuard? connectivity = null)
 {
     private readonly Func<TimeSpan, CancellationToken, Task> delayAsync =
         delayAsync ?? Task.Delay;
@@ -28,7 +29,11 @@ public sealed class GoogleApiRequestExecutor(
 
         for (var attempt = 1; attempt <= maxAttempts; attempt++)
         {
+            if (connectivity is not null) await connectivity.EnsureAllowedAsync(cancellationToken).ConfigureAwait(false);
             using var request = requestFactory();
+            if (semantics != GoogleRequestSemantics.SafeRead) GoogleMetadataReadMemo.Invalidate();
+            else if (GoogleMetadataReadMemo.Read(request) is { } memoized) return memoized;
+            var metadataRevision = GoogleMetadataReadMemo.Revision;
             request.Headers.Authorization = new AuthenticationHeaderValue(
                 "Bearer",
                 await tokenProvider.GetAccessTokenAsync(cancellationToken).ConfigureAwait(false));
@@ -38,6 +43,7 @@ public sealed class GoogleApiRequestExecutor(
             try
             {
                 if (sheetsBudget is not null) await sheetsBudget.WaitAsync(request, cancellationToken).ConfigureAwait(false);
+                if (connectivity is not null) await connectivity.EnsureAllowedAsync(cancellationToken).ConfigureAwait(false);
                 using var metric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure("google-http");
                 response = await httpClient.SendAsync(
                     request,
@@ -75,6 +81,8 @@ public sealed class GoogleApiRequestExecutor(
 
             if (response.IsSuccessStatusCode || (acceptResumeIncomplete && request.Method == HttpMethod.Put && (int)response.StatusCode == 308))
             {
+                try { await GoogleMetadataReadMemo.StoreAsync(request, response, metadataRevision, cancellationToken).ConfigureAwait(false); }
+                catch { response.Dispose(); throw; }
                 return response;
             }
 
