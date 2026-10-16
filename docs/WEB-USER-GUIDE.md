@@ -1,3 +1,17 @@
+> Runtime16/10: web mới đang chạy một instance tại https://localhost:7008; DuyTien-Web.cmd dùng lại instance đó. Không cần xóa cache hoặc reset tài khoản. UI cũ trong offline được đọc dưới dạng text chỉ đọc/asOf, mở online sẽ làm mới riêng trang đã xác minh. Tốc độ Google chưa đạt chứng cứ warm p95<500ms.
+
+# Hướng dẫn giao diện web — PLAN-003 (2026-10-15)
+
+Mở **DuyTien-Web.cmd**, dùng tài khoản trung tâm hiện có tại https://localhost:7008/Account/Login. Menu trái dẫn tới Danh mục, Tài sản, Hồ sơ, Vật tư, Số lượng và Báo cáo; phần quản trị chỉ hiện với quản trị viên. Menu trên màn hình hẹp có nút mở/đóng. Trang chủ chỉ là lối vào công việc, không hiển thị KPI chưa có nguồn.
+
+Trong mỗi module, tìm/lọc rồi mở chi tiết. Cây hiển thị tối đa60 dòng/trang; nút thu gọn chỉ tác động các dòng đã tải. Bảng rộng có vùng cuộn ngang. Bộ lọc được giữ khi phân trang; xóa bộ lọc khi muốn trở về danh sách. Tab đang mở giữ vị trí cuộn và nhánh thu gọn theo đúng phiên/quyền. Không lưu dữ liệu nghiệp vụ hoặc mật khẩu vào sessionStorage.
+
+Form đánh dấu trường sai, giữ nội dung và mã yêu cầu khi lỗi. Chờ trạng thái xử lý; không gửi lặp hoặc đổi nội dung của yêu cầu chưa rõ kết quả. Các thao tác nguy hiểm có xác nhận trước khi gửi, server vẫn kiểm lại quyền/phiên bản/CSRF. Upload có tên tệp, preview ảnh/PDF khi hỗ trợ và có thể hủy lựa chọn trước khi gửi. Chỉ thông báo lưu đã xác nhận mới coi hoàn tất.
+
+Dữ liệu chưa duyệt/kiểm thử/nguồn chưa xác nhận giữ nhãn riêng, không là tên ứng dụng. Nguồn/rule/đơn vị/địa điểm/ngưỡng OPEN/TBD không tự phê duyệt. Trang Hướng dẫn trong web mô tả luồng đầy đủ, ngoại tuyến chỉ đọc, reconnect và xử lý conflict/thiếu cache. Bằng chứng cập nhật16/10: đã quan sát browser Home/Danh mục và login trung tâm hiện có, nhưng các module/narrow/download/network còn gate; xem Report021. Không coi HTTP rendered là browser pass. Phần lịch sử bên dưới giữ nguyên theo phiên bản, không dùng hướng dẫn v1 cho mô hình hiện hành.
+
+---
+
 # Web hiện hành — online mặc định / ngoại tuyến chỉ đọc (2026-10-15)
 
 Mở **DuyTien-Web.cmd** (DuyTien-LocalOffline.cmd cũ cũng chuyển tới cùng launcher), URL https://localhost:7008/Account/Login. Dùng tài khoản trung tâm hiện có, gồm admin Google DEV với mật khẩu đang dùng; không LocalSetup hoặc admin riêng. Backend phải còn chạy trên máy.

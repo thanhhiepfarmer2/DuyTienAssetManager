@@ -1,3 +1,5 @@
+> PLAN-003 hiện hành15/10: Hoàn tất phần local PLAN-003: shell/header xanh/sidebar/breadcrumb và tài nguyên local; giao diện danh mục/tài sản/ảnh/hồ sơ/import/vật tư/số lượng/báo cáo/quản trị, hướng dẫn online mặc định/ngoại tuyến chỉ đọc. TASK-016 DONE tài liệu; TASK-017–021 IN_REVIEW do browser/Google/mạng thật chưa đủ. Không mở task/mobile khác. [Report021](../07-testing/TEST-REPORT-TASK-021.md). Web được ưu tiên, mobile không chặn; không thay gate/lịch sử dưới đây.
+
 # Ưu tiên hiện hành — kế hoạch trải nghiệm web 2026-10-15
 
 [REQ-003](../01-requirements/REQ-003-web-experience.md) → [PLAN-003](PLAN-003-web-experience.md) → [WEB-UI-DESIGN](WEB-UI-DESIGN.md), bổ sung TASK-016→017→018→019→020→021, tất cả **TODO**. Thứ tự: kiểm kê/HTML/quy chuẩn → nền/layout/account → cây/Assets → hồ sơ/import/Items/snapshot/reports → admin/home/help/content → tổng kết UX/online-offline/performance. Chưa triển khai task mới trong lượt lập kế hoạch.

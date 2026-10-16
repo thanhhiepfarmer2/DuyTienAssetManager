@@ -1,0 +1,22 @@
+{
+  "version": "REQ-002 v2",
+  "generatedAt": "2026-10-15T08:41:51.9158722+00:00",
+  "synthetic": true,
+  "googleLive": false,
+  "groups": [
+    {
+      "mode": "ONLINE",
+      "source": "FAKE central/auth; real loopback Kestrel and protected filesystem cache",
+      "samples": 20,
+      "p95Ms": 38.4576,
+      "centralAuthStoreCalls": 20
+    },
+    {
+      "mode": "OFFLINE_READ_ONLY",
+      "source": "FAKE central/auth; real loopback Kestrel and protected filesystem cache",
+      "samples": 20,
+      "p95Ms": 0.4632,
+      "centralAuthStoreCalls": 0
+    }
+  ]
+}

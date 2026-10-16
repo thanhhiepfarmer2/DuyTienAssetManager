@@ -2,62 +2,49 @@
 <html lang="vi">
 <head>
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Duy Tiến</title>
+    <meta name="duytien-ui-revision" content="@WebUi.CacheRevision" />
+    <title>@ViewData["Title"] · Duy Tiến Assets</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/DuyTien.AssetManagement.Server.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <div class="container py-2" id="connection-state" role="status" aria-live="polite">Đang xác minh trạng thái trung tâm…</div>
-    <script src="/js/connection.js" defer></script>
-    @{var localWorkspace=Context.RequestServices.GetService(typeof(DuyTien.AssetManagement.Infrastructure.Local.LocalWorkspace)) as DuyTien.AssetManagement.Infrastructure.Local.LocalWorkspace;
-    var connectedCache=Context.RequestServices.GetService(typeof(DuyTien.AssetManagement.Server.ConnectedCache.ProtectedQueryCache)) as DuyTien.AssetManagement.Server.ConnectedCache.ProtectedQueryCache;
-    var centralProof=connectedCache?.Read(DuyTien.AssetManagement.Server.ConnectedCache.ConnectedRuntime.Credential(Context))?.Proof;}
-    <div class="container small py-2" data-workspace="@(localWorkspace?.WorkspaceId ?? "Google")" data-central="@(connectedCache?.CentralId ?? "")" data-authority="@(centralProof?.AuthorityHash ?? "")" data-viewer="@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous")" data-session="@(User.FindFirst("session_id")?.Value ?? "none")">@(localWorkspace is null?"Google DEV · DRAFT/demo":"LocalOffline · workspace "+localWorkspace.WorkspaceId[..8]+" · DRAFT/demo · dữ liệu lưu trên máy")
-    </div>
-    <a class="visually-hidden-focusable" href="#main-content">Đến nội dung chính</a>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-3" aria-label="Điều hướng chính">
-            <div class="container">
-                <a class="navbar-brand" asp-page="/Index">Duy Tiến</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-navigation" aria-controls="main-navigation" aria-expanded="false" aria-label="Mở menu"><span class="navbar-toggler-icon"></span></button>
-                <div id="main-navigation" class="navbar-collapse collapse">
-                    <ul class="navbar-nav me-auto flex-wrap">
-                        <li class="nav-item"><a class="nav-link" asp-page="/Index">Trang chủ</a></li>
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item"><a class="nav-link" asp-page="/Categories/Index">Danh mục</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Assets/Index">Tài sản</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Documents/Index">Hồ sơ/biểu mẫu</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Items/Index">Items</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Stock/Index">Snapshot</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-page="/Reports/Index">Báo cáo</a></li>
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Quản trị</a>
-                                    <ul class="dropdown-menu">@if(localWorkspace is not null){<li><a class="dropdown-item" href="/Admin/LocalDemo">Demo GIẢ local</a></li>}<li><a class="dropdown-item" asp-page="/Admin/Users/Index">Tài khoản</a></li><li><a class="dropdown-item" asp-page="/Admin/Authorization">Phân quyền</a></li><li><a class="dropdown-item" asp-page="/Admin/SecurityEvents">Bảo mật / audit</a></li></ul>
-                                </li>
-                            }
-                        }
-                        <li class="nav-item"><a class="nav-link" asp-page="/Help/Index">Hướng dẫn</a></li>
-                    </ul>
-                    <ul class="navbar-nav">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item"><a class="nav-link" asp-page="/Account/ChangePassword">Đổi mật khẩu</a></li>
-                            <li class="nav-item"><form method="post" asp-page="/Account/Logout"><button type="submit" class="btn btn-link nav-link">Đăng xuất</button></form></li>
-                        }
-                        else { <li class="nav-item"><a class="nav-link" asp-page="/Account/Login">Đăng nhập</a></li> }
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container"><main id="main-content" class="pb-4">@RenderBody()</main></div>
-    <footer class="border-top text-muted mt-4 py-3"><div class="container">Duy Tiến · Demo DRAFT · <a asp-page="/Privacy">Dữ liệu và quyền riêng tư</a></div></footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+@{
+    var path = Context.Request.Path.Value ?? "/";
+    var module = WebUi.Module(path);
+    var connectedCache = Context.RequestServices.GetService(typeof(DuyTien.AssetManagement.Server.ConnectedCache.ProtectedQueryCache)) as DuyTien.AssetManagement.Server.ConnectedCache.ProtectedQueryCache;
+    var proof = connectedCache?.Read(DuyTien.AssetManagement.Server.ConnectedCache.ConnectedRuntime.Credential(Context))?.Proof;
+}
+<a class="skip-link" href="#main-content">Đến nội dung chính</a>
+<header class="topbar">
+    <a class="brand" asp-page="/Index"><svg class="brand-mark" aria-hidden="true"><use href="/img/icons.svg#asset" /></svg><span><strong>Duy Tiến Assets</strong><small>Quản lý tài sản và hồ sơ</small></span></a>
+    <button class="menu-toggle" type="button" aria-controls="main-navigation" aria-expanded="false" data-navigation-toggle><svg class="icon" aria-hidden="true"><use href="/img/icons.svg#menu" /></svg><span>Menu</span></button>
+    <span class="current-user">@(User.Identity?.IsAuthenticated == true ? User.FindFirst("display_name")?.Value ?? User.Identity.Name : "Chưa đăng nhập")</span>
+    @if (User.Identity?.IsAuthenticated == true) { <a class="header-link" asp-page="/Account/ChangePassword">Đổi mật khẩu</a><form method="post" asp-page="/Account/Logout"><button class="header-link" type="submit">Đăng xuất</button></form> }
+    else { <a class="header-link" asp-page="/Account/Login">Đăng nhập</a> }
+</header>
+<div class="workspace">
+<aside class="sidebar" id="main-navigation" aria-label="Điều hướng chính">
+    <p class="nav-heading">Không gian làm việc</p>
+    <nav aria-label="Các chức năng">
+    @foreach (var item in WebUi.Navigation(User)) { <a href="@item.Url" class="sidebar-link @(WebUi.Active(path,item.Url) ? "active" : "")" aria-current="@(WebUi.Active(path,item.Url) ? "page" : null)"><svg class="icon" aria-hidden="true"><use href="/img/icons.svg#@item.Icon" /></svg><span>@item.Label</span></a> }
+    </nav>
+    <div class="sidebar-note">Mỗi tài khoản làm việc trong phạm vi được giao.</div>
+</aside>
+<div class="content-area">
+    <div id="connection-state" class="connection-state" role="status" aria-live="polite">Đang xác minh kết nối…</div>
+    <div class="workspace-context" data-workspace="Google" data-central="@(connectedCache?.CentralId ?? "")" data-authority="@(proof?.AuthorityHash ?? "")" data-viewer="@(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous")" data-session="@(User.FindFirst("session_id")?.Value ?? "none")"><span class="source-badge" data-state="DRAFT_DEMO">Nguồn dữ liệu chưa xác nhận · Có bản ghi kiểm thử</span></div>
+    <main id="main-content" class="main-content" tabindex="-1">
+        <nav class="breadcrumb" aria-label="Đường dẫn"><a href="/">Trang chủ</a>@if(module is not null && !path.TrimEnd('/').Equals(module.Url, StringComparison.OrdinalIgnoreCase)) { <span aria-hidden="true">/</span><a href="@module.Url">@module.Label</a> }@if(path != "/") { <span aria-hidden="true">/</span><span aria-current="page">@ViewData["Title"]</span> }</nav>
+        @RenderBody()
+    </main>
+    <footer class="app-footer">Duy Tiến Assets · <a asp-page="/Privacy">Dữ liệu và quyền riêng tư</a></footer>
+</div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/ui.js" asp-append-version="true"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/connection.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

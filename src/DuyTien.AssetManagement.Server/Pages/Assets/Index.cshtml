@@ -1,26 +1,26 @@
 @page
 @model DuyTien.AssetManagement.Server.Pages.Assets.IndexModel
-@{ ViewData["Title"] = "Tài sản nháp"; }
-<h1>Tài sản nháp</h1>
-<p class="alert alert-warning">DRAFT_DEMO — cây DRAFT và mã demo chưa phải dữ liệu công ty được phê duyệt.</p>
-@if (User.IsInRole("Admin") || User.IsInRole("AssetEditor")) { <p><a class="btn btn-primary" asp-page="Create">Tạo máy demo</a> <a class="btn btn-outline-primary" asp-page="Move">Chuyển tài sản hàng loạt</a></p> }
+@{ ViewData["Title"] = "Tài sản"; }
+<h1>Tài sản</h1>
+<p class="alert alert-warning">Dữ liệu kiểm thử và phân loại chưa duyệt; chưa phải dữ liệu công ty được xác nhận.</p>
+@if (User.IsInRole("Admin") || User.IsInRole("AssetEditor")) { <p><a class="btn btn-primary" asp-page="Create">Thêm tài sản</a> <a class="btn btn-outline-primary" asp-page="Move">Chuyển tài sản hàng loạt</a></p> }
 <form method="get" class="row g-2 mb-3">
     <div class="col-md-6"><label asp-for="Q">Mã hiện tại/mã cũ, tên, alias hoặc serial</label><input asp-for="Q" class="form-control" maxlength="200" /></div>
-    <div class="col-md-6"><label asp-for="CategoryId">Danh mục nháp</label><select asp-for="CategoryId" class="form-select"><option value="">Tất cả trong phạm vi</option>@foreach (var x in Model.Filters.Categories) { <option value="@x.Id">@x.Name</option> }</select></div>
+    <div class="col-md-6"><label asp-for="CategoryId">Danh mục</label><select asp-for="CategoryId" class="form-select"><option value="">Tất cả trong phạm vi</option>@foreach (var x in Model.Filters.Categories) { <option value="@x.Id">@x.Name</option> }</select></div>
     <div class="col-md-4"><label asp-for="OrgUnitId">Đơn vị</label><select asp-for="OrgUnitId" class="form-select"><option value="">Tất cả trong phạm vi</option>@foreach (var x in Model.Filters.OrgUnits) { <option value="@x.Id">@x.Name</option> }</select></div>
     <div class="col-md-4"><label asp-for="LocationId">Địa điểm</label><select asp-for="LocationId" class="form-select"><option value="">Tất cả trong phạm vi</option>@foreach (var x in Model.Filters.Locations) { <option value="@x.Id">@x.Name</option> }</select></div>
     <div class="col-md-4"><label asp-for="CustodianRef">Người quản lý</label><input asp-for="CustodianRef" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="Condition">Tình trạng</label><input asp-for="Condition" class="form-control" /></div>
     <div class="col-md-4"><label asp-for="PageSize">Số dòng (1–100)</label><input asp-for="PageSize" type="number" min="1" max="100" class="form-control" /></div>
-    <div class="col-12"><label><input asp-for="IncludeDescendants" /> Gồm danh mục con</label> <label><input asp-for="IncludeDeleted" /> Gồm đã xóa mềm</label> <button class="btn btn-secondary" type="submit">Tìm</button></div>
+    <div class="col-12"><label><input asp-for="IncludeDescendants" /> Gồm danh mục con</label> <label><input asp-for="IncludeDeleted" /> Gồm đã xóa mềm</label> <button class="btn btn-primary" type="submit">Áp dụng bộ lọc</button> <a class="btn btn-outline-secondary" asp-page="Index">Xóa lọc</a></div>
 </form>
 @if (Model.Error is not null) { <div class="alert alert-danger" role="alert">@Model.Error</div> }
 else if (Model.Result.Items.Count == 0) { <p role="status">Không có tài sản phù hợp trong phạm vi được giao.</p> }
 else
 {
     <p>@Model.Result.Total kết quả trong phạm vi; thời điểm @Model.Result.SnapshotAsOf.ToString("u")</p>
-    <div class="table-responsive"><table class="table"><thead><tr><th>Mã</th><th>Tên</th><th>Danh mục nháp</th><th>Địa điểm</th><th>Trạng thái</th></tr></thead><tbody>
-    @foreach (var x in Model.Result.Items) { <tr><td><a asp-page="Detail" asp-route-id="@x.Asset.AssetId">@x.Asset.ObjectCode</a></td><td>@x.Asset.Name</td><td>@x.CategoryName [@x.CategoryState]</td><td>@x.LocationName</td><td>@(x.Asset.IsDeleted ? "Đã xóa mềm" : "DRAFT_DEMO")</td></tr> }
+    <div class="table-responsive"><table class="table"><caption>Tài sản trong phạm vi được giao</caption><thead><tr><th>Mã</th><th>Tên</th><th>Danh mục</th><th>Địa điểm</th><th>Trạng thái</th></tr></thead><tbody>
+    @foreach (var x in Model.Result.Items) { <tr><td><a asp-page="Detail" asp-route-id="@x.Asset.AssetId">@x.Asset.ObjectCode</a></td><td>@x.Asset.Name</td><td>@x.CategoryName [@WebUi.State(x.CategoryState)]</td><td>@x.LocationName</td><td>@(x.Asset.IsDeleted ? "Đã xóa mềm" : WebUi.State("DRAFT_DEMO"))</td></tr> }
     </tbody></table></div>
 }
 <nav aria-label="Phân trang tài sản">

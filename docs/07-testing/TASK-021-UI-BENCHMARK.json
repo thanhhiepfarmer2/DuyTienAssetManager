@@ -1,0 +1,278 @@
+{
+  "source": "SYNTHETIC central filesystem + current ConnectedRuntime + compiled Razor + protected read cache",
+  "googleLive": false,
+  "browser": false,
+  "nodes": 665,
+  "items": 20744,
+  "fixtureBuildMs": 4347.6219,
+  "centralSnapshotReloadMs": 1235.3901,
+  "centralSnapshotLoadPhases": {
+    "deserialize": 631.0407,
+    "snapshot-load": 118.0699,
+    "journal-replay": 317.9193,
+    "reconcile": 326.51,
+    "index-build": 154.5613
+  },
+  "startupMs": 287.4613,
+  "loginGetColdMs": 319.4284,
+  "loginPostMs": 117.5548,
+  "googleCalls": 0,
+  "externalManagedHttpRequests": 0,
+  "groups": [
+    {
+      "mode": "ONLINE_SYNTHETIC_CENTRAL",
+      "path": "/Categories",
+      "coldFirstRequestMs": 86.6161,
+      "warmCount": 20,
+      "p50Ms": 30.7536,
+      "p95Ms": 59.5824,
+      "maxMs": 71.6492,
+      "maxBytes": 32616,
+      "observedWarmTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "samples": 21,
+          "meanMs": 0.021428571428571436,
+          "maxMs": 0.23
+        },
+        "auth": {
+          "samples": 21,
+          "meanMs": 12.124761904761906,
+          "maxMs": 26.79
+        },
+        "razor-render": {
+          "samples": 21,
+          "meanMs": 3.9195238095238096,
+          "maxMs": 18.19
+        }
+      }
+    },
+    {
+      "mode": "ONLINE_SYNTHETIC_CENTRAL",
+      "path": "/Assets",
+      "coldFirstRequestMs": 81.205,
+      "warmCount": 20,
+      "p50Ms": 29.4801,
+      "p95Ms": 39.2537,
+      "maxMs": 42.9331,
+      "maxBytes": 81777,
+      "observedWarmTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "samples": 21,
+          "meanMs": 0.010000000000000002,
+          "maxMs": 0.01
+        },
+        "auth": {
+          "samples": 21,
+          "meanMs": 10.885714285714286,
+          "maxMs": 19.08
+        },
+        "razor-render": {
+          "samples": 21,
+          "meanMs": 5.43952380952381,
+          "maxMs": 32.42
+        }
+      }
+    },
+    {
+      "mode": "ONLINE_SYNTHETIC_CENTRAL",
+      "path": "/Items",
+      "coldFirstRequestMs": 126.4961,
+      "warmCount": 20,
+      "p50Ms": 166.0277,
+      "p95Ms": 183.4479,
+      "maxMs": 187.8575,
+      "maxBytes": 11491,
+      "observedWarmTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "samples": 21,
+          "meanMs": 0.010000000000000002,
+          "maxMs": 0.01
+        },
+        "auth": {
+          "samples": 21,
+          "meanMs": 10.604285714285716,
+          "maxMs": 15.57
+        },
+        "snapshot-clone": {
+          "samples": 21,
+          "meanMs": 114.95285714285716,
+          "maxMs": 136.88
+        },
+        "razor-render": {
+          "samples": 21,
+          "meanMs": 1.9228571428571426,
+          "maxMs": 13.39
+        }
+      }
+    },
+    {
+      "mode": "ONLINE_SYNTHETIC_CENTRAL",
+      "path": "/Stock",
+      "coldFirstRequestMs": 575.4962,
+      "warmCount": 20,
+      "p50Ms": 290.3276,
+      "p95Ms": 392.7074,
+      "maxMs": 397.1198,
+      "maxBytes": 9344,
+      "observedWarmTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "samples": 21,
+          "meanMs": 0.010952380952380955,
+          "maxMs": 0.02
+        },
+        "auth": {
+          "samples": 21,
+          "meanMs": 11.995238095238093,
+          "maxMs": 18.83
+        },
+        "snapshot-clone": {
+          "samples": 21,
+          "meanMs": 262.1219047619047,
+          "maxMs": 333.24
+        },
+        "razor-render": {
+          "samples": 21,
+          "meanMs": 2.8671428571428565,
+          "maxMs": 34.29
+        }
+      }
+    },
+    {
+      "mode": "ONLINE_SYNTHETIC_CENTRAL",
+      "path": "/Reports?Code=R01",
+      "coldFirstRequestMs": 158.7426,
+      "warmCount": 20,
+      "p50Ms": 28.8,
+      "p95Ms": 39.3095,
+      "maxMs": 70.5386,
+      "maxBytes": 78162,
+      "observedWarmTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "samples": 21,
+          "meanMs": 0.010952380952380955,
+          "maxMs": 0.02
+        },
+        "auth": {
+          "samples": 21,
+          "meanMs": 11.43904761904762,
+          "maxMs": 15.57
+        },
+        "razor-render": {
+          "samples": 21,
+          "meanMs": 4.350476190476192,
+          "maxMs": 54.14
+        }
+      }
+    },
+    {
+      "mode": "ONLINE_SYNTHETIC_CENTRAL",
+      "path": "/Reports?Code=R04",
+      "coldFirstRequestMs": 299.7278,
+      "warmCount": 20,
+      "p50Ms": 340.8412,
+      "p95Ms": 433.8848,
+      "maxMs": 498.7101,
+      "maxBytes": 77819,
+      "observedWarmTargetMet": true,
+      "phases": {
+        "auth-store-read": {
+          "samples": 21,
+          "meanMs": 0.010952380952380955,
+          "maxMs": 0.02
+        },
+        "auth": {
+          "samples": 21,
+          "meanMs": 11.92047619047619,
+          "maxMs": 23.21
+        },
+        "snapshot-clone": {
+          "samples": 21,
+          "meanMs": 61.61238095238096,
+          "maxMs": 158.14
+        },
+        "razor-render": {
+          "samples": 21,
+          "meanMs": 1.9023809523809532,
+          "maxMs": 6.57
+        }
+      }
+    },
+    {
+      "mode": "OFFLINE_READ_ONLY",
+      "path": "/Categories",
+      "coldFirstRequestMs": 6.6755,
+      "warmCount": 20,
+      "p50Ms": 0.3256,
+      "p95Ms": 0.5771,
+      "maxMs": 2.1945,
+      "maxBytes": 32914,
+      "observedWarmTargetMet": true,
+      "phases": {}
+    },
+    {
+      "mode": "OFFLINE_READ_ONLY",
+      "path": "/Assets",
+      "coldFirstRequestMs": 0.6376,
+      "warmCount": 20,
+      "p50Ms": 0.3604,
+      "p95Ms": 0.4087,
+      "maxMs": 0.4259,
+      "maxBytes": 82075,
+      "observedWarmTargetMet": true,
+      "phases": {}
+    },
+    {
+      "mode": "OFFLINE_READ_ONLY",
+      "path": "/Items",
+      "coldFirstRequestMs": 0.4543,
+      "warmCount": 20,
+      "p50Ms": 0.213,
+      "p95Ms": 0.3225,
+      "maxMs": 1.9608,
+      "maxBytes": 11789,
+      "observedWarmTargetMet": true,
+      "phases": {}
+    },
+    {
+      "mode": "OFFLINE_READ_ONLY",
+      "path": "/Stock",
+      "coldFirstRequestMs": 0.3829,
+      "warmCount": 20,
+      "p50Ms": 0.2115,
+      "p95Ms": 0.2174,
+      "maxMs": 0.2191,
+      "maxBytes": 9642,
+      "observedWarmTargetMet": true,
+      "phases": {}
+    },
+    {
+      "mode": "OFFLINE_READ_ONLY",
+      "path": "/Reports?Code=R01",
+      "coldFirstRequestMs": 0.5121,
+      "warmCount": 20,
+      "p50Ms": 0.3506,
+      "p95Ms": 0.4495,
+      "maxMs": 0.8181,
+      "maxBytes": 78460,
+      "observedWarmTargetMet": true,
+      "phases": {}
+    },
+    {
+      "mode": "OFFLINE_READ_ONLY",
+      "path": "/Reports?Code=R04",
+      "coldFirstRequestMs": 0.5554,
+      "warmCount": 20,
+      "p50Ms": 0.3567,
+      "p95Ms": 0.5108,
+      "maxMs": 0.556,
+      "maxBytes": 78117,
+      "observedWarmTargetMet": true,
+      "phases": {}
+    }
+  ]
+}

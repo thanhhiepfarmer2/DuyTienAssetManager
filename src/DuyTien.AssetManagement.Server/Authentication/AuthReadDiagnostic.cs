@@ -29,21 +29,28 @@ public static class AuthReadDiagnostic
         var connectivity = await gate.CheckAsync(ct);
         Console.WriteLine(JsonSerializer.Serialize(new { diagnostic = "auth-read", stage = "connectivity", state = connectivity.ToString() }));
         await gate.EnsureAllowedAsync(ct);
-        var now = services.GetRequiredService<TimeProvider>().GetUtcNow();
-        var result = await services.GetRequiredService<GoogleAuthSystemStore>().ReadAsync(state =>
+        var samples = Math.Clamp(config.GetValue<int?>("Diagnostics:AuthReadSamples") ?? 1, 1, 5);
+        for (var sample = 1; sample <= samples; sample++)
         {
-            var admin = state.Users.SingleOrDefault(user => user.NormalizedUsername == "ADMIN");
-            return new
+            using var trace = Application.Diagnostics.PerformanceTrace.Begin();
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            var now = services.GetRequiredService<TimeProvider>().GetUtcNow();
+            var result = await services.GetRequiredService<GoogleAuthSystemStore>().ReadAsync(state =>
             {
-                diagnostic = "auth-read", stage = "central-store", runtimeAuthTablesReadable = true,
-                adminExists = admin is not null,
-                adminActive = admin?.State == AuthUserState.Active,
-                passwordHashPresent = !string.IsNullOrEmpty(admin?.PasswordHash),
-                adminHasEffectiveThreeAll = admin is not null && AuthAuthorizationRules.IsActiveAdmin(state, admin, now),
-                currentlyTemporarilyLocked = admin?.LockoutEndAt > now,
-                noMutation = true
-            };
-        }, ct);
-        Console.WriteLine(JsonSerializer.Serialize(result));
+                var admin = state.Users.SingleOrDefault(user => user.NormalizedUsername == "ADMIN");
+                return new
+                {
+                    diagnostic = "auth-read", stage = "central-store", runtimeAuthTablesReadable = true,
+                    adminExists = admin is not null,
+                    adminActive = admin?.State == AuthUserState.Active,
+                    passwordHashPresent = !string.IsNullOrEmpty(admin?.PasswordHash),
+                    adminHasEffectiveThreeAll = admin is not null && AuthAuthorizationRules.IsActiveAdmin(state, admin, now),
+                    currentlyTemporarilyLocked = admin?.LockoutEndAt > now,
+                    noMutation = true
+                };
+            }, ct);
+            Console.WriteLine(JsonSerializer.Serialize(result));
+            Console.WriteLine(JsonSerializer.Serialize(new { diagnostic = "auth-read", stage = "timing", sample, samples, elapsedMs = timer.Elapsed.TotalMilliseconds, phases = trace.Values.ToDictionary(p => p.Key, p => new { milliseconds = p.Value.Milliseconds, count = p.Value.Count }) }));
+        }
     }
 }

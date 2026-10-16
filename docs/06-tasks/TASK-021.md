@@ -1,6 +1,10 @@
+> Hiện hành16/10: runtime đã kiểm một phần; trạng thái IN_REVIEW. Xem checkpoint16/10 cuối tài liệu và Report021, các NOT_RUN15/10 là lịch sử.
+
 # TASK-021 — Rà soát trải nghiệm, online offline và hiệu năng web
 
-- Status: TODO
+- Status: IN_REVIEW
+
+> Hiện hành15/10: đã triển khai và kiểm phần local. Matrix hiện hành ở cuối tài liệu và Test Report là kết quả; các bảng/routing “chưa bắt đầu” bên dưới được giữ như checkpoint lập kế hoạch. Browser/Google/mạng thật NOT_RUN, không DONE.
 - Type: FEATURE
 - Requirement/Plan: [REQ-003](../01-requirements/REQ-003-web-experience.md) / [PLAN-003](../02-architecture/PLAN-003-web-experience.md)
 - Thiết kế: [WEB-UI-DESIGN](../02-architecture/WEB-UI-DESIGN.md)
@@ -21,7 +25,7 @@ Không mở UAT cũ/timeout dài, yêu cầu thiết bị/secret UAT, Google wri
 
 TASK-020; bản tích hợp TASK-017–020 và hành vi REQ-002/ADR-002 v2/TASK-015. Các gate cũ vẫn theo nguồn bằng chứng riêng.
 
-Giữ mọi thay đổi chưa commit và trạng thái/gate TASK-005–015. Google/Sheets/Drive/drive.file, server auth/scope/guard/single-writer/version/idempotency và mật khẩu min8/phiên không đổi. Android tạm dừng, iOS DEFERRED_BY_USER. Không commit/push/deploy/dữ liệu thật. HTML tham chiếu hiện MISSING_REFERENCE; không dùng phân tích cũ làm bằng chứng đã đọc. Rule/nguồn OPEN/TBD giữ nguyên.
+Giữ mọi thay đổi chưa commit và trạng thái/gate TASK-005–015. Google/Sheets/Drive/drive.file, server auth/scope/guard/single-writer/version/idempotency và mật khẩu min8/phiên không đổi. Android tạm dừng, iOS DEFERRED_BY_USER. Không commit/push/deploy/dữ liệu thật. HTML hiện đã STATIC_VERIFIED đúng bytes/hash ở TASK-016; chỉ tham khảo UI, không thực thi hoặc nhập dataset. Rule/nguồn OPEN/TBD giữ nguyên.
 
 ## Màn hình bị ảnh hưởng
 
@@ -61,3 +65,26 @@ Lệnh build/filtered tests chọn theo code thực đổi và ghi trong [COMMAN
 ## Review và checkpoint
 
 Mới tạo tài liệu Task trong lượt lập kế hoạch. Review tính nhất quán docs được ghi ở [report lập kế hoạch](../07-testing/TEST-REPORT-WEB-UI-PLANNING.md), không phải nghiệm thu AC của Task này. Chưa code/build/browser/Google hoặc chốt UI theo HTML. TODO giữ; không chuyển DONE khi còn gate bắt buộc. Thiếu backend ghi gap/contract riêng, không tạo nút giả hoặc tự chốt rule.
+
+
+## Triển khai15/10 — IN_REVIEW
+
+Hoàn tất phần local PLAN-003: shell/header xanh/sidebar/breadcrumb và tài nguyên local; giao diện danh mục/tài sản/ảnh/hồ sơ/import/vật tư/số lượng/báo cáo/quản trị, hướng dẫn online mặc định/ngoại tuyến chỉ đọc. TASK-016 DONE tài liệu; TASK-017–021 IN_REVIEW do browser/Google/mạng thật chưa đủ. Không mở task/mobile khác.
+
+TASK-021:137/137 integration passed exit0 (17s), Node5/5 exit0, benchmark Connected/Razor665nút/20744Items1/1 exit0 (26s);9/9 copy-import+baseline check exit0 (1s), có overlap không cộng thành tổng unique. Release build exit0/0warnings/errors5.47s. Một backend PID25412, Google/Development/Connected; strictHTTPS public login200 và tài nguyên local có fingerprint200, không AI login/Google business pass.
+
+[Report](../07-testing/TEST-REPORT-TASK-021.md). Phần phụ thuộc local đủ; browser/Google/mạng thật chưa chạy giữ NOT_RUN. Người dùng cho phép tiếp task kế, không đổi DONE để vượt gate. Checkpoint NOT_RUN trước đó là lịch sử.
+
+
+### Matrix hiện hành sau tích hợp021
+
+AC01 matrix/HTTP+event evidence có, browser NOT_RUN. AC02 PASS_LOCAL fake transport/clock/cache, real network NOT_RUN. AC03 đủ số đo nguồn/sample/cold/warm/phase synthetic, Google timing NOT_RUN. AC04 local HTTP/node có; browser còn mở. AC05 report/gates/launcher đã đồng bộ.
+
+[Xem tổng hợp021](../07-testing/TEST-REPORT-TASK-021.md). Các bảng NOT_RUN khi lập kế hoạch là lịch sử; trạng thái task vẫn IN_REVIEW. Không mở lại UAT đã hoãn.
+
+
+## Runtime16/10 — IN_REVIEW
+
+Đã đọc auth Google thật3sample, user login thành công và partial browser Home/Danh mục. Sửa static manifest/auth-writer/cache version/literal cấp F/breadcrumb;101/101tests pass, Release0warnings/errors. Public JS trước1Google call/477.786ms, sau5samples14–32ms/0calls (14asset traces). GET chính Google vẫn nhiều giây, chưa đủ warm p95 và chưa đo browser navigation sau sửa; tool dừng URL-confidence ở Assets. Không DONE.
+
+Bằng chứng, lệnh/exit, giới hạn và backend PID13680/build mới tại [Report021](../07-testing/TEST-REPORT-TASK-021.md) và [JSON runtime](../07-testing/TASK-021-RUNTIME-20261016.json). Suite cuối101/101pass,0failed/skipped,exit0 (16s); Releaseexit0/0warnings/errors3.82s. Không cộng với các suite overlap. Browser tool dừng thì dừng app input, không yêu cầu chuỗi UAT user. Tài khoản/data/auth policy/guard/freshness/pacing giữ; không business writes Google hoặc mobile/Git/deploy.

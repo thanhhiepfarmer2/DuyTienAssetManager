@@ -1,6 +1,10 @@
+> Hiện hành16/10: TASK-017–021 IN_REVIEW; partial browser Home/Danh mục và login/Google auth thật đã quan sát,101/101local pass. JS public bỏ1Google call, GET chính vẫn nhiều giây; browser tiếp bị tool URL-confidence dừng, mạng/cache/browser còn gate. [Report021](../07-testing/TEST-REPORT-TASK-021.md). TASK-016 DONE tài liệu; các gate/task cũ không đổi.
+
+> Hiện hành PLAN-003: TASK-016 DONE tài liệu; TASK-017–021 IN_REVIEW sau triển khai/check local. HTML STATIC_VERIFIED. [Report021](../07-testing/TEST-REPORT-TASK-021.md). Phụ thuộc tiếp theo ngoại lệ user; browser/Google/mạng NOT_RUN, không đổi các gate cũ.
+
 # Danh sách Task
 
-> Hiện hành15/10: người dùng xác nhận login tài khoản hiện có **PASS_MANUAL riêng case này**; TASK-015 giữ IN_REVIEW, không tự đóng gate khác. [PLAN-003](../02-architecture/PLAN-003-web-experience.md) / [REQ-003](../01-requirements/REQ-003-web-experience.md) thêm TASK-016–021 tuần tự, **đều TODO**, lượt này chỉ lập kế hoạch. [Thiết kế](../02-architecture/WEB-UI-DESIGN.md) còn DRAFT do thiếu HTML gốc (NOT_REVIEWED_HTML). Android tạm dừng/iOS DEFERRED_BY_USER. Dòng chẩn đoán login ngay dưới là checkpoint trước xác nhận mới, giữ lịch sử.
+> Lịch sử trước triển khai PLAN-003: người dùng xác nhận login tài khoản hiện có **PASS_MANUAL riêng case này**; TASK-015 giữ IN_REVIEW, không tự đóng gate khác. [PLAN-003](../02-architecture/PLAN-003-web-experience.md) / [REQ-003](../01-requirements/REQ-003-web-experience.md) thêm TASK-016–021 tuần tự, **đều TODO**, lượt này chỉ lập kế hoạch. [Thiết kế](../02-architecture/WEB-UI-DESIGN.md) còn DRAFT do thiếu HTML gốc (NOT_REVIEWED_HTML). Android tạm dừng/iOS DEFERRED_BY_USER. Dòng chẩn đoán login ngay dưới là checkpoint trước xác nhận mới, giữ lịch sử.
 
 > Login fix 15/10: Google thật trả OAuth HTTP400/`invalid_grant` trước Sheets; config Google/Development và guard first-login đã kiểm. Bản sửa log an toàn/CLI read-only +78/78tests, Release sạch; đang chờ consent desktop cùng app `drive.file`, chưa Google auth-read/login PASS. Xem [báo cáo](../07-testing/TEST-REPORT-TASK-015-ONLINE.md). Giữ IN_REVIEW, không reset admin.
 
@@ -21,12 +25,11 @@
 | TASK-013 | [App iOS: nhập liệu và chụp ảnh](TASK-013.md) | TODO | DEFERRED_BY_USER14/10: iOS thiếu môi trường/thiết bị; không chặn Web |
 | TASK-014 | [Nghiệm thu, backup/restore và hướng dẫn](TASK-014.md) | IN_REVIEW | Web strictHTTPS/GoogleDEV fixture đã đạt: selected78local, finish57live exit0; browser/cookie mới/source/restore còn gate; Android tạm dừng/iOS DEFERRED_BY_USER, không chặn Web |
 | TASK-015 | [Online mặc định và cache ngoại tuyến chỉ đọc](TASK-015.md) | IN_REVIEW | REQ-002/ADR-002/PLAN-002 v2 thay v1 ngày15/10;46/46local+35/35affected regression+3/3logout exit0; Release sạch/strictHTTPS/public6checks/start-reuse đạt; Google authenticated/network thật/browser/coverage/restore còn gate; Android dừng/iOS hoãn |
-| TASK-016 | [Kiểm kê màn hình và quy chuẩn giao diện](TASK-016.md) | TODO | PLAN-003; Source hiện tại; HTML đúng nguồn còn thiếu; chưa bắt đầu |
-| TASK-017 | [Nền giao diện chung và tài khoản](TASK-017.md) | TODO | PLAN-003; TASK-016; auth/cache hiện có; chưa bắt đầu |
-| TASK-018 | [Hoàn thiện giao diện danh mục và tài sản](TASK-018.md) | TODO | PLAN-003; TASK-017; core TASK-006–008/014; chưa bắt đầu |
-| TASK-019 | [Hồ sơ ảnh, import, Items và báo cáo](TASK-019.md) | TODO | PLAN-003; TASK-018; core TASK-009–011; chưa bắt đầu |
-| TASK-020 | [Quản trị, trang chủ, hướng dẫn và nội dung](TASK-020.md) | TODO | PLAN-003; TASK-019; core TASK-005; chưa bắt đầu |
-| TASK-021 | [Trải nghiệm, online/offline và hiệu năng web](TASK-021.md) | TODO | PLAN-003; TASK-020; REQ-002 v2/TASK-015, evidence riêng; chưa bắt đầu |
+| TASK-016 | [Kiểm kê màn hình và quy chuẩn giao diện](TASK-016.md) | DONE | HTML đúngmetadata/static;31routes/field/action/permission + quy chuẩn/gap, report016; không runtime pass |
+| TASK-017 | [Nền giao diện chung và tài khoản](TASK-017.md) | IN_REVIEW | Local + login Google user/Home browser một phần; report021 runtime16/10; narrow/keyboard/network còn gate |
+| TASK-018 | [Hoàn thiện giao diện danh mục và tài sản](TASK-018.md) | IN_REVIEW | Local + Categories browser/Google HTTP một phần; sửa cấp F/breadcrumb; Assets visual/network còn gate |
+| TASK-019 | [Hồ sơ ảnh, import, Items và báo cáo](TASK-019.md) | IN_REVIEW | Local đã kiểm; runtime shared fixes101/101; browser/media/Items/report Google chưa kiểm lượt này |
+| TASK-020 | [Quản trị, trang chủ, hướng dẫn và nội dung](TASK-020.md) | IN_REVIEW | Local đã kiểm; Home browser một phần; admin/help/error/narrow còn gate |
+| TASK-021 | [Trải nghiệm, online/offline và hiệu năng web](TASK-021.md) | IN_REVIEW | Local101/101 runtime16/10 + evidence cũ; partial browser/login/Google; static0Google calls; warm page p95/network/browser gates còn mở |
 
-TASK-003 mới tạo scaffold và chốt kiến trúc; không có nghĩa TASK-004–TASK-014 đã
-được triển khai. AI cập nhật trạng thái bảng cùng trạng thái trong từng Task.
+Ghi chú lịch sử từ scaffold TASK-003: scaffold không tự chứng minh các task sau. Trạng thái hiện hành và gate theo bảng/report ở trên.

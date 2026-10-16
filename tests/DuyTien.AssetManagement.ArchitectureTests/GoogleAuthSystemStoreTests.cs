@@ -1,6 +1,10 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Security.Cryptography;
+using DuyTien.AssetManagement.Application.Concurrency;
+using DuyTien.AssetManagement.ArchitectureTests.Fakes;
 using DuyTien.AssetManagement.Application.ExternalStorage;
 using DuyTien.AssetManagement.Application.Authentication;
 using DuyTien.AssetManagement.Infrastructure.Google.Adapters;
@@ -120,6 +124,63 @@ public sealed class GoogleAuthSystemStoreTests
         Assert.Empty(handler.RequestBodies);
     }
 
+    [Fact]
+    public async Task Fresh_Google_session_validation_reads_current_batch_without_entering_business_writer()
+    {
+        var now = new DateTimeOffset(2026, 10, 16, 1, 0, 0, TimeSpan.Zero);
+        var handler = new SystemSheetHandler { BatchResponse = SessionBatch(now) };
+        var writer = new ValidationWriter { BlockWrites = true }; var store = CreateStore(handler, writer);
+        Assert.True(((IAuthSnapshotValidation)store).CanValidateReadOnly);
+        var service = new AuthApplicationService(store, new TestPasswordHashService(), new(), new ManualTimeProvider(now));
+        Assert.NotNull(await service.ValidateAccessTokenAsync("FAKE-session"));
+        Assert.Equal(0, writer.Calls); Assert.Single(handler.RequestUris); Assert.Empty(handler.RequestBodies);
+        // A second request must see a central revocation rather than reuse an auth snapshot across requests.
+        handler.BatchResponse = SessionBatch(now, "locked");
+        Assert.Null(await service.ValidateAccessTokenAsync("FAKE-session"));
+        Assert.Equal(2, handler.RequestUris.Count); Assert.Empty(handler.RequestBodies);
+    }
+    [Theory]
+    [InlineData("expired-idle")][InlineData("expired-absolute")][InlineData("revoked")][InlineData("security-version")][InlineData("locked")]
+    public async Task Google_read_only_validation_rejects_stale_authority_without_writes(string fault)
+    {
+        var now = new DateTimeOffset(2026, 10, 16, 1, 0, 0, TimeSpan.Zero);
+        var handler = new SystemSheetHandler { BatchResponse = SessionBatch(now, fault) }; var writer = new ValidationWriter { BlockWrites = true };
+        var service = new AuthApplicationService(CreateStore(handler, writer), new TestPasswordHashService(), new(), new ManualTimeProvider(now));
+        Assert.Null(await service.ValidateAccessTokenAsync("FAKE-session")); Assert.Equal(0, writer.Calls); Assert.Empty(handler.RequestBodies);
+    }
+    [Fact]
+    public async Task Five_minute_touch_still_reloads_under_writer_and_preserves_idle_and_absolute_policy()
+    {
+        var now = new DateTimeOffset(2026, 10, 16, 1, 0, 0, TimeSpan.Zero);
+        var handler = new SystemSheetHandler { BatchResponse = SessionBatch(now, "touch") }; var writer = new ValidationWriter();
+        var service = new AuthApplicationService(CreateStore(handler, writer), new TestPasswordHashService(), new(), new ManualTimeProvider(now));
+        Assert.NotNull(await service.ValidateAccessTokenAsync("FAKE-session")); Assert.Equal(1, writer.Calls);
+        Assert.Equal(2, handler.RequestUris.Count(u => u.Contains("values:batchGet", StringComparison.Ordinal)));
+        using var body = JsonDocument.Parse(Assert.Single(handler.RequestBodies));
+        var sessionRow = body.RootElement.GetProperty("requests").EnumerateArray().First(x => x.TryGetProperty("appendCells", out var a) && a.GetProperty("sheetId").GetInt32() == 10).GetProperty("appendCells").GetProperty("rows")[0].GetProperty("values");
+        string Value(int index) => sessionRow[index].GetProperty("userEnteredValue").GetProperty("stringValue").GetString()!;
+        Assert.Equal(now, DateTimeOffset.Parse(Value(8))); Assert.Equal(now.AddMinutes(30), DateTimeOffset.Parse(Value(9))); Assert.Equal(now.AddHours(8), DateTimeOffset.Parse(Value(10)));
+    }
+    private static string SessionBatch(DateTimeOffset now, string? fault = null)
+    {
+        var json = JsonNode.Parse(MakeBatch(seed: true))!; var rows = json["valueRanges"]!.AsArray();
+        var user = rows[0]!["values"]![1]!; var session = rows[3]!["values"]![1]!;
+        session[2] = "Web"; session[3] = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes("FAKE-session")));
+        session[8] = (fault == "touch" ? now.AddMinutes(-5) : now.AddMinutes(-1)).ToString("O"); session[9] = now.AddMinutes(29).ToString("O"); session[10] = now.AddHours(8).ToString("O");
+        if (fault == "expired-idle") session[9] = now.ToString("O");
+        if (fault == "expired-absolute") session[10] = now.ToString("O");
+        if (fault == "revoked") session[11] = now.ToString("O");
+        if (fault == "security-version") user[10] = "2";
+        if (fault == "locked") user[5] = "Locked";
+        return json.ToJsonString();
+    }
+    private sealed class ValidationWriter : ISingleWriterCoordinator
+    {
+        public int Calls; public bool BlockWrites;
+        public Task<T> ExecuteAsync<T>(Func<CancellationToken, Task<T>> operation, CancellationToken ct = default)
+        { Calls++; if (BlockWrites) throw new InvalidOperationException("Synthetic busy writer must not block fresh auth reads"); return operation(ct); }
+    }
+
     private static string MakeBatch(bool seed = false, string? fault = null)
     {
         string[][] headers =
@@ -157,7 +218,7 @@ public sealed class GoogleAuthSystemStoreTests
         });
     }
 
-    private static GoogleAuthSystemStore CreateStore(SystemSheetHandler handler)
+    private static GoogleAuthSystemStore CreateStore(SystemSheetHandler handler, ISingleWriterCoordinator? coordinator = null)
     {
         var options = new GoogleWorkspaceOptions
         {
@@ -174,12 +235,12 @@ public sealed class GoogleAuthSystemStoreTests
             new StaticTokenProvider(),
             client,
             (_, _) => Task.CompletedTask);
-        return new GoogleAuthSystemStore(options, executor, new InProcessSingleWriterCoordinator());
+        return new GoogleAuthSystemStore(options, executor, coordinator ?? new InProcessSingleWriterCoordinator());
     }
 
     private sealed class SystemSheetHandler : HttpMessageHandler
     {
-        public string BatchResponse { get; init; } = MakeBatch();
+        public string BatchResponse { get; set; } = MakeBatch();
         public List<string> RequestBodies { get; } = [];
         public List<string> RequestUris { get; } = [];
 

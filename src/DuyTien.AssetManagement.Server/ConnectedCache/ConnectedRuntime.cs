@@ -68,13 +68,13 @@ public sealed class ConnectedRuntime(ProtectedQueryCache cache, ConnectionGate c
         {
             c.Response.Headers.CacheControl = "no-store";
             await c.Response.WriteAsJsonAsync(new { mode = "Connected", state = State(internet, valid ? ticket : null), lastSyncedAt = valid ? ticket!.Views.Select(v => (DateTimeOffset?)v.AsOf).Max() : null,
-                hasOfflineSession = valid, viewerId = valid ? ticket!.Proof.UserId : null, sessionId = valid ? ticket!.Proof.SessionId : null, authorityHash = valid ? ticket!.Proof.AuthorityHash : null, cacheId = valid ? cache.CentralId : null, cachedViews = valid ? ticket!.Views.Length : 0, pendingWrite = valid && ticket!.Pending is not null, writeRetryPermitted = valid && ticket!.Pending?.JournalConfirmed == true, refreshPath = valid && ticket!.Proof.Roles.Contains("CatalogManager") ? "/Categories" : valid && ticket!.Proof.Roles.Contains("DocumentManager") && !ticket.Proof.Roles.Contains("Admin") ? "/Documents" : "/Assets", nextProbeLimited = true }, c.RequestAborted); return;
+                hasOfflineSession = valid, viewerId = valid ? ticket!.Proof.UserId : null, sessionId = valid ? ticket!.Proof.SessionId : null, authorityHash = valid ? ticket!.Proof.AuthorityHash : null, cacheId = valid ? cache.CentralId : null, uiCacheRevision = Presentation.WebUi.CacheRevision, outdatedHtmlViews = valid ? ticket!.Views.Count(v => !Presentation.CachedHtmlPresentation.IsCurrent(v)) : 0, cachedViews = valid ? ticket!.Views.Length : 0, pendingWrite = valid && ticket!.Pending is not null, writeRetryPermitted = valid && ticket!.Pending?.JournalConfirmed == true, refreshPath = valid && ticket!.Proof.Roles.Contains("CatalogManager") ? "/Categories" : valid && ticket!.Proof.Roles.Contains("DocumentManager") && !ticket.Proof.Roles.Contains("Admin") ? "/Documents" : "/Assets", nextProbeLimited = true }, c.RequestAborted); return;
         }
         if (path == "/api/connection/files")
         {
             c.Response.Headers.CacheControl = "no-store";
             if (!valid) { await Error(c, 401, "ONLINE_LOGIN_REQUIRED", "Cần phiên online/cache hợp lệ."); return; }
-            await c.Response.WriteAsJsonAsync(new { partial = true, files = ticket!.Views.Where(v => v.Key.StartsWith("/api/files/") && v.Key.Contains("/content|")).Select(v => new { url = v.Key[..v.Key.LastIndexOf('|')], offlineAvailable = cache.Bytes(token!, v) is not null, asOf = v.AsOf }) }); return;
+            await c.Response.WriteAsJsonAsync(new { partial = true, files = ticket!.Views.Where(v => FileView(v.Key)).Select(v => new { url = v.Key[..v.Key.LastIndexOf('|')], offlineAvailable = cache.Bytes(token!, v) is not null, asOf = v.AsOf }) }); return;
         }
         if (path is "/Account/LocalSetup" or "/Admin/LocalDemo") { c.Response.StatusCode = 410; await c.Response.WriteAsync("LocalOffline ghi độc lập đã ngừng. Đăng nhập tài khoản trung tâm tại /Account/Login."); return; }
         if (path == "/api/system/status") { c.Response.Headers.CacheControl = "no-store"; await c.Response.WriteAsJsonAsync(new { mode = "Connected", state = State(internet, valid ? ticket : null), singleWriterMode = true, buildId = typeof(ConnectedRuntime).Assembly.ManifestModule.ModuleVersionId, environment = c.RequestServices.GetRequiredService<IHostEnvironment>().EnvironmentName, storage = c.RequestServices.GetRequiredService<IConfiguration>()["Storage:Mode"] ?? "Google" }); return; }
@@ -103,10 +103,12 @@ public sealed class ConnectedRuntime(ProtectedQueryCache cache, ConnectionGate c
             c.Response.Headers["X-DuyTien-Files"] = "PARTIAL_CHECK_OFFLINE_AVAILABILITY";
             c.Response.Headers["X-DuyTien-State"] = "OFFLINE_READ_ONLY"; c.Response.Headers["X-DuyTien-AsOf"] = view.AsOf.ToString("O");
             if (view.Disposition is not null) c.Response.Headers.ContentDisposition = view.Disposition;
-            if (view.ContentType.StartsWith("text/html", StringComparison.OrdinalIgnoreCase))
+            if (Presentation.CachedHtmlPresentation.IsHtml(view.ContentType))
             {
+                c.Response.Headers["X-DuyTien-Ui-Revision"] = Presentation.CachedHtmlPresentation.IsCurrent(view) ? Presentation.WebUi.CacheRevision : "LEGACY_READ_ONLY";
+                if (!Presentation.CachedHtmlPresentation.IsCurrent(view)) { await c.Response.WriteAsync(Presentation.CachedHtmlPresentation.Legacy(bytes, view.AsOf, ticket.Views.Where(v => FileView(v.Key) && cache.Bytes(token!, v) is not null).Select(v => v.Key[..v.Key.LastIndexOf('|')])), c.RequestAborted); return; }
                 var banner = $"<aside role=\"status\" style=\"padding:12px;background:#fff3cd\">Ngoại tuyến — chỉ đọc · Đồng bộ trang này: {WebUtility.HtmlEncode(view.AsOf.ToString("O"))}. Cache có thể thiếu dữ liệu/file. <a href=\"/Offline\">Tìm dữ liệu đã lưu</a></aside>";
-                var html = Encoding.UTF8.GetString(bytes); html = Regex.Replace(html, "<body[^>]*>", m => m.Value + banner, RegexOptions.IgnoreCase);
+                var html = Encoding.UTF8.GetString(bytes); html = Regex.Replace(html, "<body[^>]*>", m => m.Value.Insert(m.Value.Length - 1, " data-connection-state=\"OFFLINE_READ_ONLY\"") + banner, RegexOptions.IgnoreCase);
                 await c.Response.WriteAsync(html, c.RequestAborted);
             }
             else await c.Response.Body.WriteAsync(bytes, c.RequestAborted);
@@ -184,11 +186,17 @@ public sealed class ConnectedRuntime(ProtectedQueryCache cache, ConnectionGate c
     }
     public void Dispose() => mutationBoundary.Dispose();
     public string State(InternetState internet, CachedTicket? ticket) => internet == InternetState.Disconnected ? "OFFLINE_READ_ONLY" : internet != InternetState.Connected || serviceUnavailable ? "SERVICE_UNAVAILABLE" : ticket is not null && ticket.ReadyEpoch == connection.Epoch ? "ONLINE" : "RECONNECTING";
+    private static bool FileView(string key)
+    {
+        var path = key.Split('|')[0].Split('?')[0];
+        return path.StartsWith("/Files/Content/", StringComparison.OrdinalIgnoreCase) ||
+            path.StartsWith("/api/files/", StringComparison.OrdinalIgnoreCase) && path.EndsWith("/content", StringComparison.OrdinalIgnoreCase);
+    }
     public static bool Readable(string path)
     {
         if (path == "/") return true;
         if (new[] { "/Create", "/Edit", "/Import", "/Move", "/Deactivate", "/History" }.Any(x => path.Contains(x, StringComparison.OrdinalIgnoreCase))) return false;
-        return new[] { "/Categories", "/Assets", "/Documents", "/Items", "/Stock", "/Reports", "/api/categories", "/api/assets", "/api/documents", "/api/items", "/api/stock", "/api/reports", "/api/files" }.Any(x => path.Equals(x, StringComparison.OrdinalIgnoreCase) || path.StartsWith(x + "/", StringComparison.OrdinalIgnoreCase));
+        return new[] { "/Categories", "/Assets", "/Documents", "/Items", "/Stock", "/Reports", "/api/categories", "/api/assets", "/api/documents", "/api/items", "/api/stock", "/api/reports", "/api/files", "/Files/Content" }.Any(x => path.Equals(x, StringComparison.OrdinalIgnoreCase) || path.StartsWith(x + "/", StringComparison.OrdinalIgnoreCase));
     }
     private static string ViewKey(HttpContext c) => c.Request.PathBase + c.Request.Path + c.Request.QueryString + (c.Request.Path.StartsWithSegments("/api") ? "|json" : "|html");
     private static ClaimsPrincipal Principal(CachedTicket t, string source)
@@ -231,8 +239,11 @@ public sealed class ConnectedRuntime(ProtectedQueryCache cache, ConnectionGate c
         if (c.Request.Headers.Accept.ToString().Contains("application/json")) { await c.Response.WriteAsJsonAsync(new { state = "OFFLINE_READ_ONLY", total = rows.Count, results = matches, page, partial = true }); return; }
         c.Response.ContentType = "text/html; charset=utf-8";
         var tokens = c.RequestServices.GetRequiredService<IAntiforgery>().GetAndStoreTokens(c);
-        var html = new StringBuilder("<!doctype html><html lang=\"vi\"><meta charset=\"utf-8\"><title>Dữ liệu ngoại tuyến</title><body><h1>Ngoại tuyến — chỉ đọc</h1><p>Chỉ trang/query đã lưu; có thể thiếu dữ liệu/file. Mỗi snapshot có thời điểm riêng.</p><form method=\"get\"><input name=\"q\" placeholder=\"Tìm trong dữ liệu đã lưu\"><select name=\"kind\"><option value=\"\">Mọi module</option><option>Assets</option><option>Categories</option><option>Items</option><option>Documents</option><option>Reports</option></select><button>Tìm/lọc</button></form>");
-        html.Append("<p>").Append(rows.Count).Append(" snapshot khớp; hiển thị tối đa60.</p>");
+        var html = new StringBuilder("<!doctype html><html lang=\"vi\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"stylesheet\" href=\"/css/site.css\"><title>Dữ liệu ngoại tuyến · Duy Tiến Assets</title><body class=\"offline-page\"><h1>Ngoại tuyến — chỉ đọc</h1><p>Chỉ trang và truy vấn đã lưu; có thể thiếu dữ liệu hoặc tệp. Mỗi bản lưu có thời điểm riêng.</p><form method=\"get\"><label>Tìm trong bản lưu <input name=\"q\" placeholder=\"Tìm trong dữ liệu đã lưu\"></label><label>Chức năng <select name=\"kind\"><option value=\"\">Mọi chức năng</option><option value=\"Assets\">Tài sản</option><option value=\"Categories\">Danh mục</option><option value=\"Items\">Vật tư, hàng hóa</option><option value=\"Documents\">Hồ sơ</option><option value=\"Reports\">Báo cáo</option><option value=\"Stock\">Số lượng</option></select></label><button>Tìm/lọc</button></form>");
+        html.Replace("name=\"q\" placeholder", "name=\"q\" value=\"" + WebUtility.HtmlEncode(q) + "\" placeholder");
+        if (kind != "") html.Replace("value=\"" + WebUtility.HtmlEncode(kind) + "\">", "value=\"" + WebUtility.HtmlEncode(kind) + "\" selected>");
+        if (page > 1) html.Append("<p><a href=\"/Offline?page=" + (page - 1) + "&amp;q=" + WebUtility.HtmlEncode(Uri.EscapeDataString(q)) + "&amp;kind=" + WebUtility.HtmlEncode(Uri.EscapeDataString(kind)) + "\">Trang trước</a></p>");
+        html.Append("<p>").Append(rows.Count).Append(" bản lưu khớp; hiển thị tối đa 60.</p>");
         foreach (var row in matches) { var j = JsonSerializer.SerializeToElement(row); html.Append("<p><a href=\"").Append(WebUtility.HtmlEncode(j.GetProperty("url").GetString())).Append("\">").Append(WebUtility.HtmlEncode(j.GetProperty("url").GetString())).Append("</a> · ").Append(WebUtility.HtmlEncode(j.GetProperty("asOf").ToString())).Append("</p>"); }
         if (rows.Count > page * 60) html.Append("<p><a href=\"/Offline?page=" + (page + 1) + "&amp;q=" + WebUtility.HtmlEncode(Uri.EscapeDataString(q)) + "&amp;kind=" + WebUtility.HtmlEncode(Uri.EscapeDataString(kind)) + "\">Trang tiếp</a></p>");
         html.Append("<form method=\"post\" action=\"/Account/Logout\"><input type=\"hidden\" name=\"__RequestVerificationToken\" value=\"").Append(WebUtility.HtmlEncode(tokens.RequestToken)).Append("\"><button>Đăng xuất trên máy này</button></form><script src=\"/js/connection.js\"></script></body></html>");
@@ -242,7 +253,7 @@ public sealed class ConnectedRuntime(ProtectedQueryCache cache, ConnectionGate c
     {
         c.Response.StatusCode = status; c.Response.Headers.CacheControl = "no-store"; c.Response.Headers["X-DuyTien-State"] = code;
         if (c.Request.Path.StartsWithSegments("/api")) await c.Response.WriteAsJsonAsync(new { status, code, title = message });
-        else { c.Response.ContentType = "text/html; charset=utf-8"; await c.Response.WriteAsync("<!doctype html><html lang=\"vi\"><meta charset=\"utf-8\"><body><h1>" + WebUtility.HtmlEncode(message) + "</h1><a href=\"/Offline\">Dữ liệu đã lưu</a> · <a href=\"/Account/Login\">Đăng nhập online</a><script src=\"/js/connection.js\"></script></body></html>"); }
+        else { c.Response.ContentType = "text/html; charset=utf-8"; await c.Response.WriteAsync("<!doctype html><html lang=\"vi\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link rel=\"stylesheet\" href=\"/css/site.css\"><body class=\"offline-page\"><h1>" + WebUtility.HtmlEncode(message) + "</h1><a href=\"/Offline\">Dữ liệu đã lưu</a> · <a href=\"/Account/Login\">Đăng nhập online</a><script src=\"/js/connection.js\"></script></body></html>"); }
     }
 }
 internal sealed class RecordingStream(int limit) : MemoryStream

@@ -34,9 +34,10 @@ public sealed class GoogleApiRequestExecutor(
             if (semantics != GoogleRequestSemantics.SafeRead) GoogleMetadataReadMemo.Invalidate();
             else if (GoogleMetadataReadMemo.Read(request) is { } memoized) return memoized;
             var metadataRevision = GoogleMetadataReadMemo.Revision;
-            request.Headers.Authorization = new AuthenticationHeaderValue(
-                "Bearer",
-                await tokenProvider.GetAccessTokenAsync(cancellationToken).ConfigureAwait(false));
+            string accessToken;
+            using (var tokenMetric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure("google-token"))
+                accessToken = await tokenProvider.GetAccessTokenAsync(cancellationToken).ConfigureAwait(false);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             request.Headers.UserAgent.ParseAdd("DuyTien-AssetManagement/1.0");
 
             HttpResponseMessage response;
@@ -45,6 +46,7 @@ public sealed class GoogleApiRequestExecutor(
                 if (sheetsBudget is not null) await sheetsBudget.WaitAsync(request, cancellationToken).ConfigureAwait(false);
                 if (connectivity is not null) await connectivity.EnsureAllowedAsync(cancellationToken).ConfigureAwait(false);
                 using var metric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure("google-http");
+                using var methodMetric = DuyTien.AssetManagement.Application.Diagnostics.PerformanceTrace.Measure(request.Method == HttpMethod.Get ? "google-read-http" : "google-write-http");
                 response = await httpClient.SendAsync(
                     request,
                     HttpCompletionOption.ResponseHeadersRead,

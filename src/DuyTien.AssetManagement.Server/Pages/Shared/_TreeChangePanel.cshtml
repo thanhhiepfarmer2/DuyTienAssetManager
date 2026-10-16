@@ -1,8 +1,8 @@
 @model DuyTien.AssetManagement.Server.Categories.TreeChangePageModel
-<p class="alert alert-warning">DRAFT — preview và xác nhận trước khi thay đổi. Mã/ID đã cấp được giữ; publish snapshot không phê duyệt nghiệp vụ.</p>
+<p class="alert alert-warning">Chưa duyệt — xem trước ảnh hưởng rồi xác nhận lưu. Mã nhận diện và mã đã cấp được giữ nguyên.</p>
 @if (Model.Error is not null) { <div class="alert alert-danger" role="alert">@Model.Error</div> }
-@if (Model.Result is { } result) { <div class="alert alert-success" role="status">Đã xác nhận commit snapshot DRAFT đầy đủ. @result.ChangedCategoryCount danh mục thay đổi, @result.ChangedAssetCount tài sản, @result.ChangedItemCount Item, @result.ChangedDocumentCount hồ sơ cập nhật; @result.RegistryImpactCount reference registry đã đối soát. @(result.Replayed ? "Retry: dùng kết quả đã lưu, không ghi lần hai." : "")</div> }
-@if (Model.AssetMove) { <form method="get" class="mb-3"><label for="Q">Tìm mã/tên/alias/serial để chọn tài sản</label><input id="Q" name="Q" value="@Model.Q" maxlength="200" class="form-control"/><button class="btn btn-secondary mt-2">Tìm</button></form> }
+@if (Model.Result is { } result) { <div class="alert alert-success" role="status">Đã lưu thay đổi vào phiên bản chưa duyệt. @result.ChangedCategoryCount danh mục thay đổi, @result.ChangedAssetCount tài sản, @result.ChangedItemCount vật tư, @result.ChangedDocumentCount hồ sơ cập nhật; @result.RegistryImpactCount liên kết đã đối soát. @(result.Replayed ? "Dùng kết quả đã lưu, không tạo bản sao." : "")</div> }
+@if (Model.AssetMove) { <form method="get" class="mb-3"><label for="Q">Tìm mã/tên/mã tham chiếu/số sê-ri để chọn tài sản</label><input id="Q" name="Q" value="@Model.Q" maxlength="200" class="form-control"/><button class="btn btn-secondary mt-2">Tìm</button></form> }
 <form method="post" data-tree-change>
     <div asp-validation-summary="All" role="alert" class="text-danger"></div>
     <input type="hidden" asp-for="RequestKey"/><input type="hidden" asp-for="PreviewHash"/><input type="hidden" asp-for="ExpectedTreeRevision"/><input type="hidden" asp-for="ExpectedAssetRevision"/>
@@ -14,7 +14,7 @@
         @foreach (var selected in (Model.Form.AssetIds ?? []).Distinct().Except(Model.AssetChoices.Items.Select(x => x.Asset.AssetId)).Take(100)) { <input type="hidden" name="Form.AssetIds" value="@selected"/><p class="text-warning">Giữ một ID đã chọn nhưng chưa có trong danh sách hiện tại. Server kiểm lại quyền và phiên bản trước commit.</p> }
         @foreach (var x in Model.AssetChoices.Items) { <div><label><input type="checkbox" name="Form.AssetIds" value="@x.Asset.AssetId" checked="@(Model.Form.AssetIds?.Contains(x.Asset.AssetId) == true)"/> @x.Asset.ObjectCode — @x.Asset.Name — @x.LocationName</label></div> }
         @if (Model.AssetChoices.Total > 100) { <p>Đang hiển thị100 kết quả đầu; dùng từ khóa để thu hẹp.</p> }
-        </fieldset>
+        <p data-selection-status role="status"></p></fieldset>
         <label asp-for="Form.DestinationOrgUnitId" class="form-label mt-2">Đơn vị đích (trống: giữ từng đơn vị cũ)</label><select asp-for="Form.DestinationOrgUnitId" class="form-select">@if (!string.IsNullOrWhiteSpace(Model.Form.DestinationOrgUnitId) && !Model.ScopeChoices.OrgUnits.Select(x => x.Id).Contains(Model.Form.DestinationOrgUnitId)) { <option value="@Model.Form.DestinationOrgUnitId">Giữ giá trị đã nhập; cần tải lại dữ liệu chọn</option> }<option value="">Giữ đơn vị cũ</option>@foreach (var x in Model.ScopeChoices.OrgUnits) { <option value="@x.Id">@x.Name</option> }</select>
         <label asp-for="Form.DestinationLocationId" class="form-label mt-2">Địa điểm đích (trống: giữ từng địa điểm cũ)</label><select asp-for="Form.DestinationLocationId" class="form-select">@if (!string.IsNullOrWhiteSpace(Model.Form.DestinationLocationId) && !Model.ScopeChoices.Locations.Select(x => x.Id).Contains(Model.Form.DestinationLocationId)) { <option value="@Model.Form.DestinationLocationId">Giữ giá trị đã nhập; cần tải lại dữ liệu chọn</option> }<option value="">Giữ địa điểm cũ</option>@foreach (var x in Model.ScopeChoices.Locations) { <option value="@x.Id">@x.Name</option> }</select>
     }
@@ -27,23 +27,23 @@
     }
     <label asp-for="Form.DestinationCategoryId" class="form-label mt-2">Danh mục đích / cha mới</label><select asp-for="Form.DestinationCategoryId" class="form-select">@if (!string.IsNullOrWhiteSpace(Model.Form.DestinationCategoryId) && !Model.Choices.Nodes.Select(x => x.CategoryId).Contains(Model.Form.DestinationCategoryId)) { <option value="@Model.Form.DestinationCategoryId">Giữ giá trị đã nhập; cần tải lại dữ liệu chọn</option> }<option value="">Không chọn (MOVE_CATEGORY: chuyển thành gốc, cần ALL)</option>@foreach (var x in Model.Choices.Nodes) { <option value="@x.CategoryId">@x.Path — @x.FullCode</option> }</select>
     <label asp-for="Form.Reason" class="form-label mt-2">Lý do</label><input asp-for="Form.Reason" class="form-control" required maxlength="500"/>
-    <button class="btn btn-primary mt-3" type="submit" asp-page-handler="Preview">Preview tác động</button>
+    <button class="btn btn-primary mt-3" type="submit" asp-page-handler="Preview">Xem trước tác động</button>
     @if (Model.Preview is { } p)
     {
-        <section class="mt-4" aria-label="Preview tác động"><h2 class="h4">Báo cáo tác động trong phạm vi</h2><p>@p.AffectedCategoryCount nút liên quan; @p.AffectedAssetCount tài sản liên quan; @p.ChangedAssetCount tài sản sẽ cập nhật. Những module chưa triển khai không được coi là rỗng.</p>
+        <section class="mt-4" aria-label="Xem trước tác động"><h2 class="h4">Báo cáo tác động trong phạm vi</h2><p>@p.AffectedCategoryCount nút liên quan; @p.AffectedAssetCount tài sản liên quan; @p.ChangedAssetCount tài sản sẽ cập nhật. Các liên kết dữ liệu phải được kiểm tra đầy đủ trước khi lưu.</p>
         @foreach (var issue in p.Issues) { <p class="text-danger" role="alert">@issue</p> }
-        <div class="table-responsive"><table class="table"><thead><tr><th>Danh mục</th><th>Trước</th><th>Sau</th><th>Trạng thái</th></tr></thead><tbody>@foreach (var x in p.Categories) { <tr><td>@x.Name</td><td>@x.BeforePath (F@x.BeforeLevel)</td><td>@x.AfterPath (F@x.AfterLevel)</td><td>@x.BeforeState → @x.AfterState</td></tr> }</tbody></table></div>
+        <div class="table-responsive"><table class="table"><thead><tr><th>Danh mục</th><th>Trước</th><th>Sau</th><th>Trạng thái</th></tr></thead><tbody>@foreach (var x in p.Categories) { <tr><td>@x.Name</td><td>@x.BeforePath (F@(x.BeforeLevel))</td><td>@x.AfterPath (F@(x.AfterLevel))</td><td>@x.BeforeState → @x.AfterState</td></tr> }</tbody></table></div>
         <div class="table-responsive"><table class="table"><thead><tr><th>Mã/ID giữ nguyên</th><th>Tên</th><th>Phân loại trước/sau</th><th>Địa điểm trước/sau</th><th>Xóa mềm sau</th></tr></thead><tbody>@foreach (var x in p.Assets) { <tr><td>@x.ObjectCode</td><td>@x.Name</td><td>@x.BeforeCategory → @x.AfterCategory</td><td>@x.BeforeLocation → @x.AfterLocation</td><td>@x.WillBeDeleted</td></tr> }</tbody></table></div>
-        @if (p.CanCommit) { <label class="d-block"><input asp-for="ConfirmImpact"/> Tôi xác nhận tác động, phương án và lý do; giữ dữ liệu ở trạng thái nháp.</label><button type="submit" asp-page-handler="Commit" class="btn btn-danger mt-2">Xác nhận commit snapshot đầy đủ</button> }
+        @if (p.CanCommit) { <label class="d-block"><input asp-for="ConfirmImpact"/> Tôi xác nhận tác động, phương án và lý do; giữ dữ liệu ở trạng thái nháp.</label><button type="submit" asp-page-handler="Commit" data-confirm-action="Lưu các thay đổi theo báo cáo tác động đã xem?" class="btn btn-danger mt-2">Lưu thay đổi đã kiểm tra</button> }
         </section>
     }
-    else if (Model.Result is null && Model.PreviewHash is not null && Model.Error is not null) { <p>Tạo preview mới nếu dữ liệu đã đổi; retry cùng yêu cầu chỉ khi kết quả chưa xác nhận.</p><label><input asp-for="ConfirmImpact"/> Xác nhận lại cùng tác động</label><button type="submit" asp-page-handler="Commit" class="btn btn-outline-danger">Thử lại cùng yêu cầu</button> }
+    else if (Model.Result is null && Model.PreviewHash is not null && Model.Error is not null) { <p>Xem trước lại nếu dữ liệu đã đổi; thử lại cùng yêu cầu chỉ khi kết quả chưa xác nhận.</p><label><input asp-for="ConfirmImpact"/> Xác nhận lại cùng tác động</label><button type="submit" asp-page-handler="Commit" data-confirm-action="Lưu các thay đổi theo báo cáo tác động đã xem?" class="btn btn-outline-danger">Thử lại cùng yêu cầu</button> }
     <p data-tree-status role="status" aria-live="polite"></p>
 </form>
-<p><a asp-page="/Categories/Index">Xem cây/TXT theo snapshot hiện tại</a> · <a asp-page="/Assets/Index">Tra cứu tài sản theo phân loại hiện tại</a></p>
+<p><a asp-page="/Categories/Index">Xem cây và xuất TXT hiện tại</a> · <a asp-page="/Assets/Index">Tra cứu tài sản theo phân loại hiện tại</a></p>
 
 @if (Model.Preview?.Registry is { Count: > 0 } registry)
 {
-    <h2 class="h5">Registry/owner được phép — snapshot/file giữ dữ liệu và ID</h2>
-    <div class="table-responsive"><table class="table"><thead><tr><th>Loại</th><th>Tên / ID</th><th>Version</th><th>Category trước → sau</th><th>Tác động</th></tr></thead><tbody>@foreach (var impact in registry) { <tr><td>@impact.Kind</td><td>@impact.Name / @impact.Id</td><td>@impact.ExpectedVersion</td><td>@impact.BeforeCategoryId → @impact.AfterCategoryId</td><td>@(impact.WillBeDeleted ? "Owner ngừng/xóa mềm; file vật lý giữ" : "Giữ ID/bytes/snapshot, scope theo owner")</td></tr> }</tbody></table></div>
+    <h2 class="h5">Đối tượng liên quan trong phạm vi</h2>
+    <div class="table-responsive"><table class="table"><thead><tr><th>Loại</th><th>Tên / ID</th><th>Phiên bản</th><th>Danh mục trước → sau</th><th>Tác động</th></tr></thead><tbody>@foreach (var impact in registry) { <tr><td>@impact.Kind</td><td>@impact.Name / @impact.Id</td><td>@impact.ExpectedVersion</td><td>@impact.BeforeCategoryId → @impact.AfterCategoryId</td><td>@(impact.WillBeDeleted ? "Đối tượng ngừng/xóa mềm; tệp vật lý được giữ" : "Giữ mã nhận diện, tệp và số liệu; quyền theo đối tượng")</td></tr> }</tbody></table></div>
 }

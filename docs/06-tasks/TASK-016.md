@@ -1,6 +1,6 @@
 # TASK-016 — Kiểm kê màn hình và quy chuẩn giao diện
 
-- Status: TODO
+- Status: DONE
 - Type: DOCS
 - Requirement/Plan: [REQ-003](../01-requirements/REQ-003-web-experience.md) / [PLAN-003](../02-architecture/PLAN-003-web-experience.md)
 - Thiết kế: [WEB-UI-DESIGN](../02-architecture/WEB-UI-DESIGN.md)
@@ -20,7 +20,7 @@ Không code UI/backend, không đổi source/data/rule, không mock dashboard ho
 
 Source hiện tại TASK-005–011/014/015; cần đúng file QuanLyVatTu_DuyTien_v4_Offline.html để chốt đối chiếu. Không yêu cầu các task cũ đổi DONE.
 
-Giữ mọi thay đổi chưa commit và trạng thái/gate TASK-005–015. Google/Sheets/Drive/drive.file, server auth/scope/guard/single-writer/version/idempotency và mật khẩu min8/phiên không đổi. Android tạm dừng, iOS DEFERRED_BY_USER. Không commit/push/deploy/dữ liệu thật. HTML tham chiếu hiện MISSING_REFERENCE; không dùng phân tích cũ làm bằng chứng đã đọc. Rule/nguồn OPEN/TBD giữ nguyên.
+Giữ mọi thay đổi chưa commit và trạng thái/gate TASK-005–015. Google/Sheets/Drive/drive.file, server auth/scope/guard/single-writer/version/idempotency và mật khẩu min8/phiên không đổi. Android tạm dừng, iOS DEFERRED_BY_USER. Không commit/push/deploy/dữ liệu thật. HTML hiện đã STATIC_VERIFIED đúng bytes/hash ở TASK-016; chỉ tham khảo UI, không thực thi hoặc nhập dataset. Rule/nguồn OPEN/TBD giữ nguyên.
 
 ## Màn hình bị ảnh hưởng
 
@@ -28,10 +28,10 @@ Toàn bộ Pages/Account, Admin, Categories, Assets, Documents, Files, Items, St
 
 ## Acceptance criteria
 
-- [ ] AC-01: Liệt kê đầy đủ route hiện hành/legacy, field/action/contract/permission/error/empty/loading/paging; có bảng đối chiếu source và phần thiếu.
-- [ ] AC-02: Đọc đúng HTML, ghi provenance và khác biệt với domain hiện tại; không đưa file/dataset công ty vào Git.
-- [ ] AC-03: Quy chuẩn định lượng về header/sidebar/breadcrumb/colors/type/focus/local assets/responsive; mapping từng module sang component.
-- [ ] AC-04: Gap backend ghi trigger/actual/expected/contract/permission/phạm vi; không biến assumption OPEN/TBD thành rule.
+- [x] AC-01: Liệt kê đầy đủ route hiện hành/legacy, field/action/contract/permission/error/empty/loading/paging; có bảng đối chiếu source và phần thiếu.
+- [x] AC-02: Đọc đúng HTML, ghi provenance và khác biệt với domain hiện tại; không đưa file/dataset công ty vào Git.
+- [x] AC-03: Quy chuẩn định lượng về header/sidebar/breadcrumb/colors/type/focus/local assets/responsive; mapping từng module sang component.
+- [x] AC-04: Gap backend ghi trigger/actual/expected/contract/permission/phạm vi; không biến assumption OPEN/TBD thành rule.
 
 ## Routing
 
@@ -58,3 +58,8 @@ Lệnh build/filtered tests chọn theo code thực đổi và ghi trong [COMMAN
 ## Review và checkpoint
 
 Mới tạo tài liệu Task trong lượt lập kế hoạch. Review tính nhất quán docs được ghi ở [report lập kế hoạch](../07-testing/TEST-REPORT-WEB-UI-PLANNING.md), không phải nghiệm thu AC của Task này. Chưa code/build/browser/Google hoặc chốt UI theo HTML. TODO giữ; không chuyển DONE khi còn gate bắt buộc. Thiếu backend ghi gap/contract riêng, không tạo nút giả hoặc tự chốt rule.
+
+
+## Thực hiện15/10 — DONE tài liệu
+
+[Report](../07-testing/TEST-REPORT-TASK-016.md), [inventory](../02-architecture/WEB-UI-INVENTORY-TASK-016.md).31routes/partials/DTO/actions/access, HTML đúngmetadata đọc tĩnh, quy chuẩn và gap log đủ. Build/test ứng dụng NOT_APPLICABLE; không browser/Google pass. Các bảng NOT_RUN phía trên là checkpoint trước triển khai.

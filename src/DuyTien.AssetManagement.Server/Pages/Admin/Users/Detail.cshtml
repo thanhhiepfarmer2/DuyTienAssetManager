@@ -25,16 +25,16 @@
         </div>
     </form>
     <div class="mt-3 d-flex gap-2">
-        <form method="post" asp-page-handler="Lock" asp-route-id="@Model.Id"><button class="btn btn-outline-danger">Khóa</button></form>
-        <form method="post" asp-page-handler="Unlock" asp-route-id="@Model.Id"><button class="btn btn-outline-success">Mở khóa</button></form>
-        <form method="post" asp-page-handler="Reset" asp-route-id="@Model.Id"><button class="btn btn-outline-warning">Reset mật khẩu</button></form>
+        <form method="post" asp-page-handler="Lock" data-confirm="Khóa tài khoản này và thu hồi các phiên đang dùng?" asp-route-id="@Model.Id"><button class="btn btn-outline-danger">Khóa</button></form>
+        <form method="post" asp-page-handler="Unlock" data-confirm="Mở khóa tài khoản này?" asp-route-id="@Model.Id"><button class="btn btn-outline-success">Mở khóa</button></form>
+        <form method="post" asp-page-handler="Reset" data-confirm="Đặt lại mật khẩu và thu hồi các phiên cũ? Mật khẩu tạm chỉ hiện một lần." asp-route-id="@Model.Id"><button class="btn btn-outline-warning">Đặt lại mật khẩu</button></form>
     </div>
 </section>
 
 <section class="card card-body">
-    <h2 class="h5">Role và scope</h2>
-    <p>Mẫu này thay toàn bộ assignment của tài khoản bằng một assignment. API hỗ trợ nhiều assignment.</p>
-    <form method="post" asp-page-handler="Assign" asp-route-id="@Model.Id">
+    <h2 class="h5">Vai trò và phạm vi</h2>
+    <p>Biểu mẫu này thay toàn bộ phân quyền hiện tại bằng một cấu hình gồm vai trò và ba phạm vi. Nếu tài khoản có nhiều cấu hình, kiểm tra danh sách đã lưu trước khi thay. ALL nghĩa là toàn bộ phạm vi tương ứng.</p>
+    <form method="post" asp-page-handler="Assign" data-confirm="Thay toàn bộ phân quyền hiện tại bằng cấu hình này và thu hồi các phiên cũ?" asp-route-id="@Model.Id">
         <div class="row g-3">
             <div class="col-md-4">
                 <label asp-for="Input.RoleCode" class="form-label"></label>
@@ -46,27 +46,27 @@
             <div class="col-md-4"><label asp-for="Input.LocationScopeId" class="form-label"></label><input asp-for="Input.LocationScopeId" class="form-control" /></div>
             <div class="col-md-4"><label asp-for="Input.CategoryScopeId" class="form-label"></label><input asp-for="Input.CategoryScopeId" class="form-control" /></div>
             <div class="col-md-4 form-check align-self-end"><input asp-for="Input.IncludeDescendants" class="form-check-input" /><label asp-for="Input.IncludeDescendants" class="form-check-label"></label></div>
-            <div class="col-md-4 align-self-end"><button class="btn btn-primary" type="submit">Thay assignment</button></div>
+            <div class="col-md-4 align-self-end"><button class="btn btn-primary" type="submit">Thay phân quyền</button></div>
         </div>
     </form>
-    <h3 class="h6 mt-4">Assignment hiện tại</h3>
+    <h3 class="h6 mt-4">Phân quyền đã lưu</h3>
     @if (Model.AssignmentDetails.Count == 0)
     {
-        <p>Chưa có assignment.</p>
+        <p>Chưa có phân quyền.</p>
     }
     else
     {
         @foreach (var detail in Model.AssignmentDetails)
         {
-            <section class="mt-3" aria-label="Assignment @detail.Assignment.RoleCode">
-                <h4 class="h6">@detail.Assignment.RoleCode — @detail.Assignment.State — @detail.Assignment.EffectiveFrom.ToString("u")</h4>
-                @if (detail.Scopes.Count == 0) { <p>Chưa có scope.</p> }
+            <section class="mt-3" aria-label="Phân quyền @WebUi.State(detail.Assignment.RoleCode)">
+                <h4 class="h6">@WebUi.State(detail.Assignment.RoleCode) — @WebUi.State(detail.Assignment.State.ToString())</h4><p>Hiệu lực từ @detail.Assignment.EffectiveFrom.ToString("u") đến @(detail.Assignment.EffectiveTo?.ToString("u") ?? "Không đặt ngày kết thúc")</p><h4 class="visually-hidden">Phạm vi</h4>
+                @if (detail.Scopes.Count == 0) { <p>Chưa có phạm vi.</p> }
                 else
                 {
                     <ul>
                         @foreach (var scope in detail.Scopes)
                         {
-                            <li>@scope.ScopeType: <code>@scope.ScopeId</code> — Bao gồm cấp con: @(scope.IncludeDescendants ? "Có" : "Không")</li>
+                            <li>@WebUi.Scope(scope.ScopeType.ToString()): <code>@scope.ScopeId</code> — Bao gồm cấp con: @(scope.IncludeDescendants ? "Có" : "Không")</li>
                         }
                     </ul>
                 }

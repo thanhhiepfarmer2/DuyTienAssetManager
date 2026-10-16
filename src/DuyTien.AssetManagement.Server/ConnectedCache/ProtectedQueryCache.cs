@@ -11,7 +11,7 @@ namespace DuyTien.AssetManagement.Server.ConnectedCache;
 
 public sealed record CentralProof(string UserId, string SessionId, string Username, string DisplayName, string[] Roles,
     long SecurityVersion, string AuthorityHash, DateTimeOffset VerifiedAt, DateTimeOffset ExpiresAt);
-public sealed record CachedView(string Key, string File, string ContentType, string? Disposition, DateTimeOffset AsOf, int Size, Dictionary<string, string>? Dependencies = null);
+public sealed record CachedView(string Key, string File, string ContentType, string? Disposition, DateTimeOffset AsOf, int Size, Dictionary<string, string>? Dependencies = null, string? PresentationVersion = null);
 public sealed record PendingWrite(string Method, string Path, string Key, string BodyHash, string State = "UNKNOWN", bool JournalConfirmed = false);
 public sealed record CachedTicket(CentralProof Proof, string ReadyEpoch, bool Revoked, CachedView[] Views, PendingWrite? Pending, string SnapshotEpoch = "", Dictionary<string, string>? Checkpoints = null, string CredentialId = "");
 public sealed class ProtectedQueryCache : IDisposable
@@ -99,7 +99,7 @@ public sealed class ProtectedQueryCache : IDisposable
             while (remaining.Count >= 200 || remaining.Sum(v => (long)v.Size) + body.Length > MaxBytes) remaining.RemoveAt(0);
             var file = Guid.NewGuid().ToString("N") + ".view";
             Atomic(Path.Combine(DirectoryFor(token), file), ViewProtector(token, file).Protect(body));
-            remaining.Add(new(key, file, type, disposition, now, body.Length, dependencies?.ToDictionary(p => p.Key, p => p.Value)));
+            remaining.Add(new(key, file, type, disposition, now, body.Length, dependencies?.ToDictionary(p => p.Key, p => p.Value), Presentation.CachedHtmlPresentation.IsHtml(type) ? Presentation.WebUi.CacheRevision : null));
             Save(token, old with { ReadyEpoch = epoch, Views = remaining.ToArray(), Checkpoints = heads });
             RemoveViews(token, old.Views.Where(v => !remaining.Any(n => n.File == v.File)));
         }
@@ -199,7 +199,7 @@ public sealed class ProtectedQueryCache : IDisposable
             try { using var doc = JsonDocument.Parse(bytes); var fields = new List<string>(); Flatten(doc.RootElement, fields); text = string.Join(" ", fields); }
             catch (JsonException) { return ""; }
         }
-        else text = System.Net.WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(text, "<[^>]+>", " "));
+        else text = Presentation.CachedHtmlPresentation.Text(bytes);
         text = Normalize(text); memory.Set("index:" + MemoryKey(token, view.File), text, new MemoryCacheEntryOptions { Size = text.Length * 2L, SlidingExpiration = TimeSpan.FromMinutes(10) }); return text;
     }
     private static void Flatten(JsonElement value, List<string> fields)

@@ -1,23 +1,23 @@
 @page "{id}"
 @model DuyTien.AssetManagement.Server.Pages.Assets.PhotosModel
-@{ViewData["Title"]="Ảnh tài sản demo";}
-<h1>Ảnh tài sản demo</h1><p class="alert alert-warning">DRAFT_DEMO — ảnh chỉ trong phạm vi tài sản. Ngừng/hủy không xóa bytes file hoặc lịch sử.</p>
+@{ViewData["Title"]="Ảnh tài sản";}
+<h1>Ảnh tài sản</h1><p class="alert alert-warning">Ảnh thuộc dữ liệu kiểm thử trong phạm vi tài sản. Ngừng dùng không xóa file hoặc lịch sử.</p>
 @if(Model.Error is not null){<div class="alert alert-danger" role="alert">@Model.Error</div>}
 @if(Model.Feedback is not null){<div class="alert alert-success" role="status">@Model.Feedback</div>}
 @if(Model.Item is {} item)
 {
 <h2 class="h4">@item.Asset.Name — @item.Asset.ObjectCode</h2>
 @if(Model.CanManage)
-{<form method="post" enctype="multipart/form-data" data-media-upload><input name="RequestKey" type="hidden" value="@Model.FormKey("Upload")"/><input name="ExpectedVersion" type="hidden" value="@Model.UploadExpectedVersion"/><label asp-for="Upload">Chọn PNG/JPEG (giới hạn demo @Model.UploadCapLabel)</label><input asp-for="Upload" type="file" accept="image/png,image/jpeg" required class="form-control"/><label asp-for="Description">Mô tả ảnh</label><input asp-for="Description" maxlength="1000" class="form-control"/><label class="d-block"><input asp-for="IsPrimary"/> Đặt làm ảnh chính sau khi lưu thành công</label><img data-media-preview alt="Preview ảnh đang chọn" hidden style="max-width:100%;max-height:240px"/><button asp-page-handler="Upload" class="btn btn-primary mt-2">Upload ảnh</button><button type="button" data-media-cancel class="btn btn-secondary mt-2">Hủy lựa chọn</button><p data-media-status role="status" aria-live="polite"></p></form>}
+{<form method="post" enctype="multipart/form-data" data-media-upload><input name="RequestKey" type="hidden" value="@Model.FormKey("Upload")"/><input name="ExpectedVersion" type="hidden" value="@Model.UploadExpectedVersion"/><label asp-for="Upload">Chọn PNG/JPEG (tối đa @Model.UploadCapLabel)</label><input asp-for="Upload" type="file" accept="image/png,image/jpeg" required class="form-control"/><label asp-for="Description">Mô tả ảnh</label><input asp-for="Description" maxlength="1000" class="form-control"/><label class="d-block"><input asp-for="IsPrimary" class="form-check-input" /> Đặt làm ảnh chính sau khi lưu thành công</label><img data-media-preview alt="Xem trước ảnh đang chọn" hidden style="max-width:100%;max-height:240px"/><button asp-page-handler="Upload" class="btn btn-primary mt-2">Tải ảnh lên</button><button type="button" data-media-cancel class="btn btn-secondary mt-2">Hủy lựa chọn</button><p data-media-file-name class="status-note"></p><a data-media-local-preview hidden target="_blank" rel="noopener">Xem PDF đã chọn</a><p data-media-status role="status" aria-live="polite"></p></form>}
 @if(Model.Files.Count==0){<p role="status">Chưa có ảnh trong phạm vi.</p>}
 @foreach(var f in Model.Files)
 {
-<section class="border rounded p-3 my-3"><h2 class="h5">@f.FileName</h2><p>@f.State @(f.IsDeleted?"— đã ngừng/hủy":"") · @f.Description · version @f.Version</p>
-@if(f.State=="AVAILABLE"&&!f.IsDeleted){<img src="@Url.Page("/Files/Content",new{id=f.FileId,preview=true})" alt="@f.Description" loading="lazy" style="max-width:100%;max-height:240px"/><p>@(f.IsPrimary?"Ảnh chính":"Ảnh bổ sung") <a asp-page="/Files/Content" asp-route-id="@f.FileId">Tải ảnh</a></p>}
+<section class="border rounded p-3 my-3"><h2 class="h5">@f.FileName</h2><p><span class="state-badge" data-state="@f.State">@WebUi.State(f.State)</span> @(f.IsDeleted?"— đã ngừng/hủy":"") · @f.Description · phiên bản @f.Version</p>
+@if(f.State=="AVAILABLE"&&!f.IsDeleted){<img src="@Url.Page("/Files/Content",new{id=f.FileId,preview=true})" alt="@f.Description" class="file-preview" loading="lazy" style="max-width:100%;max-height:240px"/><p>@(f.IsPrimary?"Ảnh chính":"Ảnh bổ sung") <a asp-page="/Files/Content" asp-route-id="@f.FileId">Tải ảnh</a></p>}
 @if(Model.CanManage&&!f.IsDeleted)
 {<form method="post"><input name="RequestKey" type="hidden" value="@Model.FileActionKey(f)"/><input type="hidden" name="FileId" value="@f.FileId"/><input type="hidden" name="ExpectedVersion" value="@(Model.RetryingFile(f)?Model.ExpectedVersion:f.Version)"/><label>Lý do<input name="Reason" value="@(Model.RetryingFile(f)?Model.Reason:"")" maxlength="500" class="form-control" required/></label>
-@if(f.State=="AVAILABLE"){<label>Mô tả<input name="Description" value="@(Model.Retrying("Update",f.FileId)?Model.Description:f.Description)" maxlength="1000" class="form-control"/></label><label><input type="checkbox" name="IsPrimary" value="true" checked="@(Model.Retrying("Update",f.FileId)?Model.IsPrimary:f.IsPrimary)"/> Ảnh chính</label><button asp-page-handler="Update" class="btn btn-outline-primary">Lưu mô tả/ảnh chính</button><button asp-page-handler="Delete" class="btn btn-outline-danger">Ngừng dùng ảnh</button>}
-else{<button asp-page-handler="Reconcile" class="btn btn-outline-primary" formnovalidate>Đối soát upload</button><button asp-page-handler="Cancel" class="btn btn-outline-danger">Hủy operation</button>}
+@if(f.State=="AVAILABLE"){<label>Mô tả<input name="Description" value="@(Model.Retrying("Update",f.FileId)?Model.Description:f.Description)" maxlength="1000" class="form-control"/></label><label><input type="checkbox" name="IsPrimary" value="true" checked="@(Model.Retrying("Update",f.FileId)?Model.IsPrimary:f.IsPrimary)"/> Ảnh chính</label><button asp-page-handler="Update" class="btn btn-outline-primary">Lưu mô tả/ảnh chính</button><button asp-page-handler="Delete" data-confirm-action="Xác nhận thực hiện thao tác trên đối tượng đang chọn?" class="btn btn-outline-danger">Ngừng dùng ảnh</button>}
+else{<button asp-page-handler="Reconcile" class="btn btn-outline-primary" formnovalidate>Đối soát tải tệp</button><button asp-page-handler="Cancel" data-confirm-action="Xác nhận thực hiện thao tác trên đối tượng đang chọn?" class="btn btn-outline-danger">Hủy thao tác</button>}
 </form>}
 </section>
 }

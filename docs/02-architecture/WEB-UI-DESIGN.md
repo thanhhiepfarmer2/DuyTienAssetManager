@@ -1,10 +1,18 @@
 # Thiết kế giao diện web — Duy Tiến Assets
 
-- Ngày: 2026-10-15. Status: **DRAFT — quy chuẩn đề xuất từ yêu cầu; chưa đối chiếu HTML gốc**.
+- Ngày: 2026-10-15. Status: **READY — đã đối chiếu tĩnh HTML và chốt quy chuẩn cho triển khai; chưa browser nghiệm thu**.
 - Nguồn authoritative: [REQ-003](../01-requirements/REQ-003-web-experience.md), [REQ-002 v2](../01-requirements/REQ-002-local-offline.md), [PERMISSIONS](../01-requirements/PERMISSIONS.md).
 - Thực hiện qua [PLAN-003](PLAN-003-web-experience.md), TASK-016–021. Đây là đầu vào lập kế hoạch, không chứng nhận TASK-016 đã kiểm kê đủ hoặc UI đã sửa.
 
-## 1. Nguồn và ranh giới
+## TASK-016 — nguồn đã đọc và quy chuẩn chốt, 2026-10-15
+
+Đã đọc tĩnh file `D:/Dev/01-QuanLyVatTu_DuyTien_v4_Offline.html` (tiền tố01- là tên nhận file), **7190714bytes**, SHA256 **577423ad5166a11a14597d97650366b2052af366df076c5f6a23bb78e92e22a6**, khớp metadata. Không thực thi script/Apps Script, không nhập dataset hoặc đưa HTML vào Git. [Inventory31routes/fields/handlers/access](WEB-UI-INVENTORY-TASK-016.md).
+
+CSS thật: header sticky68px gradient xanh; sidebar288px (255px ở<=1180), canvas#eef3f7/surface trắng/border#d9e2ec; breadcrumb/filter/search, grid4/3/2/1, table min980px, form2cột; breakpoint1180/900/640/390. Tái sử dụng tổ chức này bằng Razor/Bootstrap local, không copy stylesheet/React. Điều chỉnh: body16px/helper14px, sidebar248px, header68px; <=900sidebar disclosure trong flow (không trap focus), bảng scroll có nhãn; SVG tự vẽ local và systemfont. Các cỡ11–12px của tool không bê sang app.
+
+Quy chuẩn đã đủ cho017–020: một page heading, breadcrumb theo module, filter GET/paging, panels trắng, table caption/thead, nhãn trường Việt, validation/empty/error/loading, destructive confirmation, source badge gần dữ liệu. Giữ scope/version/idempotency, đơn vị/asOf/UNKNOWN và DRAFT/PUBLISHED thật. GapBE01/02/04/05 không thêm backend ngoài contract; BE03 cần style offline page, không mirror dữ liệu. MISSING_REFERENCE trước15/10 là lịch sử đã giải quyết bằng file đúng metadata; không phải bằng chứng browser tool.
+
+## 1. Nguồn và ranh giới (checkpoint lập kế hoạch, đã được cập nhật ở trên)
 
 `QuanLyVatTu_DuyTien_v4_Offline.html`: **MISSING_REFERENCE / NOT_REVIEWED_HTML** sau tìm filename trong repo/attachments. Không có screenshot hoặc browser của tool được AI quan sát lượt này. Màu, header/sidebar và mô tả trải nghiệm lấy từ yêu cầu người dùng; không ghi “đã đối chiếu tool”. TASK-016 phải đọc đúng file trước khi chốt quy chuẩn. Không chép dataset20744x12, Apps Script, IndexedDB/auth, rule ID/mã hoặc source thật vào app/Git. Contract VTHH20 cột hiện tại giữ riêng.
 
@@ -89,8 +97,8 @@ Không thêm polling/auth/metadata call cho từng component, không bỏ pacing
 
 | ID | Khoảng trống / trách nhiệm | Cách xử lý |
 |---|---|---|
-| REF-01 | Thiếu HTML đúng nguồn | TASK-016 ghi nguồn/hash metadata khi có file, không import dữ liệu; chưa được DONE phần đối chiếu |
-| MAP-01 | Chưa kiểm kê toàn bộ field/action/role/error/legacy route ở mức contract | TASK-016 lập bảng route→DTO/service/permission→field/action→trạng thái/test; phân biệt có code với runtime đã chạy |
+| REF-01 | RESOLVED_STATIC: đúng bytes/hash đã đọc | Không chạy HTML/dataset; xem inventory và report016 |
+| MAP-01 | RESOLVED_SOURCE:31routes + partial/DTO/permission/action inventory | Không là runtime/browser pass; mọi triển khai tiếp tục regression |
 | BE-01 | Bulk ngoài chuyển tài sản/impact tree hiện có chưa có xác nhận contract | Ghi thiếu backend; không vẽ nút hoặc tự thêm bulk create/delete/module mới |
 | BE-02 | Dashboard counters/KPI mới chưa có contract và nguồn được duyệt | Home dùng shortcuts có thật; chỉ hiện số khi có read đã scoped/verified, không tự thêm service hoặc gọi dư Google |
 | BE-03 | Offline cache chỉ phủ query/bytes đã đọc, HTML do middleware sinh khác Razor | TASK-017/021 rà shell/render/cache compatibility; không hứa full dataset/mirror hoặc offline form write |
@@ -102,3 +110,8 @@ Nếu phát hiện thiếu chức năng server khác, ghi rõ trigger/actual/exp
 ## 8. Cách xác minh khi triển khai
 
 Build và filtered tests của đúng phần đổi; HTTP/rendered khác browser. Khi có browser dùng fixture GIẢ/DEV trong phạm vi được phép để kiểm desktop1280x720, hẹp375/768, keyboard/focus/validation/loading/empty/error/conflict/return context/download. Không giao checklist UAT cũ cho người dùng. Nếu không có provider giữ NOT_RUN_BROWSER, task không DONE khi browser là gate bắt buộc. Online/offline latency và Google call counts đo riêng; mục tiêu GET warm p95<500ms kế thừa REQ-002 nhưng không dùng fake/local để chứng minh Google. Không phát sinh Google live/ghi dữ liệu thật chỉ vì đã lập plan.
+
+
+## Runtime16/10 — tương thích cache và kiểm giao diện
+
+Contract markup/resources có `WebUi.CacheRevision`, hiện web-ui-2026-10-16.2. Offline HTML khác revision giữ nội dung dạng text đã encode và asOf/cũ, không chạy scripts/forms/assets fingerprint cũ; cùng-session links chỉ có bytes thật. Không xóa dữ liệu để làm mới giao diện. Online giữ fresh auth/data, thay từng view. Public build-manifest assets phục vụ trực tiếp trước auth để tránh Google calls cho component, protected gateway/API không thay. Home/Danh mục Chrome đã quan sát một phần; narrow/keyboard/download/cache browser còn gate theo Report021, không tự tuyên bố toàn bộ UX đạt.

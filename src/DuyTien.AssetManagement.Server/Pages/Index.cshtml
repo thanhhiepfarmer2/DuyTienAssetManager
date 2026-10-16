@@ -1,20 +1,22 @@
 @page
 @model IndexModel
-@{ ViewData["Title"] = "Quản lý tài sản"; }
+@{ ViewData["Title"] = "Trang chủ"; }
 <h1>Quản lý tài sản Duy Tiến</h1>
 <p class="lead">Tra cứu, nhập liệu và quản lý hồ sơ theo phạm vi được giao.</p>
-<p class="alert alert-warning">DRAFT / DRAFT_DEMO — cây, dữ liệu và rule demo chưa là dữ liệu chính thức. Nguồn công ty/đơn vị/địa điểm/ngưỡng còn chưa xác minh. Web được ưu tiên; Android tiếp sau, iOS đang hoãn.</p>
 @if (User.Identity?.IsAuthenticated != true)
 {
-    <p><a class="btn btn-primary" asp-page="/Account/Login">Đăng nhập</a> <a class="btn btn-outline-secondary" asp-page="/Help/Index">Hướng dẫn web</a></p>
-    <p>Mỗi tài khoản chỉ xem dữ liệu được server cho phép. Cấu hình backend sẵn sàng không chứng minh đã kết nối Google.</p>
+    <section class="card card-body"><h2 class="h4">Bắt đầu công việc</h2><p>Đăng nhập bằng tài khoản đã được cấp. Lần đăng nhập đầu cần kết nối Internet.</p><p><a class="btn btn-primary" asp-page="/Account/Login">Đăng nhập</a> <a class="btn btn-outline-secondary" asp-page="/Help/Index">Hướng dẫn sử dụng</a></p></section>
 }
 else
 {
-    <div class="row g-3">
-        <div class="col-md-6"><section class="card h-100"><div class="card-body"><h2 class="h5">Danh mục và tài sản</h2><p><a asp-page="/Categories/Index">Cây danh mục</a> → <a asp-page="/Assets/Index">Tài sản / tìm kiếm</a> → chi tiết, ảnh và phiên bản.</p>@if (User.IsInRole("Admin") || User.IsInRole("AssetEditor")) { <p><a asp-page="/Assets/Create">Tạo máy demo</a> · <a asp-page="/Assets/Move">Preview chuyển tài sản</a></p> }@if (User.IsInRole("Admin") || User.IsInRole("CatalogManager")) { <p><a asp-page="/Categories/Import">Import cây DRAFT</a> · <a asp-page="/Categories/Manage">Preview sửa/chuyển/ngừng cây</a></p> }</div></section></div>
-        <div class="col-md-6"><section class="card h-100"><div class="card-body"><h2 class="h5">Items và snapshot</h2><p><a asp-page="/Items/Index">Items</a> → chi tiết → <a asp-page="/Stock/Index">snapshot riêng</a>. Không coi Item là Asset hoặc BOM/kho là tồn.</p>@if (User.IsInRole("Admin") || User.IsInRole("CatalogManager")) { <p><a asp-page="/Items/Import">Import / tiếp tục job Items</a></p> }<p>Quantity chưa biết là UNKNOWN, minimum thiếu không tự đặt.</p></div></section></div>
-        <div class="col-md-6"><section class="card h-100"><div class="card-body"><h2 class="h5">Hồ sơ và báo cáo</h2><p><a asp-page="/Documents/Index">Biểu mẫu DOCX/PDF theo version</a> · <a asp-page="/Reports/Index">Báo cáo R01–R04 / CSV</a></p><p>File được tải qua gateway, kiểm quyền hiện tại; phiên bản demo phát hành có ngày hiệu lực.</p></div></section></div>
-        <div class="col-md-6"><section class="card h-100"><div class="card-body"><h2 class="h5">Sử dụng và xử lý lỗi</h2><p><a asp-page="/Help/Index">Luồng thao tác web và giới hạn</a></p><p>409: tải bản mới và kiểm nội dung. Mạng/503: giữ form/file/key, thử lại cùng yêu cầu; chưa xác nhận thành công. Không sửa trực tiếp Sheet để đi vòng ứng dụng.</p>@if (User.IsInRole("Admin")) { <p><a asp-page="/Admin/Users/Index">Tài khoản</a> · <a asp-page="/Admin/Authorization">Quyền / scope</a> · <a asp-page="/Admin/SecurityEvents">Audit bảo mật</a></p> }</div></section></div>
+    <div class="work-grid">
+        <section class="card card-body"><h2 class="h4">Danh mục và tài sản</h2><p>Đi từ nhánh danh mục đến tài sản, thông tin quản lý, ảnh và lịch sử thay đổi.</p><p><a asp-page="/Categories/Index">Cây danh mục</a> · <a asp-page="/Assets/Index">Tra cứu tài sản</a></p>
+        @if (User.IsInRole("Admin") || User.IsInRole("AssetEditor")) { <p><a class="btn btn-primary" asp-page="/Assets/Create">Thêm tài sản</a> <a asp-page="/Assets/Move">Chuyển tài sản</a></p> }
+        @if (User.IsInRole("Admin") || User.IsInRole("CatalogManager")) { <p><a asp-page="/Categories/Import">Nhập cây danh mục</a> · <a asp-page="/Categories/Manage">Sửa, chuyển hoặc ngừng nhánh</a></p> }</section>
+        <section class="card card-body"><h2 class="h4">Vật tư và số lượng</h2><p>Vật tư, hàng hóa được quản lý riêng với từng tài sản. Xem số lượng cùng đơn vị tính, thời điểm và nguồn ghi nhận.</p><p><a asp-page="/Items/Index">Tra cứu vật tư, hàng hóa</a> · <a asp-page="/Stock/Index">Số lượng theo thời điểm</a></p>
+        @if (User.IsInRole("Admin") || User.IsInRole("CatalogManager")) { <p><a asp-page="/Items/Import">Nhập dữ liệu và tiếp tục lần nhập đang dở</a></p> }</section>
+        <section class="card card-body"><h2 class="h4">Hồ sơ và báo cáo</h2><p>Tra cứu hồ sơ DOCX/PDF theo phiên bản, ngày hiệu lực và quyền truy cập.</p><p><a asp-page="/Documents/Index">Hồ sơ và biểu mẫu</a> · <a asp-page="/Reports/Index">Báo cáo tài sản và số lượng</a></p><p>Số lượng chưa biết và ngưỡng chưa xác nhận được thể hiện riêng; không tự quy về 0.</p></section>
+        <section class="card card-body"><h2 class="h4">Tài khoản và trợ giúp</h2><p><a asp-page="/Account/ChangePassword">Đổi mật khẩu</a> · <a asp-page="/Help/Index">Hướng dẫn sử dụng và xử lý lỗi</a></p><p>Theo dõi trạng thái kết nối ở đầu trang. Ngoại tuyến chỉ xem các nội dung đã lưu; dữ liệu chưa tải có thể không đầy đủ.</p>
+        @if (User.IsInRole("Admin")) { <p><a asp-page="/Admin/Users/Index">Tài khoản</a> · <a asp-page="/Admin/Authorization">Phân quyền</a> · <a asp-page="/Admin/SecurityEvents">Nhật ký bảo mật</a></p> }</section>
     </div>
 }

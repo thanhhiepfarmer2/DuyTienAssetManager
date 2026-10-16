@@ -1,3 +1,54 @@
+# Runtime16/10 — TASK-017–021 tiếp tục IN_REVIEW
+
+User đã login admin hiện có trực tiếp form, AI thấy Home/Danh mục trong Chrome qua Windows sky. Google auth CLI3snapshot đọc thật/admin Active3ALL/exit0; POST login302 và protected Google reads đã có. Tool lại dừng URL-confidence khi mở Assets, không tiếp tục browser input; các module/narrow/download/network/cache browser chưa đủ. Các checkpoint NOT_RUN bên dưới là lịch sử theo lượt, không phủ nhận evidence mới.
+
+Sửa literal cấp F, breadcrumb lặp, HTML cache revision/legacy chỉ đọc giữ bytes/session/pending; Google session validation dùng fresh snapshot không chờ writer trước touch5ph. Public manifest CSS/JS/SVG phục vụ trực tiếp mà protected API/gateway vẫn auth: trước JS1Google read/477.786ms, sau5samples14–32ms/0calls;14actual asset traces0Google/auth. GET Categories2.94–3.62s, Assets thường4.93s trước staticfix; chưa có page before/after/warm p95 thật đủ mẫu, không dùng fixture chứng minh Google nhanh. Policy/quota/freshness/scope/metadata guard giữ.
+
+Suite liên quan101/101pass,0failed/skipped,exit0/16s; Releaseexit0/0warnings/errors3.82s. Một backend mới PID13680/build43068903-cfc6-4236-935d-0777b9fa5d55/Google/Development, strictTLS; UIrevision web-ui-2026-10-16.2. Mở DuyTien-Web.cmd → https://localhost:7008/Account/Login, dùng lại đúng backend/tài khoản trung tâm; không LocalSetup/reset. Không business Google writes/resources/sharing/commit/push/deploy/mobile. TASK-016 DONE docs,017–021 IN_REVIEW; toàn bộ trạng thái và gate cũ giữ nguyên. [Report021](07-testing/TEST-REPORT-TASK-021.md), [runtime evidence](07-testing/TASK-021-RUNTIME-20261016.json).
+
+---
+
+> Kết quả cuối15/10: web Release mới đã chạy một instance PID25412, https://localhost:7008/Account/Login, Google/Development/Connected, strictTLS public200/new shell và9assets fingerprint200. Chưa login/Google business test mới. Benchmark final665/20744 warm p95online synthetic39.25–433.88ms/offline0.22–0.58ms, không Google speed. [Report021](07-testing/TEST-REPORT-TASK-021.md).
+
+# Bước6/6 — TASK-021 local hoàn tất, IN_REVIEW
+
+Hoàn tất phần local PLAN-003: shell/header xanh/sidebar/breadcrumb và tài nguyên local; giao diện danh mục/tài sản/ảnh/hồ sơ/import/vật tư/số lượng/báo cáo/quản trị, hướng dẫn online mặc định/ngoại tuyến chỉ đọc. TASK-016 DONE tài liệu; TASK-017–021 IN_REVIEW do browser/Google/mạng thật chưa đủ. Không mở task/mobile khác.
+TASK-021:137/137 integration passed exit0 (17s), Node5/5 exit0, benchmark Connected/Razor665nút/20744Items1/1 exit0 (26s);9/9 copy-import+baseline check exit0 (1s), có overlap không cộng thành tổng unique. Release build exit0/0warnings/errors5.47s. Một backend PID25412, Google/Development/Connected; strictHTTPS public login200 và tài nguyên local có fingerprint200, không AI login/Google business pass.
+
+Ngoại lệ user cho tiếp nhiệm vụ kế khi local đủ, không tự DONE gate thật. Browser/Google/mạng thật NOT_RUN; không Git/mobile/real data. Các checkpoint dưới là lịch sử.
+
+# Bước5/6 — TASK-020 local hoàn tất, IN_REVIEW
+
+Hoàn thiện trang chủ theo quyền với links thật/không KPI, quản trị tài khoản/vai trò/ba phạm vi/ngày hiệu lực/audit và xác nhận khóa/reset/thay quyền. Viết lại Help/Privacy/Error bằng tiếng Việt, loại chỉ dẫn LocalOffline ghi và branding demo/task khỏi web thông thường; giữ nhãn dữ liệu chưa duyệt/kiểm thử và guide lịch sử. Sửa độ rộng form account. Chỉ đổi Display labels/thông báo trong PageModel, không đổi auth core/password/session.
+Filtered WebUi|WebIntegrationTests|AuthRazorUserDetailTests|AuthApiIntegrationTests:43/43passed,0failed/skipped,exit0,16s. Trước đó compile exit1 vì Outcome enum cần ToString;42pass/1fail do assertion Registry/owner cũ, sửa đúng tiêu đề tiếng Việt, giữ CSRF/write/registry assertions. Compiled Razor/Kestrel+fake Google, không live/browser. COMMANDS/WEB-USER-GUIDE cập nhật.
+
+Ngoại lệ user cho tiếp nhiệm vụ kế khi local đủ, không tự DONE gate thật. Browser/Google/mạng thật NOT_RUN; không Git/mobile/real data. Các checkpoint dưới là lịch sử.
+
+# Bước4/6 — TASK-019 local hoàn tất, IN_REVIEW
+
+Thống nhất ảnh/hồ sơ, import vật tư20cột, số lượng và R01–R04: form/bảng/nhãn trạng thái/lỗi, xác nhận thao tác thật, chọn tệp/preview PNG/JPEG/PDF và trạng thái tải. Không thêm nút cancel-job vì backend chưa có contract. Sửa tích hợp cache gateway Razor /Files/Content: bytes và query được phân biệt chính xác; link coverage kiểm pathname+query, không báo file sẵn có khi thiếu bytes. Guard/proof/quyền không nới.
+AI chạy trực tiếp filtered tests theo COMMANDS: WebUi|ManagedMediaHttpRazorTests|InventoryHttpRazorTests|ReportHttpRazorTests|ConnectedCacheTests. Cuối 89/89passed,0failed/skipped,exit0,17s. Trước đó compile exit1 do thay nhầm field Tracking (đã khôi phục); các lần89cases:85pass/4fail,87pass/2fail do nhãn UI cũ;88pass/1fail do assertion mới suy tracking=null trong fixture thực true (sửa kiểm không sinh snapshot). Không skip test; giữ test validation/CSRF/scopes/version/retry/nullable. Node check ui/media/connection và git diff --check exit0. Compiled Razor/Kestrel + fixture GIẢ/fake transport/filesystem cache, không Google/browser bằng chứng.
+
+Ngoại lệ user cho tiếp nhiệm vụ kế khi local đủ, không tự DONE gate thật. Browser/Google/mạng thật NOT_RUN; không Git/mobile/real data. Các checkpoint dưới là lịch sử.
+
+# Bước3/6 — TASK-018 local hoàn tất, IN_REVIEW
+
+Danh mục có cây thụt cấp/thu gọn phần con thực trong60rows, tìm/xóa lọc/page và context theo phiên/quyền. Assets list/detail/create/edit/lifecycle, chuyển nhiều AssetIds/impact/confirm giữ nguyên backend và input/key/version; nhãn Việt và provenance dữ liệu riêng. Không thêm bulk khác/KPI hoặc tắt guard.
+dotnet test filterWebUi/AssetCrudHttpRazor/CategoryHttpRazor/TreeMutationHttpRazor biên dịch Server: vòng đầu33total/32pass/1fail exit1 do assertion copy cũ snapshot DRAFT. Đổi assertion sang câu Việt mới và bổ sung assert core nodes vẫn DRAFT; không giảm behaviorchecks. Thêm integration form/confirmation/source test; vòng cuối34/34pass,0failed/skipped,exit0,6s. node ui.js exit0. Browser collapse/keyboard/layout NOT_RUN, không tự PASS.
+
+Ngoại lệ user cho tiếp nhiệm vụ kế khi local đủ, không tự DONE gate thật. Browser/Google/mạng thật NOT_RUN; không Git/mobile/real data. Các checkpoint dưới là lịch sử.
+
+# Bước2/6 — TASK-017 local hoàn tất, IN_REVIEW
+
+Đã triển khai header/sidebar/breadcrumb/account panels/localSVG/systemfont/semanticCSS và nhãn metadata Việt. Menu chỉ dùng claims, không thêm I/O/Google; cookie/auth/role/scope giữ. Offline/error HTML dùng CSS local, provenance tách branding; view state bind user/session/authority.
+Build Server Debug --no-restore:exit0,0warnings/errors,17.36s. Filter WebUi/AuthApiIntegration/LoginFailureDiagnostics/ConnectedCache:65/65passed,0failed/skipped,exit0,17s. node ui/connection syntax exit0 từng lệnh. Lệnh ghi checkpoint đầu exit1 do Python default cp1252 đọc helperUTF8; sửa encoding rõ, không lỗi ứng dụng hoặc đổi test. Compiled Razor/fixtureHTTP không browser/Google pass.
+
+Ngoại lệ user cho tiếp nhiệm vụ kế khi local đủ, không tự DONE gate thật. Browser/Google/mạng thật NOT_RUN; không Git/mobile/real data. Các checkpoint dưới là lịch sử.
+
+# Bước1/6 hoàn tất — TASK-016, 2026-10-15
+
+Nguồn01-HTML khớp metadata đã đọc tĩnh, không dataset/AppsScript/Git. [Inventory](02-architecture/WEB-UI-INVENTORY-TASK-016.md), [report016](07-testing/TEST-REPORT-TASK-016.md). TASK-016 DONE tài liệu;017 IN_PROGRESS. User cho phép triển khai liên tục016→021, ngoại lệ phụ thuộc giữ IN_REVIEW khi đủ local nhưng thiếu browser/Google/mạng. Giữ guard/auth/scopes/drive.file/singlewriter và gate cũ. Android tạm dừng/iOS hoãn, không commit/push. Checkpoints dưới là lịch sử.
+
 # Kế hoạch web hiện hành — 2026-10-15 (Asia/Saigon)
 
 Người dùng xác nhận đăng nhập thành công bằng tài khoản hiện có: **PASS_MANUAL riêng case login**, không AI auth-read/schema/consent hoặc các gate TASK-015 khác PASS. [Bằng chứng](07-testing/TEST-REPORT-TASK-015-ONLINE.md); TASK-015 vẫn IN_REVIEW. Các thông báo invalid_grant/PID/build dưới đây là checkpoint lịch sử, không là runtime mới kiểm trong lượt lập kế hoạch.

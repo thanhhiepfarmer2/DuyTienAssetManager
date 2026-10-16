@@ -47,7 +47,7 @@ if (configuredMinimumPasswordLength != AuthPasswordPolicy.MinimumLength)
         "Auth:Password:MinimumLength must remain 8 for the accepted TASK-005 policy.");
 }
 
-builder.Services.AddRazorPages().AddMvcOptions(o => o.Filters.Add<PerformanceResultFilter>());
+builder.Services.AddRazorPages().AddMvcOptions(o => { o.Filters.Add<PerformanceResultFilter>(); o.ModelMetadataDetailsProviders.Add(new DuyTien.AssetManagement.Server.Presentation.WebUiMetadataProvider()); });
 builder.Services.AddAuthentication(OpaqueSessionAuthenticationHandler.SchemeName)
     .AddScheme<AuthenticationSchemeOptions, OpaqueSessionAuthenticationHandler>(
         OpaqueSessionAuthenticationHandler.SchemeName,
@@ -183,9 +183,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UsePerformanceTrace();
 app.UseStaticFiles();
 app.UseRouting();
-app.UsePerformanceTrace();
 app.Use(async (context, next) => { using var scope = RequestAuthStore.Begin(); using var business = BusinessReadProof.Begin(HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method)); using var metadata = GoogleMetadataReadMemo.Begin(HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method)); await next(); });
 if (connectedCache) app.UseConnectedCache();
 app.UseTask005SessionAuthentication();
@@ -226,7 +226,7 @@ app.Use(async (context, next) =>
     await next();
 });
 app.UseAuthorization();
-app.MapStaticAssets();
+app.MapPublicUiAssets();
 app.MapRazorPages().WithStaticAssets();
 app.MapTask005AuthApi();
 app.MapTask006CategoryApi();

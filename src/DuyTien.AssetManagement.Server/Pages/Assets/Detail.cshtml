@@ -1,40 +1,40 @@
 @page "{id}"
 @model DuyTien.AssetManagement.Server.Pages.Assets.DetailModel
-@{ ViewData["Title"] = "Chi tiết tài sản nháp"; }
-<h1>Chi tiết tài sản nháp</h1>
+@{ ViewData["Title"] = "Chi tiết tài sản"; }
+<h1>Chi tiết tài sản</h1>
 @if (Model.Error is not null) { <div class="alert alert-danger" role="alert">@Model.Error <a asp-page="Detail" asp-route-id="@Model.Item?.Asset.AssetId">Tải lại bản đã lưu</a></div> }
 @if (Model.Item is { } item)
 {
-    <p class="alert alert-warning">@item.Asset.DataState / danh mục @item.CategoryState — chưa phê duyệt. @(item.Asset.IsDeleted ? "Đã xóa mềm; mã vẫn được giữ." : "Đang dùng trong demo.")</p>
+    <p class="alert alert-warning">@WebUi.State(item.Asset.DataState) / danh mục @WebUi.State(item.CategoryState) — chưa phê duyệt. @(item.Asset.IsDeleted ? "Đã xóa mềm; mã vẫn được giữ." : "Bản ghi kiểm thử, chưa dùng làm dữ liệu chính thức.")</p>
     <dl class="row">
-        <dt class="col-sm-3">ID bất biến</dt><dd class="col-sm-9">@item.Asset.AssetId</dd>
+        <dt class="col-sm-3">Mã nhận diện</dt><dd class="col-sm-9">@item.Asset.AssetId</dd>
         <dt class="col-sm-3">Mã đã cấp</dt><dd class="col-sm-9">@item.Asset.ObjectCode</dd>
         <dt class="col-sm-3">Nhóm cấp mã ban đầu</dt><dd class="col-sm-9">@item.Asset.IssuedCcc</dd>
-        <dt class="col-sm-3">Phân loại hiện tại</dt><dd class="col-sm-9">@item.CategoryName [@item.CategoryState]</dd>
+        <dt class="col-sm-3">Phân loại hiện tại</dt><dd class="col-sm-9">@item.CategoryName [@WebUi.State(item.CategoryState)]</dd>
         <dt class="col-sm-3">Tên / loại</dt><dd class="col-sm-9">@item.Asset.Name / @item.Asset.Type</dd>
         <dt class="col-sm-3">Đơn vị / địa điểm</dt><dd class="col-sm-9">@item.OrgUnitName / @item.LocationName</dd>
         <dt class="col-sm-3">Người quản lý</dt><dd class="col-sm-9">@item.Asset.CustodianRef</dd>
-        <dt class="col-sm-3">Serial / model / hãng</dt><dd class="col-sm-9">@item.Asset.Serial / @item.Asset.Model / @item.Asset.Manufacturer</dd>
+        <dt class="col-sm-3">Số sê-ri / model / hãng</dt><dd class="col-sm-9">@item.Asset.Serial / @item.Asset.Model / @item.Asset.Manufacturer</dd>
         <dt class="col-sm-3">Ngày ghi nhận / tình trạng</dt><dd class="col-sm-9">@item.Asset.RecordedOn / @item.Asset.Condition</dd>
         <dt class="col-sm-3">Ghi chú</dt><dd class="col-sm-9" style="white-space:pre-wrap">@item.Asset.Notes</dd>
-        <dt class="col-sm-3">Version đang lưu</dt><dd class="col-sm-9">@item.Asset.Version</dd>
+        <dt class="col-sm-3">Phiên bản đang lưu</dt><dd class="col-sm-9">@item.Asset.Version</dd>
         <dt class="col-sm-3">Cập nhật</dt><dd class="col-sm-9">@item.Asset.UpdatedAt.ToString("u") / @item.Asset.UpdatedBy</dd>
     </dl>
-    <h2 class="h5">Alias demo và lịch sử mapping</h2>
+    <h2 class="h5">Mã tham chiếu và lịch sử</h2>
     <ul>@foreach (var alias in item.Aliases) { <li>@alias.OldCode — @(alias.IsActive ? "đang dùng" : "lịch sử, vẫn giữ mã")</li> }</ul>
     @if (Model.CanEdit)
     {
         @if (!item.Asset.IsDeleted)
         {
-            <h2 class="h4">Sửa máy demo</h2>
-            <p>Đổi phân loại/đơn vị/địa điểm cần quyền MOVE ở cả nguồn và đích trong cùng assignment.</p>
+            <h2 class="h4">Sửa thông tin tài sản</h2>
+            <p>Cần quyền chuyển tại cả danh mục, đơn vị và địa điểm nguồn, đích.</p>
             <form method="post" asp-page-handler="Save" data-asset-form>
                 <input type="hidden" asp-for="RequestKey" /><input type="hidden" asp-for="ExpectedVersion" /><input type="hidden" asp-for="TreeVersionId" />
                 <partial name="_AssetFields" for="Form" />
                 <button type="submit" class="btn btn-primary mt-3">Lưu thay đổi</button><p data-save-status role="status" aria-live="polite"></p>
             </form>
         }
-        <form method="post" asp-page-handler="@(item.Asset.IsDeleted ? "Restore" : "Delete")" class="mt-4" data-asset-form>
+        <form method="post" asp-page-handler="@(item.Asset.IsDeleted ? "Restore" : "Delete")" class="mt-4 danger-zone panel" data-confirm="Xác nhận thay đổi trạng thái tài sản này? Mã và lịch sử sẽ được giữ." data-asset-form>
             <input type="hidden" asp-for="RequestKey" /><input type="hidden" asp-for="ExpectedVersion" />
             <label asp-for="Reason" class="form-label">Lý do @(item.Asset.IsDeleted ? "khôi phục" : "xóa mềm")</label><input asp-for="Reason" class="form-control" required maxlength="500" /><span asp-validation-for="Reason" class="text-danger"></span>
             <button type="submit" class="btn @(item.Asset.IsDeleted ? "btn-success" : "btn-outline-danger") mt-2">@(item.Asset.IsDeleted ? "Khôi phục (giữ ID/mã)" : "Xác nhận xóa mềm (giữ ID/mã)")</button><p data-save-status role="status" aria-live="polite"></p>
@@ -54,6 +54,6 @@
 <a asp-page="Index">Danh sách tài sản</a>
 @section Scripts { <script src="~/js/asset-form.js" asp-append-version="true"></script> }
 
-@if (Model.Item is {} mediaOwner) { <p><a asp-page="Photos" asp-route-id="@mediaOwner.Asset.AssetId">Ảnh tài sản / upload và đối soát</a></p> }
+@if (Model.Item is {} mediaOwner) { <p><a asp-page="Photos" asp-route-id="@mediaOwner.Asset.AssetId">Ảnh tài sản</a></p> }
 
 @if (Model.Item is { } detail) { <p class="mt-3"><a asp-page="/Categories/Detail" asp-route-id="@detail.Asset.CategoryId">Danh mục hiện tại</a> · <a asp-page="/Assets/Index">Về tài sản</a> · <a asp-page="/Reports/Index" asp-route-Code="R01" asp-route-CategoryId="@detail.Asset.CategoryId">Báo cáo trong danh mục</a></p> }

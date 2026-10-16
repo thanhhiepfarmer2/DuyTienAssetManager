@@ -7,8 +7,8 @@
 @if (Model.Events.Count == 0) { <p>Chưa có sự kiện.</p> }
 else
 {
-    <div class="table-responsive"><table class="table table-sm">
-        <thead><tr><th>Thời gian UTC</th><th>Hành động</th><th>Kết quả</th><th>Actor</th><th>Target</th><th>Mã lỗi</th></tr></thead>
-        <tbody>@foreach (var item in Model.Events) { <tr><td>@item.Timestamp.ToString("u")</td><td>@item.Action</td><td>@item.Outcome</td><td>@item.ActorUserId</td><td>@item.TargetUserId</td><td>@item.FailureCode</td></tr> }</tbody>
+    <div class="table-responsive"><table class="table table-sm"><caption>Sự kiện đã được ghi nhận, mới nhất trước</caption>
+        <thead><tr><th>Thời gian UTC</th><th>Hành động</th><th>Kết quả</th><th>Người thực hiện</th><th>Đối tượng</th><th>Mã lỗi</th></tr></thead>
+        <tbody>@foreach (var item in Model.Events) { <tr><td>@item.Timestamp.ToString("u")</td><td>@item.Action</td><td>@WebUi.State(item.Outcome.ToString())</td><td>@item.ActorUserId</td><td>@item.TargetUserId</td><td>@item.FailureCode</td></tr> }</tbody>
     </table></div>
 }

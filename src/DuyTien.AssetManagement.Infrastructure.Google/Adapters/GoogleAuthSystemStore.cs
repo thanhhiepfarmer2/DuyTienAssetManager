@@ -12,8 +12,11 @@ namespace DuyTien.AssetManagement.Infrastructure.Google.Adapters;
 public sealed class GoogleAuthSystemStore(
     GoogleWorkspaceOptions options,
     GoogleApiRequestExecutor api,
-    ISingleWriterCoordinator writerCoordinator) : IAuthSystemStore
+    ISingleWriterCoordinator writerCoordinator) : IAuthSystemStore, IAuthSnapshotValidation
 {
+    // BatchGet reads a fresh validated auth snapshot. The core still touches under the writer every5min.
+    public bool CanValidateReadOnly => true;
+
     private const string SystemSchemaVersions = "SystemSchemaVersions";
     private const string Users = "Users";
     private const string Roles = "Roles";

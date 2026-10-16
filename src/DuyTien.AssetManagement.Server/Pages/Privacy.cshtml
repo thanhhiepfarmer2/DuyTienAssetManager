@@ -2,6 +2,7 @@
 @model PrivacyModel
 @{ ViewData["Title"] = "Dữ liệu và quyền riêng tư"; }
 <h1>Dữ liệu và quyền riêng tư</h1>
-<p>Backend kiểm quyền/scope; không chia sẻ cookie/token/mật khẩu hoặc URL upload session. Google credential chỉ ở backend ngoài repository.</p>
-<p>Dữ liệu demo DRAFT không là dữ liệu công ty đã duyệt. Nguồn/rule/retention/backup và môi trường dùng thật còn chưa xác minh; trang này mô tả hành vi local, chưa là chính sách pháp lý của công ty.</p>
-<p><a asp-page="/Help/Index">Hướng dẫn xử lý lỗi và vận hành</a></p>
+<section><h2>Truy cập theo tài khoản</h2><p>Bạn chỉ được xem và thao tác trong phạm vi đã giao. Không chia sẻ mật khẩu, phiên đăng nhập hoặc tệp riêng tư. Khóa tài khoản hay thay quyền có thể làm phiên cũ mất hiệu lực.</p></section>
+<section><h2>Bản lưu trên máy</h2><p>Nội dung đã tải có thể được lưu riêng cho phiên để xem ngoại tuyến. Chỉ đọc trong thời hạn phiên; tệp chưa tải không có sẵn. Đăng xuất sau khi sử dụng máy dùng chung. Không sao chép hoặc đưa bản lưu vào nơi chia sẻ công khai.</p></section>
+<section><h2>Nguồn và trạng thái</h2><p>Nhãn Chưa duyệt, Dữ liệu kiểm thử hoặc Nguồn chưa xác nhận cho biết giới hạn của bản ghi. Không dùng nhãn này như bằng chứng dữ liệu đã được phê duyệt. Chính sách lưu trữ và nguồn nghiệp vụ chưa xác nhận cần được đơn vị phụ trách quyết định riêng.</p><p>Trang này mô tả hành vi ứng dụng hiện có, chưa thay thế chính sách pháp lý của công ty.</p></section>
+<p><a asp-page="/Help/Index">Hướng dẫn sử dụng</a></p>

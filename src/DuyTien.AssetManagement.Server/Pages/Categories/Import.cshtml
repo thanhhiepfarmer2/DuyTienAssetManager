@@ -1,21 +1,21 @@
 @page
 @model DuyTien.AssetManagement.Server.Pages.Categories.ImportModel
-@{ViewData["Title"]="Nạp cây DRAFT";}
-<h1>Nạp cây danh mục DRAFT</h1>
-<p>Nạp XLSX (cấu trúc và metadata F1/F2/F3) hoặc JSON staging. Preview chưa ghi dữ liệu. Import tạo một phiên bản nháp hiệu lực demo; giữ phiên bản cũ.</p>
+@{ViewData["Title"]="Nhập danh mục";}
+<h1>Nhập cây danh mục</h1>
+<p>Chọn XLSX (cấu trúc và metadata F1/F2/F3) hoặc JSON staging. Xem trước chưa lưu thay đổi. Dữ liệu nhập giữ trạng thái chưa duyệt và lịch sử phiên bản trước.</p>
 <div asp-validation-summary="All" class="text-danger" role="alert"></div>
 <p id="category-import-status" role="status" aria-live="polite"></p>
-<form data-category-import="preview" method="post" enctype="multipart/form-data" asp-page-handler="Preview"><label asp-for="Upload">File cây (tối đa 10 MB)</label><input asp-for="Upload" type="file" accept=".xlsx,.json" class="form-control" required/><button class="btn btn-primary mt-2">Preview và kiểm tra</button></form>
-@if(Model.Result is {} result){<p class="alert alert-success" role="status">@(result.AlreadyImported ? "Dữ liệu đã có; không tạo bản sao." : "Đã import phiên bản DRAFT.") @result.Total nút.</p><a asp-page="Index">Xem cây</a>}
+<form data-category-import="preview" method="post" enctype="multipart/form-data" asp-page-handler="Preview"><label asp-for="Upload">File cây (tối đa 10 MB)</label><input asp-for="Upload" type="file" accept=".xlsx,.json" class="form-control" required/><button class="btn btn-primary mt-2">Xem trước và kiểm tra</button></form>
+@if(Model.Result is {} result){<p class="alert alert-success" role="status">@(result.AlreadyImported ? "Dữ liệu đã có; không tạo bản sao." : "Đã nhập phiên bản chưa duyệt.") @result.Total nút.</p><a asp-page="Index">Xem cây</a>}
 @if(Model.Preview is {} p){
-<h2>Preview</h2><p>@p.Total nút: F1=@p.F1 / F2=@p.F2 / F3=@p.F3. @p.DuplicateNames.Count tên có nhiều mã.</p>
+<h2>Kết quả xem trước</h2><p>@p.Total nút: F1=@p.F1 / F2=@p.F2 / F3=@p.F3. @p.DuplicateNames.Count tên có nhiều mã.</p>
 <p>Baseline nguồn đã audit: 665 / 15 / 98 / 552 / 39. Nếu chênh lệch, giữ số liệu file thực và kiểm nguồn; không tự ép baseline.</p>
 @foreach(var warning in p.Warnings){<p class="alert alert-warning">@warning</p>}
 <ul>@foreach(var e in p.Issues){<li>@e.SourceSheet dòng @e.SourceRow [@e.Code]: @e.Message</li>}</ul>
 <details><summary>Tên nhiều mã — giữ riêng, không tự gom</summary><ul>@foreach(var d in p.DuplicateNames){<li>@d.Name: @string.Join(", ",d.Codes)</li>}</ul></details>
 <details><summary>Cây và metadata F1/F2/F3</summary><div class="table-responsive"><table class="table"><thead><tr><th>STT / tên</th><th>Mã</th><th>Định nghĩa</th></tr></thead><tbody>@foreach(var r in p.Rows){<tr><td><span style="padding-left:@((r.Level-1)*1.25)rem">@r.SourceStt @r.Name</span></td><td>@r.SegmentCode</td><td style="white-space:pre-wrap">@r.Definition</td></tr>}</tbody></table></div></details>
 <details open><summary>Diff phiên bản (@p.Diff.Count thay đổi)</summary><div class="table-responsive"><table class="table"><thead><tr><th>Loại</th><th>Tên</th><th>Đường dẫn cũ → mới</th><th>Định nghĩa cũ → mới</th></tr></thead><tbody>@foreach(var d in p.Diff){<tr><td>@d.Kind</td><td>@d.Name</td><td>@d.BeforePath → @d.AfterPath</td><td>@d.BeforeDefinition → @d.AfterDefinition</td></tr>}</tbody></table></div></details>
-@if(p.CanCommit && Model.PreviewId is not null && Model.Result is null){<form data-category-import="commit" method="post" asp-page-handler="Commit"><input asp-for="PreviewId" type="hidden"/><label><input asp-for="ConfirmDuplicateNames"/> Tôi giữ riêng các tên nhiều mã, toàn bộ cây ở DRAFT.</label><p>Snapshot thay thế toàn cây hiệu lực; nhánh thiếu sẽ rời phiên bản mới nhưng còn trong lịch sử. Server kiểm quyền ở mọi nhánh ảnh hưởng.</p><button class="btn btn-warning">Import phiên bản DRAFT đã preview</button></form>}
+@if(p.CanCommit && Model.PreviewId is not null && Model.Result is null){<form data-category-import="commit" data-confirm="Nhập phiên bản danh mục đã xem trước và giữ lịch sử cũ?" method="post" asp-page-handler="Commit"><input asp-for="PreviewId" type="hidden"/><label><input asp-for="ConfirmDuplicateNames"/> Tôi giữ riêng các tên nhiều mã, toàn bộ cây ở trạng thái Chưa duyệt.</label><p>Phiên bản mới thay toàn bộ cây hiện hành; nhánh thiếu sẽ rời phiên bản mới nhưng còn trong lịch sử. Server kiểm quyền ở mọi nhánh ảnh hưởng.</p><button class="btn btn-warning">Lưu phiên bản đã xem trước</button></form>}
 }
 
 @section Scripts { <script src="~/js/category-import.js" asp-append-version="true"></script> }

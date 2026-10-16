@@ -7,7 +7,7 @@ namespace DuyTien.AssetManagement.Server.Reports;
 public static class ReportWeb
 {
     public static readonly IReadOnlyDictionary<string, string> StatusNames = new Dictionary<string, string>(StringComparer.Ordinal)
-    { ["MATCHES"] = "Kết quả báo cáo", ["OUT"] = "Hết số lượng (=0)", ["LOW"] = "Sắp hết (0<quantity<=minimum)", ["AVAILABLE"] = "Có số lượng, vượt ngưỡng đã nhập", ["UNKNOWN"] = "UNKNOWN — chưa có số lượng", ["MISSING_MINIMUM"] = "Thiếu ngưỡng minimum", ["NOT_TRACKED"] = "Không theo dõi tồn / dịch vụ", ["TRACKING_UNCONFIRMED"] = "Chưa xác nhận theo dõi tồn", ["SOURCE_MISSING"] = "Thiếu nguồn snapshot", ["INVALID_SNAPSHOT"] = "Snapshot cần đối soát" };
+    { ["MATCHES"] = "Kết quả báo cáo", ["OUT"] = "Hết số lượng (=0)", ["LOW"] = "Sắp hết (trên0 và không vượt ngưỡng)", ["AVAILABLE"] = "Có số lượng, vượt ngưỡng đã nhập", ["UNKNOWN"] = "Chưa có số lượng", ["MISSING_MINIMUM"] = "Chưa có ngưỡng tối thiểu", ["NOT_TRACKED"] = "Không theo dõi tồn / dịch vụ", ["TRACKING_UNCONFIRMED"] = "Chưa xác nhận theo dõi tồn", ["SOURCE_MISSING"] = "Chưa có nguồn số liệu", ["INVALID_SNAPSHOT"] = "Số liệu cần đối soát" };
     public static string Actor(ClaimsPrincipal user) => user.FindFirstValue(ClaimTypes.NameIdentifier)!;
     public static bool Expected(Exception e) => e is ReportValidationException or ReportForbiddenException or ReportNotFoundException or ExternalStorageException;
     public static int Status(Exception e) => e switch { ReportValidationException => 422, ReportForbiddenException => 403, ReportNotFoundException => 404, _ => 503 };

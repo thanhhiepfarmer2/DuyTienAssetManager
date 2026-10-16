@@ -821,3 +821,48 @@ raise SystemExit(1 if issues else 0)
 # Quan sát exit python trước lệnh kế.
 git diff --check
 ```
+
+
+## PLAN-003 implementation — 2026-10-15
+Build/test tuần tự, không Google/UAT hoãn.
+```powershell
+dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj --no-restore --nologo -v:minimal
+dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebUi|FullyQualifiedName~AuthApiIntegrationTests|FullyQualifiedName~LoginFailureDiagnosticsTests|FullyQualifiedName~ConnectedCacheTests"
+node --check src/DuyTien.AssetManagement.Server/wwwroot/js/ui.js
+node --check src/DuyTien.AssetManagement.Server/wwwroot/js/connection.js
+```
+
+TASK-018: `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebUi|FullyQualifiedName~AssetCrudHttpRazorTests|FullyQualifiedName~CategoryHttpRazorTests|FullyQualifiedName~TreeMutationHttpRazorTests"`
+
+TASK-019: `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebUi|FullyQualifiedName~ManagedMediaHttpRazorTests|FullyQualifiedName~InventoryHttpRazorTests|FullyQualifiedName~ReportHttpRazorTests|FullyQualifiedName~ConnectedCacheTests"`
+
+
+## TASK-020 — kiểm quản trị và nội dung web
+
+`dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebUi|FullyQualifiedName~WebIntegrationTests|FullyQualifiedName~AuthRazorUserDetailTests|FullyQualifiedName~AuthApiIntegrationTests"`
+
+Compiled Razor/Kestrel với fixture GIẢ; không thay browser/Google.
+
+
+## TASK-021 — kiểm tích hợp và benchmark UI
+
+- `node --test tests/web-ui-behavior.test.cjs` — event/DOM doubles local, không browser.
+- `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebUiShellTests|FullyQualifiedName~WebUiModuleTests|FullyQualifiedName~ConnectedCacheTests|FullyQualifiedName~WebIntegrationTests|FullyQualifiedName~AssetCrudHttpRazorTests|FullyQualifiedName~CategoryHttpRazorTests|FullyQualifiedName~TreeMutationHttpRazorTests|FullyQualifiedName~ManagedMediaHttpRazorTests|FullyQualifiedName~InventoryHttpRazorTests|FullyQualifiedName~ReportHttpRazorTests"` — sequential output, fixture GIẢ/fake Google, không UAT/live.
+- Benchmark riêng (không chạy đồng thời với suite): đặt `DUYTIEN_WEB_UI_BENCHMARK_OUTPUT` tới JSON private ngoài Git, filter `FullyQualifiedName~WebUiPerformanceTests`; số đo synthetic current Connected pipeline, không Google timing.
+- So baseline015 cùng fake-central route: đặt `DUYTIEN_CONNECTED_BENCHMARK` tới JSON private, filter `FullyQualifiedName~Warm_online_and_offline_timings_are_separate_fake_central_samples`.
+- Build Release: `dotnet build src/DuyTien.AssetManagement.Server/DuyTien.AssetManagement.Server.csproj -c Release --no-restore --nologo -v:minimal`; chỉ sau stop đúng backend launcher. Start `powershell.exe -NoProfile -File scripts/Start-Web.ps1 -NoBrowser`, TLS giữ validation.
+
+TASK-021 kiểm lại copy import và baseline cùng nguồn: `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~InventoryHttpRazorTests|FullyQualifiedName~Warm_online_and_offline_timings_are_separate_fake_central_samples"`, biến `DUYTIEN_CONNECTED_BENCHMARK` chỉ file JSON số đo riêng ngoài Git.
+
+
+## TASK-017–021 runtime16/10 — checks liên quan
+
+`dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~ConnectedCacheTests|FullyQualifiedName~GoogleAuthSystemStoreTests|FullyQualifiedName~AuthApiIntegrationTests|FullyQualifiedName~LoginFailureDiagnosticsTests|FullyQualifiedName~WebUiShellTests|FullyQualifiedName~WebUiModuleTests|FullyQualifiedName~GoogleApiRequestExecutorTests"`
+
+`auth-diagnose` hiện hỗ trợ `Diagnostics__AuthReadSamples=3` (bounded1–5), chỉ đọc trung tâm và in bool/timing/count. Chạy native Release từ Server/Development/Google sau stop đúng backend; không password check/init/write. Không in dòng auth/log raw. Trace web có thể bật `Diagnostics__Enabled=true`, `Diagnostics__OutputFile` dưới TEMP; chỉ route-family/method/status/random trace-id/phases, không path/query/body/credential. Thiết lập trước Start-Web trong cùng child process, giữ Google default.
+
+
+Runtime021 sửa lỗi browser cấp F/breadcrumb và public static manifest:
+`dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebStaticAssetTests|FullyQualifiedName~WebUiShellTests|FullyQualifiedName~WebUiModuleTests|FullyQualifiedName~TreeMutationHttpRazorTests|FullyQualifiedName~ConnectedCacheTests|FullyQualifiedName~GoogleAuthSystemStoreTests|FullyQualifiedName~AuthApiIntegrationTests|FullyQualifiedName~LoginFailureDiagnosticsTests|FullyQualifiedName~GoogleApiRequestExecutorTests"`
+
+Static probe trước/sau dùng URL JS fingerprint thực từ HTML login và cookie giả hoàn toàn, strict TLS; chỉ GET public asset/auth lookup invalid, không dùng cookie browser. Chỉ route manifest công khai được short-circuit; `/Files/Content`, API và route giả dưới `/css` vẫn qua kiểm quyền. Browser bị tool URL-confidence dừng thì không tiếp tục app input hoặc chuyển driver để lách.

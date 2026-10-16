@@ -12,6 +12,8 @@ public static class PerformanceMiddleware
         app.Use(async (context, next) =>
         {
             using var trace = PerformanceTrace.Begin();
+            var requestId = Guid.NewGuid().ToString("N");
+            context.Response.Headers["X-DuyTien-Trace"] = requestId;
             context.Response.OnStarting(() => { var value = string.Join(", ", trace.Values.Select(p => $"{p.Key};dur={p.Value.Milliseconds.ToString("F2", CultureInfo.InvariantCulture)};desc=\"count {p.Value.Count}\"")); context.Response.Headers["Server-Timing"] = value; return Task.CompletedTask; });
             using (var total = PerformanceTrace.Measure("request")) await next();
             var output = app.Configuration["Diagnostics:OutputFile"];
@@ -21,11 +23,21 @@ public static class PerformanceMiddleware
                 {
                     if (!Path.IsPathFullyQualified(output) || !Path.GetFullPath(output).StartsWith(Path.GetTempPath(), StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("Diagnostics output phải ở temp/private workspace ngoài Git.");
                     var phases = trace.Values.ToDictionary(p => p.Key, p => new { milliseconds = p.Value.Milliseconds, count = p.Value.Count });
-                    await File.AppendAllTextAsync(output, JsonSerializer.Serialize(new { status = context.Response.StatusCode, phases }) + Environment.NewLine);
+                    await File.AppendAllTextAsync(output, JsonSerializer.Serialize(new { requestId, route = RouteFamily(context.Request.Path), method = context.Request.Method, status = context.Response.StatusCode, phases }) + Environment.NewLine);
                 }
                 catch (Exception e) when (e is IOException or UnauthorizedAccessException or InvalidOperationException) { app.Logger.LogWarning("Performance output unavailable: {Type}", e.GetType().Name); }
             }
         });
+    }
+    private static string RouteFamily(PathString path)
+    {
+        var p = path.Value ?? "";
+        if (p.Equals("/api/connection", StringComparison.OrdinalIgnoreCase)) return "ConnectionStatus";
+        if (p.Equals("/api/system/status", StringComparison.OrdinalIgnoreCase)) return "SystemStatus";
+        if (new[] { "/css", "/js", "/lib", "/img" }.Any(root => path.StartsWithSegments(root, StringComparison.OrdinalIgnoreCase))) return "UiAsset";
+        foreach (var root in new[] { "Account/Login", "Account/ChangePassword", "Categories", "Assets", "Documents", "Items", "Stock", "Reports", "Admin", "Files", "Offline" })
+            if (p.Equals("/" + root, StringComparison.OrdinalIgnoreCase) || p.StartsWith("/" + root + "/", StringComparison.OrdinalIgnoreCase)) return root;
+        return p == "/" ? "Home" : "Other";
     }
 }
 public sealed class PerformanceResultFilter : IAsyncResultFilter

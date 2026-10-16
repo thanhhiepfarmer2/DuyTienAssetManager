@@ -1,0 +1,77 @@
+{
+  "ObservedUtc": "2026-10-15T08:44:20.0801981+00:00",
+  "HttpsValidation": "ENABLED Windows default",
+  "Mode": "Connected",
+  "Storage": "Google",
+  "Environment": "Development",
+  "StateAnonymous": "RECONNECTING",
+  "BuildId": "0b991037-4f51-4fe0-98b6-c93f51f1c297",
+  "LoginStatus": 200,
+  "NewShell": true,
+  "AdminLogin": "NOT_RUN_THIS_TURN",
+  "GoogleBusinessRead": "NOT_RUN_THIS_TURN",
+  "BackendCount": 1,
+  "Pid": 25412,
+  "RecordMatchesExecutable": true,
+  "Assets": [
+    {
+      "Path": "/css/site.css",
+      "Status": 200
+    },
+    {
+      "Path": "/js/ui.js",
+      "Status": 200
+    },
+    {
+      "Path": "/js/connection.js",
+      "Status": 200
+    },
+    {
+      "Path": "/img/icons.svg",
+      "Status": 200
+    },
+    {
+      "Path": "/Help",
+      "Status": 200
+    }
+  ],
+  "FingerprintedAssets": [
+    {
+      "Path": "/lib/bootstrap/dist/css/bootstrap.min.46ein0sx1k.css",
+      "Status": 200
+    },
+    {
+      "Path": "/css/site.w1zb66fbzw.css",
+      "Status": 200
+    },
+    {
+      "Path": "/lib/jquery/dist/jquery.min.o1o13a6vjx.js",
+      "Status": 200
+    },
+    {
+      "Path": "/lib/bootstrap/dist/js/bootstrap.bundle.min.493y06b0oq.js",
+      "Status": 200
+    },
+    {
+      "Path": "/js/ui.umh9dthctf.js",
+      "Status": 200
+    },
+    {
+      "Path": "/js/site.kuos9ikzwi.js",
+      "Status": 200
+    },
+    {
+      "Path": "/js/connection.l6v75zo8t0.js",
+      "Status": 200
+    },
+    {
+      "Path": "/lib/jquery-validation/dist/jquery.validate.min.ag7o75518u.js",
+      "Status": 200
+    },
+    {
+      "Path": "/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.4v8eqarkd7.js",
+      "Status": 200
+    }
+  ],
+  "InitialProbeNote": "Exact /js/ui.js marker was false because .NET10 Release uses fingerprinted filenames; actual local URLs fetched and verified."
+}

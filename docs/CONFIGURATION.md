@@ -247,3 +247,15 @@ Auth dùng framework hash/policy TASK-005, cookie `dt_local_<WorkspaceId>` tách
 File bytes ở `blobs/LOCAL-<uuid>`, size/SHA256 kiểm trước upload và mỗi gateway download; AVAILABLE thiếu/corrupt bytes làm startup fail closed. Không dựa Drive manifest để giả bytes. Metadata wire giữ contract TASK-009; physical local ID không thành quyền truy cập trực tiếp. Form lỗi đĩa503 giữ payload/key/version; uncertain commit retry cùng key, không báo lưu khi chưa bền vững.
 
 Diagnostics tùy chọn `Diagnostics:Enabled=true`: Server-Timing chứa các phase đã hoàn tất trước headers. `Diagnostics:OutputFile` absolute dưới `%TEMP%` dùng ghi timings riêng tư, không body/query/user/token. Startup phases deserialize/snapshot-load/journal-replay/reconcile/index-build và warm auth/clone/render/request được benchmark riêng; các scope lồng nhau, không cộng thời gian một cách máy móc. Google operational budget bổ sung ReadCooldown/WriteCooldown timestamps để phân loại đúng pacing/cooldown, vẫn1250ms/60s và đọc schema cũ2field được; không auth policy change.
+
+
+## TASK-021 runtime16/10 — cache giao diện và chẩn đoán
+
+HTML cache được gắn `WebUi.CacheRevision` (tách schema/dữ liệu). Thiếu/khác revision: offline chỉ trình bày text đã encode, không chạy form/script/fingerprint cũ; link file chỉ từ ticket cùng phiên, có bytes thực. Không xóa toàn bộ cache, không reset admin. Khi đọc online, dữ liệu/quyền vẫn xác minh ở trung tâm và thay riêng trang đó; JSON/file bytes không cần đổi revision UI. Đổi contract markup/client resources phải bump revision. Workspace LocalOffline cũ giữ nguyên.
+
+GoogleAuthSystemStore công bố capability snapshot-read cho core session validator: batch GET auth hiện hành mỗi request, không cross-request cache; <5 phút không chờ writer nghiệp vụ. Đến mốc touch5ph vẫn re-read trong writer, giữ idle/absolute/revoke/SecurityVersion. RequestAuthStore chỉ memo trong một request. Đây không phải nới TTL/quyền hay bật offline khi Google lỗi.
+
+Diagnostics tùy chọn vẫn ngoài Git: web route-family/method/status/random request-id/phases, không raw route/query/body/user/cookie/token. Auth CLI `Diagnostics:AuthReadSamples` bounded1–5 chỉ đọc thực, có elapsed/phases/call count; không password check hoặc init. Số đo CLI không là browser/login/page latency.
+
+
+Runtime16/10: UIrevision hiện `web-ui-2026-10-16.2` (revision `.1` là checkpoint trước sửa Razor). `MapPublicUiAssets` chỉ route public thuộc build static manifest và ShortCircuit ở routing; API/gateway/business không dùng cơ chế này. Diagnostic trace trước static/routing để đo0Google/auth thật cho public assets, route-family UiAsset/ConnectionStatus/SystemStatus không raw URL. Không giảm1250ms pacing hoặc đổi quyền/freshness. Final runtime Google/Development, dùng đúng script Start-Web của DuyTien-Web.cmd, không cấu hình LocalOffline hoặc user-secrets mới.

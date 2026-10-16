@@ -1,12 +1,12 @@
 @page
 @model DuyTien.AssetManagement.Server.Pages.Items.IndexModel
-@{ViewData["Title"]="Items nháp";}
-<h1>Items — DRAFT_DEMO</h1><p>Danh mục tham chiếu, không phải từng Asset. Tồn chưa nhập: UNKNOWN; BOM/kho ngầm định không phải tồn.</p>
-<p><a asp-page="Import">Import và tiến độ</a> · <a asp-page="/Stock/Index">Snapshot số lượng</a></p>
+@{ViewData["Title"]="Vật tư, hàng hóa";}
+<h1>Vật tư, hàng hóa</h1><p>Danh mục vật tư và hàng hóa tham chiếu, được quản lý riêng với từng tài sản. Chưa nhập số lượng là chưa biết, không phải bằng0.</p>
+<p><a asp-page="Import">Nhập dữ liệu và tiến độ</a> · <a asp-page="/Stock/Index">Số lượng theo thời điểm</a></p>
 @if(Model.Error is not null){<div class="alert alert-danger" role="alert">@Model.Error</div>}
-<form method="get"><label asp-for="Q">Tìm mã/tên/mô tả</label><input asp-for="Q" maxlength="200"/><label asp-for="CategoryId">CategoryId</label><input asp-for="CategoryId"/><button type="submit">Tìm</button></form>
+<form method="get"><label asp-for="Q">Tìm mã/tên/mô tả</label><input asp-for="Q" maxlength="200" class="form-control" /><label asp-for="CategoryId" >Danh mục</label><input asp-for="CategoryId" class="form-control" /><button type="submit" class="btn btn-primary">Tìm</button></form>
 <p>@Model.Result.Total Item trong phạm vi · trang @Model.Result.Page</p>
 @if(Model.Result.Items.Count==0){<p>Chưa có Item phù hợp trong phạm vi.</p>}
-else{<div class="table-responsive"><table class="table"><thead><tr><th>Mã nguồn</th><th>Tên</th><th>ĐVT</th><th>Tracking</th><th>Trạng thái</th></tr></thead><tbody>@foreach(var i in Model.Result.Items){<tr><td><a asp-page="Detail" asp-route-id="@i.ItemId">@i.SourceCode</a></td><td>@i.Name</td><td>@i.PrimaryUnit</td><td>@(i.StockTracked?.ToString()??"Chưa xác nhận")</td><td>@i.State</td></tr>}</tbody></table></div>}
+else{<div class="table-responsive"><table class="table"><caption>Dữ liệu trong phạm vi được giao</caption><thead><tr><th>Mã nguồn</th><th>Tên</th><th>ĐVT</th><th>Theo dõi số lượng</th><th>Trạng thái</th></tr></thead><tbody>@foreach(var i in Model.Result.Items){<tr><td><a asp-page="Detail" asp-route-id="@i.ItemId">@i.SourceCode</a></td><td>@i.Name</td><td>@i.PrimaryUnit</td><td>@(i.StockTracked is true ? "Có" : i.StockTracked is false ? "Không" : "Chưa xác nhận")</td><td>@WebUi.State(i.State)</td></tr>}</tbody></table></div>}
 @if(Model.PageNumber>1){<a asp-route-PageNumber="@(Model.PageNumber-1)" asp-route-Q="@Model.Q" asp-route-CategoryId="@Model.CategoryId">Trang trước</a>}
 @if(Model.PageNumber*20<Model.Result.Total){<a asp-route-PageNumber="@(Model.PageNumber+1)" asp-route-Q="@Model.Q" asp-route-CategoryId="@Model.CategoryId">Trang sau</a>}

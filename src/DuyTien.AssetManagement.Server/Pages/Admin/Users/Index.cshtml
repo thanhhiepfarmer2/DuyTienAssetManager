@@ -43,15 +43,15 @@
 else
 {
     <div class="table-responsive">
-        <table class="table table-striped">
-            <thead><tr><th>Username</th><th>Tên hiển thị</th><th>Trạng thái</th><th>Đổi mật khẩu</th><th></th></tr></thead>
+        <table class="table table-striped"><caption>Tài khoản và trạng thái truy cập</caption>
+            <thead><tr><th>Tên đăng nhập</th><th>Tên hiển thị</th><th>Trạng thái</th><th>Đổi mật khẩu</th><th></th></tr></thead>
             <tbody>
             @foreach (var user in Model.Users)
             {
                 <tr>
                     <td>@user.Username</td>
                     <td>@user.DisplayName</td>
-                    <td>@user.State</td>
+                    <td>@WebUi.State(user.State.ToString())</td>
                     <td>@(user.MustChangePassword ? "Bắt buộc" : "Không")</td>
                     <td><a asp-page="./Detail" asp-route-id="@user.UserId">Quản lý</a></td>
                 </tr>

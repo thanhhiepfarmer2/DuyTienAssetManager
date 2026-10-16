@@ -58,7 +58,7 @@ public sealed class DetailModel(AuthApplicationService authService, TimeProvider
             var result = await authService.ResetPasswordAsync(ActorId(), id, cancellationToken);
             TemporaryPassword = result.TemporaryPassword;
             Response.Headers.CacheControl = "no-store";
-            Message = "Đã reset mật khẩu và thu hồi các phiên cũ.";
+            Message = "Đã đặt lại mật khẩu và thu hồi các phiên cũ.";
         }
         catch (AuthNotFoundException)
         {
@@ -89,7 +89,7 @@ public sealed class DetailModel(AuthApplicationService authService, TimeProvider
         return await MutateAsync(
             id,
             () => authService.ReplaceRoleAssignmentsAsync(ActorId(), id, [input], cancellationToken),
-            "Đã thay assignment và thu hồi các phiên cũ.",
+            "Đã thay phân quyền và thu hồi các phiên cũ.",
             cancellationToken);
     }
 
@@ -134,16 +134,16 @@ public sealed class DetailModel(AuthApplicationService authService, TimeProvider
         [Display(Name = "Tên hiển thị")]
         public string DisplayName { get; set; } = string.Empty;
 
-        [Display(Name = "Role")]
+        [Display(Name = "Vai trò")]
         public string RoleCode { get; set; } = AuthRole.Viewer;
 
-        [Display(Name = "OrgUnit scope ID")]
+        [Display(Name = "Mã phạm vi đơn vị")]
         public string OrgUnitScopeId { get; set; } = string.Empty;
 
-        [Display(Name = "Location scope ID")]
+        [Display(Name = "Mã phạm vi địa điểm")]
         public string LocationScopeId { get; set; } = string.Empty;
 
-        [Display(Name = "Category scope ID")]
+        [Display(Name = "Mã phạm vi danh mục")]
         public string CategoryScopeId { get; set; } = string.Empty;
 
         [Display(Name = "Bao gồm cấp con")]

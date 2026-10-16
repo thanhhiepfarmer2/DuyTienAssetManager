@@ -24,7 +24,7 @@ window.addEventListener("pageshow", () => {
 try {
 const workspaceBanner = document.querySelector("[data-workspace]");
 if (workspaceBanner) {
-    const owner = [workspaceBanner.dataset.workspace, workspaceBanner.dataset.viewer, workspaceBanner.dataset.session].join(":");
+    const owner = [workspaceBanner.dataset.workspace, workspaceBanner.dataset.central, workspaceBanner.dataset.authority, workspaceBanner.dataset.viewer, workspaceBanner.dataset.session].join(":");
     if (sessionStorage.getItem("dt-view-owner") !== owner) { for (const k of Object.keys(sessionStorage)) if (k.startsWith("dt-view:")) sessionStorage.removeItem(k); sessionStorage.setItem("dt-view-owner", owner); }
     const key = "dt-view:" + owner + ":" + location.pathname + location.search;
     const saved = Number(sessionStorage.getItem(key)); if (Number.isFinite(saved) && saved > 0) requestAnimationFrame(() => window.scrollTo(0, saved));

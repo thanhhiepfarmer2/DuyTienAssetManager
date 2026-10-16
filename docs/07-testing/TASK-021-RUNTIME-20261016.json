@@ -1,0 +1,855 @@
+{
+  "date": "2026-10-16",
+  "source": "AI observed directly; user entered existing admin credentials on browser form",
+  "environment": {
+    "os": "Windows x64",
+    "sdk": "10.0.400",
+    "browser": "Chrome via Windows sky UI Automation",
+    "tlsValidation": "enabled; no insecure bypass",
+    "data": "Existing Google DEV; business read-only, normal auth session/audit/touch writes"
+  },
+  "authReadDiagnostic": {
+    "source": "AI native CLI read-only Google DEV; no browser/login proof",
+    "exitCode": 0,
+    "records": [
+      {
+        "diagnostic": "auth-read",
+        "build": "5dd1f0ca-b18e-4cc8-9304-a6f8b9fbb124",
+        "systemSeparateFromBusiness": true,
+        "storage": "Google",
+        "environment": "Development",
+        "stage": "configuration",
+        "cacheEnabled": true,
+        "oauthAndSystemSettingsPresent": true
+      },
+      {
+        "diagnostic": "auth-read",
+        "stage": "connectivity",
+        "state": "Connected"
+      },
+      {
+        "adminExists": true,
+        "adminHasEffectiveThreeAll": true,
+        "passwordHashPresent": true,
+        "diagnostic": "auth-read",
+        "currentlyTemporarilyLocked": false,
+        "stage": "central-store",
+        "runtimeAuthTablesReadable": true,
+        "adminActive": true,
+        "noMutation": true
+      },
+      {
+        "diagnostic": "auth-read",
+        "samples": 3,
+        "sample": 1,
+        "phases": {
+          "google-token": {
+            "milliseconds": 340.3211,
+            "count": 1
+          },
+          "google-read-http": {
+            "milliseconds": 1040.0896,
+            "count": 1
+          },
+          "google-http": {
+            "milliseconds": 1040.0984,
+            "count": 1
+          }
+        },
+        "stage": "timing",
+        "elapsedMs": 1668.8526
+      },
+      {
+        "adminExists": true,
+        "adminHasEffectiveThreeAll": true,
+        "passwordHashPresent": true,
+        "diagnostic": "auth-read",
+        "currentlyTemporarilyLocked": false,
+        "stage": "central-store",
+        "runtimeAuthTablesReadable": true,
+        "adminActive": true,
+        "noMutation": true
+      },
+      {
+        "diagnostic": "auth-read",
+        "samples": 3,
+        "sample": 2,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0237,
+            "count": 1
+          },
+          "google-read-http": {
+            "milliseconds": 543.8347,
+            "count": 1
+          },
+          "google-http": {
+            "milliseconds": 543.8379,
+            "count": 1
+          }
+        },
+        "stage": "timing",
+        "elapsedMs": 607.0956
+      },
+      {
+        "adminExists": true,
+        "adminHasEffectiveThreeAll": true,
+        "passwordHashPresent": true,
+        "diagnostic": "auth-read",
+        "currentlyTemporarilyLocked": false,
+        "stage": "central-store",
+        "runtimeAuthTablesReadable": true,
+        "adminActive": true,
+        "noMutation": true
+      },
+      {
+        "diagnostic": "auth-read",
+        "samples": 3,
+        "sample": 3,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0056,
+            "count": 1
+          },
+          "google-pacing": {
+            "milliseconds": 656.7207000000001,
+            "count": 2
+          },
+          "google-read-http": {
+            "milliseconds": 506.4425,
+            "count": 1
+          },
+          "google-http": {
+            "milliseconds": 506.4458,
+            "count": 1
+          }
+        },
+        "stage": "timing",
+        "elapsedMs": 1188.0695
+      }
+    ],
+    "failure": []
+  },
+  "realPageTracesBeforeFinalStaticFix": [
+    {
+      "requestId": "fd7fbb76820244fb9ab20c105ad66c0a",
+      "route": "Assets",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "google-token": {
+          "milliseconds": 219.1002,
+          "count": 7
+        },
+        "google-read-http": {
+          "milliseconds": 4767.020200000001,
+          "count": 6
+        },
+        "google-http": {
+          "milliseconds": 5427.686,
+          "count": 7
+        },
+        "auth-store-read": {
+          "milliseconds": 1401.294,
+          "count": 1
+        },
+        "coordinator-wait": {
+          "milliseconds": 0.0135,
+          "count": 2
+        },
+        "google-pacing": {
+          "milliseconds": 1744.35,
+          "count": 4
+        },
+        "google-write-http": {
+          "milliseconds": 660.625,
+          "count": 1
+        },
+        "auth-store-mutate": {
+          "milliseconds": 2357.4955,
+          "count": 1
+        },
+        "auth": {
+          "milliseconds": 3801.7146,
+          "count": 1
+        },
+        "journal-replay": {
+          "milliseconds": 14.1045,
+          "count": 1
+        },
+        "razor-render": {
+          "milliseconds": 94.5508,
+          "count": 1
+        },
+        "request": {
+          "milliseconds": 8134.4056,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "812923add71b4cc882806f6b02b64a74",
+      "route": "Categories",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "google-token": {
+          "milliseconds": 0.0342,
+          "count": 3
+        },
+        "google-pacing": {
+          "milliseconds": 2381.651,
+          "count": 3
+        },
+        "google-read-http": {
+          "milliseconds": 1075.0549,
+          "count": 3
+        },
+        "google-http": {
+          "milliseconds": 1075.0737,
+          "count": 3
+        },
+        "auth-store-read": {
+          "milliseconds": 1021.5618,
+          "count": 1
+        },
+        "auth": {
+          "milliseconds": 1031.2322,
+          "count": 1
+        },
+        "coordinator-wait": {
+          "milliseconds": 0.0044,
+          "count": 1
+        },
+        "razor-render": {
+          "milliseconds": 58.2624,
+          "count": 1
+        },
+        "request": {
+          "milliseconds": 3616.6202,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "11f0cf3dc4b34c04a1e665011ddf3cb2",
+      "route": "Account/Login",
+      "method": "POST",
+      "status": 302,
+      "phases": {
+        "coordinator-wait": {
+          "milliseconds": 0.0015,
+          "count": 1
+        },
+        "google-token": {
+          "milliseconds": 0.0101,
+          "count": 3
+        },
+        "google-read-http": {
+          "milliseconds": 680.729,
+          "count": 2
+        },
+        "google-http": {
+          "milliseconds": 1515.8407,
+          "count": 3
+        },
+        "google-pacing": {
+          "milliseconds": 771.5486999999999,
+          "count": 2
+        },
+        "google-write-http": {
+          "milliseconds": 835.108,
+          "count": 1
+        },
+        "auth-store-mutate": {
+          "milliseconds": 2405.8273,
+          "count": 1
+        },
+        "auth-login": {
+          "milliseconds": 2407.9542,
+          "count": 1
+        },
+        "razor-render": {
+          "milliseconds": 0.026,
+          "count": 1
+        },
+        "request": {
+          "milliseconds": 2428.8601,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "a3d2fa44e40c45089e1758ffe7da57d8",
+      "route": "Home",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "google-token": {
+          "milliseconds": 0.003,
+          "count": 1
+        },
+        "google-pacing": {
+          "milliseconds": 104.716,
+          "count": 2
+        },
+        "google-read-http": {
+          "milliseconds": 361.1933,
+          "count": 1
+        },
+        "google-http": {
+          "milliseconds": 361.1943,
+          "count": 1
+        },
+        "auth-store-read": {
+          "milliseconds": 491.3817,
+          "count": 1
+        },
+        "auth": {
+          "milliseconds": 494.3541,
+          "count": 1
+        },
+        "razor-render": {
+          "milliseconds": 1.6642,
+          "count": 1
+        },
+        "request": {
+          "milliseconds": 511.7542,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "7c919d7f63674b2e869c00809f647070",
+      "route": "Assets",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "google-token": {
+          "milliseconds": 0.013,
+          "count": 4
+        },
+        "google-pacing": {
+          "milliseconds": 3342.5845,
+          "count": 4
+        },
+        "google-read-http": {
+          "milliseconds": 1494.6103,
+          "count": 4
+        },
+        "google-http": {
+          "milliseconds": 1494.6162999999997,
+          "count": 4
+        },
+        "auth-store-read": {
+          "milliseconds": 1174.3487,
+          "count": 1
+        },
+        "auth": {
+          "milliseconds": 1183.6513,
+          "count": 1
+        },
+        "coordinator-wait": {
+          "milliseconds": 0.0012,
+          "count": 1
+        },
+        "journal-replay": {
+          "milliseconds": 0.3242,
+          "count": 1
+        },
+        "razor-render": {
+          "milliseconds": 2.3611,
+          "count": 1
+        },
+        "request": {
+          "milliseconds": 4932.7305,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "a614321b1bba4a05b699461a0aa26ff1",
+      "route": "Home",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "google-token": {
+          "milliseconds": 0.0022,
+          "count": 1
+        },
+        "google-pacing": {
+          "milliseconds": 846.2262000000001,
+          "count": 2
+        },
+        "google-read-http": {
+          "milliseconds": 344.5542,
+          "count": 1
+        },
+        "google-http": {
+          "milliseconds": 344.556,
+          "count": 1
+        },
+        "auth-store-read": {
+          "milliseconds": 1223.4052,
+          "count": 1
+        },
+        "auth": {
+          "milliseconds": 1240.8343,
+          "count": 1
+        },
+        "razor-render": {
+          "milliseconds": 0.6945,
+          "count": 1
+        },
+        "request": {
+          "milliseconds": 1269.7441,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "4d15e482536e49e2ab7ab08d4c1012e9",
+      "route": "Categories",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "google-token": {
+          "milliseconds": 0.0318,
+          "count": 3
+        },
+        "google-read-http": {
+          "milliseconds": 1335.3838,
+          "count": 3
+        },
+        "google-http": {
+          "milliseconds": 1335.3892,
+          "count": 3
+        },
+        "auth-store-read": {
+          "milliseconds": 820.7728,
+          "count": 1
+        },
+        "auth": {
+          "milliseconds": 836.3535,
+          "count": 1
+        },
+        "coordinator-wait": {
+          "milliseconds": 0.004,
+          "count": 1
+        },
+        "google-pacing": {
+          "milliseconds": 1257.7198999999998,
+          "count": 5
+        },
+        "razor-render": {
+          "milliseconds": 13.8237,
+          "count": 1
+        },
+        "request": {
+          "milliseconds": 2935.7391,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "3c87bf9ada9746169b4d6779b7db747d",
+      "route": "Assets",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "google-token": {
+          "milliseconds": 0.0093,
+          "count": 7
+        },
+        "google-read-http": {
+          "milliseconds": 2763.3095000000003,
+          "count": 6
+        },
+        "google-http": {
+          "milliseconds": 3567.4222000000004,
+          "count": 7
+        },
+        "auth-store-read": {
+          "milliseconds": 825.7382,
+          "count": 1
+        },
+        "coordinator-wait": {
+          "milliseconds": 0.0021000000000000003,
+          "count": 2
+        },
+        "google-pacing": {
+          "milliseconds": 2682.2406,
+          "count": 5
+        },
+        "google-write-http": {
+          "milliseconds": 804.1025,
+          "count": 1
+        },
+        "auth-store-mutate": {
+          "milliseconds": 2852.5797,
+          "count": 1
+        },
+        "auth": {
+          "milliseconds": 3692.0787,
+          "count": 1
+        },
+        "journal-replay": {
+          "milliseconds": 0.2737,
+          "count": 1
+        },
+        "razor-render": {
+          "milliseconds": 3.033,
+          "count": 1
+        },
+        "request": {
+          "milliseconds": 6671.7531,
+          "count": 1
+        }
+      }
+    }
+  ],
+  "publicStaticBefore": {
+    "kind": "PUBLIC_UI_ASSET_INVALID_SYNTHETIC_COOKIE",
+    "uiAsset": "/js/connection.l6v75zo8t0.js",
+    "status": 200,
+    "traceId": "004d78ddb4444de2b9fd4abb1293e2ae",
+    "elapsedMs": 477.786,
+    "serverTiming": "google-token;dur=0.00;desc=\"count 1\", google-read-http;dur=419.56;desc=\"count 1\", google-http;dur=419.56;desc=\"count 1\", auth-store-read;dur=467.35;desc=\"count 1\", auth;dur=467.38;desc=\"count 1\""
+  },
+  "publicStaticAfter": {
+    "source": "AI_HTTP_STRICT_TLS_PUBLIC_ASSETS_ONLY_NOT_BROWSER",
+    "runtime": {
+      "mode": "Connected",
+      "state": "RECONNECTING",
+      "singleWriterMode": true,
+      "buildId": "43068903-cfc6-4236-935d-0777b9fa5d55",
+      "environment": "Development",
+      "storage": "Google"
+    },
+    "uiRevision": "web-ui-2026-10-16.2",
+    "uiAsset": "/js/connection.l6v75zo8t0.js",
+    "samples": [
+      {
+        "sample": 1,
+        "status": 200,
+        "traceId": "9367479e06874fdda9bfed388ec3ab9b",
+        "elapsedMs": 32.289,
+        "serverTiming": ""
+      },
+      {
+        "sample": 2,
+        "status": 200,
+        "traceId": "f2a0ec3197954a34a6850a8ac3aca07b",
+        "elapsedMs": 17.506,
+        "serverTiming": ""
+      },
+      {
+        "sample": 3,
+        "status": 200,
+        "traceId": "06e12887369a410f80d5149ccbfda982",
+        "elapsedMs": 15.293,
+        "serverTiming": ""
+      },
+      {
+        "sample": 4,
+        "status": 200,
+        "traceId": "a55e9a269f4046e0826f43e94b4f24e6",
+        "elapsedMs": 14.001,
+        "serverTiming": ""
+      },
+      {
+        "sample": 5,
+        "status": 200,
+        "traceId": "1b49bfb1dcd541f48d66b863c7d2fe3d",
+        "elapsedMs": 26.527,
+        "serverTiming": ""
+      }
+    ],
+    "allAssets": [
+      {
+        "path": "/lib/bootstrap/dist/css/bootstrap.min.46ein0sx1k.css",
+        "status": 200,
+        "traceId": "26b127b1a2374a7ca8e2bc6f0d033bbc",
+        "serverTiming": ""
+      },
+      {
+        "path": "/css/site.g9tq1ao6mf.css",
+        "status": 200,
+        "traceId": "fe04123131fe4fa09c5e83c9f6d6a386",
+        "serverTiming": ""
+      },
+      {
+        "path": "/lib/jquery/dist/jquery.min.o1o13a6vjx.js",
+        "status": 200,
+        "traceId": "8338984c14264a9c9503e23745e43f4b",
+        "serverTiming": ""
+      },
+      {
+        "path": "/lib/bootstrap/dist/js/bootstrap.bundle.min.493y06b0oq.js",
+        "status": 200,
+        "traceId": "10f866a4f5d549af9e0c620bc25a1ff1",
+        "serverTiming": ""
+      },
+      {
+        "path": "/js/ui.umh9dthctf.js",
+        "status": 200,
+        "traceId": "982e0cf7654d4ce8910a81ba62ae9269",
+        "serverTiming": ""
+      },
+      {
+        "path": "/js/site.kuos9ikzwi.js",
+        "status": 200,
+        "traceId": "18d724333acf4ed2bcd2e5010c01f5bd",
+        "serverTiming": ""
+      },
+      {
+        "path": "/js/connection.l6v75zo8t0.js",
+        "status": 200,
+        "traceId": "4fc332530fce41eeb7c2935899801b13",
+        "serverTiming": ""
+      },
+      {
+        "path": "/lib/jquery-validation/dist/jquery.validate.min.ag7o75518u.js",
+        "status": 200,
+        "traceId": "bb529ad39e8f4279acb5c9c1ff832430",
+        "serverTiming": ""
+      },
+      {
+        "path": "/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.4v8eqarkd7.js",
+        "status": 200,
+        "traceId": "aef456c5a1be4d53aacb8197240d00e5",
+        "serverTiming": ""
+      }
+    ]
+  },
+  "publicStaticAfterMatchedTraces": [
+    {
+      "requestId": "9367479e06874fdda9bfed388ec3ab9b",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 17.0045,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "f2a0ec3197954a34a6850a8ac3aca07b",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 2.6834,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "06e12887369a410f80d5149ccbfda982",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 0.7897,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "a55e9a269f4046e0826f43e94b4f24e6",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 0.7401,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "1b49bfb1dcd541f48d66b863c7d2fe3d",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 2.463,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "26b127b1a2374a7ca8e2bc6f0d033bbc",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 8.1885,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "fe04123131fe4fa09c5e83c9f6d6a386",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 3.0481,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "8338984c14264a9c9503e23745e43f4b",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 9.51,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "10f866a4f5d549af9e0c620bc25a1ff1",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 42.9505,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "982e0cf7654d4ce8910a81ba62ae9269",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 1.6821,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "18d724333acf4ed2bcd2e5010c01f5bd",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 1.0391,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "4fc332530fce41eeb7c2935899801b13",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 0.9419,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "bb529ad39e8f4279acb5c9c1ff832430",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 11.0818,
+          "count": 1
+        }
+      }
+    },
+    {
+      "requestId": "aef456c5a1be4d53aacb8197240d00e5",
+      "route": "UiAsset",
+      "method": "GET",
+      "status": 200,
+      "phases": {
+        "request": {
+          "milliseconds": 13.8972,
+          "count": 1
+        }
+      }
+    }
+  ],
+  "browser": {
+    "manualLogin": "PASS_MANUAL user confirmed login; POST302 plus authenticated Home observed by AI",
+    "observed": [
+      "Home desktop shell and navigation",
+      "Categories desktop: current tree has 2 test roots; DRAFT badge and search/export/manage links visible",
+      "ONLINE connection banner after verification"
+    ],
+    "bugsObserved": [
+      "Literal F@n.FLevel in level column",
+      "Repeated module breadcrumb"
+    ],
+    "latestFixBrowserRetest": "NOT_RUN; tool stopped on URL confidence when opening Assets",
+    "notRun": [
+      "Assets visual/detail/forms",
+      "Documents/Items/Stock/Reports/Admin visual",
+      "narrow/keyboard/focus",
+      "actual file download/preview",
+      "old/new offline cache in real browser",
+      "actual network loss/reconnect/revoke"
+    ],
+    "toolStop": "STOPPED_TOOL_URL_CONFIDENCE; no further browser input or alternate driver"
+  },
+  "tests": {
+    "earlierFocused": {
+      "passed": 92,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0
+    },
+    "latestFocused": {
+      "passed": 101,
+      "failed": 0,
+      "skipped": 0,
+      "exit": 0,
+      "seconds": 16
+    },
+    "releaseBuild": {
+      "exit": 0,
+      "warnings": 0,
+      "errors": 0,
+      "reportedElapsedSeconds": 3.82
+    }
+  },
+  "limits": [
+    "Backend timing is not browser Navigation Timing; no browser p50/p95",
+    "Small opportunistic page sample; no representative warm p95 or before/after page speed claim",
+    "Final build has no authenticated business-page sample after restart",
+    "Real offline/reconnect not tested; fixture evidence remains separate",
+    "No business mutation or new Google resource/sharing/reset"
+  ],
+  "finalBackend": {
+    "pid": 13680,
+    "count": 1,
+    "url": "https://localhost:7008",
+    "buildId": "43068903-cfc6-4236-935d-0777b9fa5d55",
+    "uiRevision": "web-ui-2026-10-16.2",
+    "storage": "Google",
+    "environment": "Development",
+    "anonymousConnectionState": "RECONNECTING"
+  }
+}

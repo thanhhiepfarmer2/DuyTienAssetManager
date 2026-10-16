@@ -1,19 +1,15 @@
 @page
 @model DuyTien.AssetManagement.Server.Pages.Categories.IndexModel
-@{ ViewData["Title"] = "Danh mục DRAFT"; }
-<h1>Cây danh mục <span class="badge bg-warning text-dark">DRAFT</span></h1>
-<p>Cây nháp phục vụ demo; mã chưa được ban hành chính thức.</p>
+@{ ViewData["Title"] = "Danh mục"; var visible = Model.Catalog.Nodes.Skip((Model.PageNumber-1)*60).Take(60).ToArray(); }
+<h1>Cây danh mục <span class="badge bg-warning text-dark" data-state="DRAFT">Chưa duyệt</span></h1>
+<p class="status-note">Cấu trúc và mã phân loại chưa được xác nhận là nguồn chính thức.</p>
 @if (Model.Error is not null) { <div role="alert" class="alert alert-danger">@Model.Error</div> }
-<form method="get" class="d-flex gap-2 mb-3"><label class="visually-hidden" for="Q">Từ khóa tên/mã/định nghĩa</label><input id="Q" name="Q" value="@Model.Q" maxlength="200" class="form-control" placeholder="Tìm tên, mã, định nghĩa (có hoặc không dấu)"/><button class="btn btn-primary">Tìm</button><a asp-page="Index" class="btn btn-outline-secondary">Xem cây</a></form>
-@if (User.IsInRole("Admin") || User.IsInRole("CatalogManager")) {
-<p><a asp-page="Manage">Sửa/chuyển/ngừng cây</a> · <a asp-page="Import">Nạp/preview cây</a> · <a asp-page-handler="Export">Xuất TXT UTF-8 trong phạm vi</a></p>
-}
-<p>@Model.Catalog.Total nút được phép xem. Chỉ đường dẫn trong phạm vi được hiển thị.</p>
-@if (Model.Catalog.Nodes.Count == 0 && Model.Error is null) { <p role="status">Chưa có danh mục trong phạm vi hoặc không tìm thấy kết quả.</p> }
-<div class="table-responsive"><table class="table"><caption>Các danh mục được phép xem</caption><thead><tr><th>Tên / cây</th><th>Cấp</th><th>Mã đoạn</th><th>Đường dẫn được phép</th></tr></thead><tbody>
-@foreach (var n in Model.Catalog.Nodes.Skip((Model.PageNumber-1)*60).Take(60)) {
-<tr><td><span style="padding-left:@(n.VisibleDepth * 1.25)rem"><a asp-page="Detail" asp-route-id="@n.CategoryId">@n.Name</a></span>@if(n.PathIsPartial){<small> (nhánh được phép)</small>}</td><td>F@n.FLevel</td><td>@n.SegmentCode</td><td>@n.FullCode<br/><small>@n.Path</small></td></tr>
-}
+<form method="get" class="d-flex gap-2 mb-3"><label class="visually-hidden" for="Q">Tên, mã hoặc định nghĩa</label><input id="Q" name="Q" value="@Model.Q" maxlength="200" class="form-control" placeholder="Tìm tên, mã, định nghĩa (có hoặc không dấu)"/><button class="btn btn-primary">Tìm</button><a asp-page="Index" class="btn btn-outline-secondary">Xóa lọc</a></form>
+@if (User.IsInRole("Admin") || User.IsInRole("CatalogManager")) { <nav class="module-links" aria-label="Thao tác danh mục"><a class="btn btn-outline-primary" asp-page="Manage">Quản lý cây</a><a class="btn btn-primary" asp-page="Import">Nhập danh mục</a><a class="btn btn-outline-secondary" asp-page-handler="Export">Xuất TXT</a></nav> }
+<p role="status">@Model.Catalog.Total danh mục trong phạm vi. Trang @Model.PageNumber, tối đa 60 dòng; chỉ hiển thị đường dẫn được phép.</p>
+@if (visible.Length == 0 && Model.Error is null) { <p role="status" class="panel">Chưa có danh mục trong phạm vi hoặc không tìm thấy kết quả.</p> }
+<div class="table-responsive"><table class="table" data-category-tree><caption>Danh mục trong phạm vi — mở chi tiết để xem metadata và dữ liệu liên quan</caption><thead><tr><th>Tên / cây</th><th>Cấp</th><th>Mã đoạn</th><th>Đường dẫn</th></tr></thead><tbody>
+@for (var i=0; i<visible.Length; i++) { var n=visible[i]; var hasChildren=string.IsNullOrEmpty(Model.Q) && i+1<visible.Length && visible[i+1].VisibleDepth>n.VisibleDepth;
+<tr data-depth="@n.VisibleDepth" data-node="@n.CategoryId"><td><span class="tree-entry" style="padding-left:@(n.VisibleDepth*1.25)rem">@if(hasChildren){<button type="button" class="tree-toggle" data-tree-toggle aria-expanded="true" aria-label="Thu gọn cấp con đang hiển thị của @n.Name">−</button>}<a asp-page="Detail" asp-route-id="@n.CategoryId">@n.Name</a></span>@if(n.PathIsPartial){<small> (nhánh được phép)</small>}</td><td>F@(n.FLevel)</td><td>@n.SegmentCode</td><td>@n.FullCode<br/><small>@n.Path</small></td></tr> }
 </tbody></table></div>
-
-<nav aria-label="Trang cây">@if(Model.PageNumber>1){<a asp-route-Q="@Model.Q" asp-route-PageNumber="@(Model.PageNumber-1)">Trang trước</a>} · @Model.PageNumber @if(Model.PageNumber*60<Model.Catalog.Total){<a asp-route-Q="@Model.Q" asp-route-PageNumber="@(Model.PageNumber+1)">Trang sau</a>}</nav>
+<nav aria-label="Trang cây">@if(Model.PageNumber>1){<a class="btn btn-outline-secondary" asp-route-Q="@Model.Q" asp-route-PageNumber="@(Model.PageNumber-1)">Trang trước</a>}<span>Trang @Model.PageNumber</span>@if((long)Model.PageNumber*60<Model.Catalog.Total){<a class="btn btn-outline-secondary" asp-route-Q="@Model.Q" asp-route-PageNumber="@(Model.PageNumber+1)">Trang sau</a>}</nav>

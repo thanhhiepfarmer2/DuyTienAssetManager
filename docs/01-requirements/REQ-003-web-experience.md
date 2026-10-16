@@ -1,6 +1,8 @@
+> Cập nhật triển khai15/10: nguồn HTML đã nhận đúng bytes/SHA256 và đọc tĩnh ở TASK-016; [inventory](../02-architecture/WEB-UI-INVENTORY-TASK-016.md). Người dùng cho phép thực hiện liên tục016→021; task trước đủ local nhưng thiếu browser/Google/network được tiếp tục với ngoại lệ ghi rõ và giữ IN_REVIEW. Không commit/push/deploy/mobile/Google resources/real writes. Các mô tả chỉ lập kế hoạch/thiếu nguồn dưới đây thuộc checkpoint trước.
+
 # REQ-003 — Hoàn thiện trải nghiệm web Duy Tiến Assets
 
-- Status: READY cho lập kế hoạch; việc đối chiếu HTML và nghiệm thu giao diện chưa hoàn tất.
+- Status: IN_REVIEW — đã đối chiếu HTML tĩnh và triển khai local TASK-016–021; browser/Google/mạng thật chưa đủ.
 - Ngày: 2026-10-15 (Asia/Saigon). Người xác lập: Nguyễn Thanh Hiệp.
 - Nguồn: yêu cầu người dùng trong file đính kèm “Cập nhật kế hoạch phát triển DuyTien Assets…”, ngày15/10; không chép dữ liệu công ty từ HTML vào repo.
 - Plan: [PLAN-003](../02-architecture/PLAN-003-web-experience.md); thiết kế: [WEB-UI-DESIGN](../02-architecture/WEB-UI-DESIGN.md); Task: TASK-016–021 tại [INDEX](../06-tasks/INDEX.md).
@@ -20,7 +22,8 @@ Không chuyển React, sao chép Apps Script/auth/dataset nhúng hoặc cách t�
 
 ## Nguồn tham chiếu và độ tin cậy
 
-File cần đọc: `QuanLyVatTu_DuyTien_v4_Offline.html`. Tìm filename chính xác trong workspace (kể cả ignored/hidden, loại .git) và thư mục attachments hiện có **không tìm thấy** ở lượt lập kế hoạch. Trạng thái: **MISSING_REFERENCE / NOT_REVIEWED_HTML**. Phân tích tĩnh cũ là thông tin người dùng cung cấp tại [SOURCE-AUDIT](SOURCE-AUDIT.md), không là AI đã đọc file. Bảng màu và định hướng dưới đây do người dùng xác lập; thiết kế chi tiết là đề xuất cần TASK-016 đối chiếu file thật. Không đánh dấu AC đối chiếu nguồn PASS hoặc TASK-016 DONE khi thiếu file.
+File thực nhận `D:/Dev/01-QuanLyVatTu_DuyTien_v4_Offline.html` khớp7190714bytes/SHA256577423ad5166a11a14597d97650366b2052af366df076c5f6a23bb78e92e22a6. TASK-016 đọc CSS/classes tĩnh bằng HTMLParser; không thực thi script/Apps Script, không nhập dataset hoặc đưa HTML vào Git. **MISSING_REFERENCE/NOT_REVIEWED_HTML của checkpoint lập kế hoạch đã RESOLVED_STATIC**; [report016](../07-testing/TEST-REPORT-TASK-016.md) và [inventory](../02-architecture/WEB-UI-INVENTORY-TASK-016.md) là nguồn hiện tại. Báo cáo lập kế hoạch giữ lịch sử thiếu file lúc đó. UI runtime chưa có browser pass.
+
 
 ## Luồng công việc
 
@@ -35,7 +38,7 @@ File cần đọc: `QuanLyVatTu_DuyTien_v4_Offline.html`. Tìm filename chính x
 | ID | Quy tắc | Nguồn/giới hạn |
 |---|---|---|
 | UX-01 | Header xanh, thương hiệu “Duy Tiến Assets”, người dùng hiện tại và kết nối; sidebar module | Chỉ đạo15/10; không thêm cây toàn cục bắt buộc |
-| UX-02 | Màu gốc #0b74e5/#102a43/#243b53/#eef3f7/#d9e2ec; nền sáng, mặt nội dung trắng, viền nhẹ | Người dùng; token chi tiết trong thiết kế còn chờ đối chiếu HTML |
+| UX-02 | Màu gốc #0b74e5/#102a43/#243b53/#eef3f7/#d9e2ec; nền sáng, mặt nội dung trắng, viền nhẹ | Người dùng; tokens đã đối chiếu CSS tĩnh ở TASK-016; visual browser chưa nghiệm thu |
 | UX-03 | Breadcrumb, heading, search/filter/action/page/status thống nhất; không render20744rows cùng lúc | Dùng paging hiện có, không tải lại toàn bộ dataset cho thao tác giao diện |
 | UX-04 | Font/icon/tài nguyên thiết yếu local; tiếng Việt dễ đọc, focus và keyboard rõ | Không CDN hoặc font download lúc chạy |
 | UX-05 | Nội dung giới thiệu ứng dụng không gọi là demo/PoC/bản nháp/scaffold; không lộ tên task | Áp cho copy giới thiệu/menu/footer/help thông thường; không đổi raw trạng thái dữ liệu |

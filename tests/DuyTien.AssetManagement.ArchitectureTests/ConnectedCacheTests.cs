@@ -8,6 +8,7 @@ using DuyTien.AssetManagement.ArchitectureTests.Fakes;
 using DuyTien.AssetManagement.Server.Authentication;
 using DuyTien.AssetManagement.Server.ConnectedCache;
 using DuyTien.AssetManagement.Server.LocalOffline;
+using DuyTien.AssetManagement.Server.Presentation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -204,6 +205,42 @@ public sealed class ConnectedCacheTests
             if (offline) Assert.Equal(before, h.Store.Calls);
         }
         var target = Environment.GetEnvironmentVariable("DUYTIEN_CONNECTED_BENCHMARK"); if (!string.IsNullOrWhiteSpace(target)) await File.WriteAllTextAsync(target, JsonSerializer.Serialize(new { version = "REQ-002 v2", generatedAt = DateTimeOffset.UtcNow, synthetic = true, googleLive = false, groups }, new JsonSerializerOptions { WriteIndented = true }));
+    }
+    [Fact]
+    public async Task Legacy_HTML_remains_readable_without_old_scripts_forms_or_fingerprint_and_preserves_pending_and_file_bytes()
+    {
+        await using var h = await Host.Start(); await h.Warm(); var proof = h.Cache.Read(h.Token)!.Proof;
+        var old = Encoding.UTF8.GetBytes("<html><head><link href='/css/retired.hash.css'></head><body><h1>GIẢ tài sản cũ</h1><script>PRIVATE-OLD-SCRIPT</script><form><input value='PRIVATE-HIDDEN-FIELD'></form><p>Chưa duyệt</p></body></html>");
+        await h.Cache.SaveViewAsync(h.Token, proof, h.Gate.Epoch, "/Assets|html", old, "text/html", null, h.Clock.GetUtcNow(), default);
+        var ticket = h.Cache.Read(h.Token)!; var index = Array.FindIndex(ticket.Views, v => v.Key == "/Assets|html");
+        // Own synthetic ticket injection models the pre-version serialized format, not a personal browser profile.
+        ticket.Views[index] = ticket.Views[index] with { PresentationVersion = null };
+        await h.Cache.NotReadyAsync(h.Token, default); var originalFile = ticket.Views[index].File;
+        await h.Cache.UpdatePendingAsync(h.Token, new("POST", "/api/assets", "FAKE-kept-key", "FAKE-kept-payload"), default);
+        await h.Cache.SaveViewAsync(h.Token, proof, h.Gate.Epoch, "/Files/Content/FAKE|html", [1, 2, 3], "application/pdf", null, h.Clock.GetUtcNow(), default);
+        h.Offline(); var before = h.Store.Calls;
+        using var response = await h.Client.GetAsync("/Assets"); response.EnsureSuccessStatusCode(); var html = WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync());
+        Assert.Equal("LEGACY_READ_ONLY", response.Headers.GetValues("X-DuyTien-Ui-Revision").Single());
+        Assert.Contains("GIẢ tài sản cũ", html); Assert.Contains("giao diện cũ", html); Assert.DoesNotContain("PRIVATE-OLD-SCRIPT", html); Assert.DoesNotContain("PRIVATE-HIDDEN-FIELD", html); Assert.DoesNotContain("retired.hash", html); Assert.DoesNotContain("<form", html); Assert.Contains("href=\"/Files/Content/FAKE\"", html);
+        Assert.Equal(before, h.Store.Calls); Assert.Equal(old, h.Cache.Bytes(h.Token, ticket.Views[index]));
+        Assert.Equal("FAKE-kept-key", h.Cache.Read(h.Token)!.Pending!.Key);
+        Assert.Contains(h.Cache.Read(h.Token)!.Views, v => v.File == originalFile);
+        using var file = await h.Client.GetAsync("/Files/Content/FAKE"); Assert.Equal(new byte[] { 1, 2, 3 }, await file.Content.ReadAsByteArrayAsync());
+    }
+    [Fact]
+    public async Task Refreshing_one_HTML_cache_view_stamps_new_revision_without_purging_other_views_or_pending()
+    {
+        using var disk = new Disk(); using var cache = disk.Open(); var now = DateTimeOffset.UtcNow; var proof = Proof(now);
+        await cache.SaveProofAsync("FAKE-ui-version", proof, default);
+        await cache.UpdatePendingAsync("FAKE-ui-version", new("POST", "/Assets", "FAKE-key", "FAKE-hash"), default);
+        await cache.SaveViewAsync("FAKE-ui-version", proof, "e", "/api/assets|json", [1], "application/json", null, now, default);
+        await cache.SaveViewAsync("FAKE-ui-version", proof, "e", "/Assets|html", Encoding.UTF8.GetBytes("<body>FAKE old</body>"), "text/html", null, now, default);
+        var old = cache.Read("FAKE-ui-version")!; var other = old.Views.First().File; old.Views[1] = old.Views[1] with { PresentationVersion = null };
+        await cache.SaveViewAsync("FAKE-ui-version", proof, "e", "/Assets|html", Encoding.UTF8.GetBytes("<body>FAKE new</body>"), "text/html", null, now, default);
+        var current = cache.Read("FAKE-ui-version")!; Assert.Equal(2, current.Views.Length); Assert.Contains(current.Views, v => v.File == other);
+        Assert.Equal(WebUi.CacheRevision, current.Views.Single(v => v.Key == "/Assets|html").PresentationVersion); Assert.Equal("FAKE-key", current.Pending!.Key);
+        var legacy = JsonSerializer.Deserialize<CachedView>("{\"Key\":\"/Assets|html\",\"File\":\"fake.view\",\"ContentType\":\"text/html\",\"Disposition\":null,\"AsOf\":\"2026-10-15T00:00:00Z\",\"Size\":1}")!;
+        Assert.Null(legacy.PresentationVersion); Assert.False(CachedHtmlPresentation.IsCurrent(legacy));
     }
     private sealed class ProbeClients(HttpMessageHandler handler) : IHttpClientFactory { public HttpClient CreateClient(string name) => new(handler, false); }
     private sealed class ProbeHandler(Func<HttpResponseMessage> create) : HttpMessageHandler { public int Calls; protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage r, CancellationToken ct) { Calls++; return Task.FromResult(create()); } }
@@ -438,6 +475,19 @@ public sealed class ConnectedCacheTests
         probe.State = InternetState.Connected; clock.Advance(TimeSpan.FromSeconds(61)); await gate.CheckAsync(default);
         Assert.Equal(InternetState.Connected, gate.State); await Assert.ThrowsAsync<DuyTien.AssetManagement.Application.ExternalStorage.ExternalStorageException>(() => gate.EnsureAllowedAsync(default));
     }
+    [Fact]
+    public async Task Razor_file_gateway_caches_exact_query_bytes_and_reports_missing_variant_without_central_access()
+    {
+        await using var h = await Host.Start(); await h.Warm();
+        var url = "/Files/Content/FAKE?preview=true";
+        using (var online = await h.Client.GetAsync(url)) { Assert.Equal(HttpStatusCode.OK, online.StatusCode); Assert.Equal(new byte[] { 4, 5, 6 }, await online.Content.ReadAsByteArrayAsync()); }
+        h.Offline(); var before = h.Store.Calls;
+        using (var offline = await h.Client.GetAsync(url)) { Assert.Equal(HttpStatusCode.OK, offline.StatusCode); Assert.Equal(new byte[] { 4, 5, 6 }, await offline.Content.ReadAsByteArrayAsync()); }
+        var coverage = await h.Client.GetFromJsonAsync<JsonElement>("/api/connection/files");
+        Assert.Contains(coverage.GetProperty("files").EnumerateArray(), f => f.GetProperty("url").GetString() == url && f.GetProperty("offlineAvailable").GetBoolean());
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, (await h.Client.GetAsync("/Files/Content/FAKE")).StatusCode);
+        Assert.Equal(before, h.Store.Calls);
+    }
     private static CentralProof Proof(DateTimeOffset now) => new("FAKE-user", "FAKE-session", "fake", "GIẢ", ["Viewer"], 1, "scope-A", now, now.AddMinutes(30));
     private sealed class FakeProbe : IInternetProbe { public InternetState State = InternetState.Connected; public int Calls; public Task<InternetState> ProbeAsync(CancellationToken ct) { Interlocked.Increment(ref Calls); return Task.FromResult(State); } }
     private sealed class Disk : IDisposable
@@ -466,6 +516,7 @@ public sealed class ConnectedCacheTests
             h.app = b.Build(); h.app.Urls.Add("http://127.0.0.1:0"); h.app.UseRouting(); h.app.Use(async (c, n) => { using var frame = RequestAuthStore.Begin(); using var data = BusinessReadProof.Begin(true); await n(); }); h.app.UseConnectedCache(); h.app.UseTask005SessionAuthentication(); h.app.UseConnectedWriteGate(); h.app.UseAuthorization();
             h.app.MapPost("/api/auth/login", (LoginRequest request, AuthApplicationService service) => service.LoginAsync(request));
             h.app.MapGet("/", () => Results.Content("FAKE navigation only", "text/html")).RequireAuthorization();
+            h.app.MapGet("/Files/Content/FAKE", () => Results.Bytes(new byte[] { 4, 5, 6 }, "application/pdf")).RequireAuthorization();
             h.app.MapGet("/api/files/FAKE/content", () => Results.Bytes(new byte[] { 1, 2, 3 }, "application/pdf")).RequireAuthorization();
             h.app.MapGet("/api/assets", async () => { if (h.ReadHook is { } hook) await hook(); return h.FailRead ? Results.StatusCode(503) : Results.Ok(new { revision = h.Revision, name = "FAKE scoped asset" }); }).RequireAuthorization();
             h.app.MapPost("/api/assets", () => { Interlocked.Increment(ref h.Writes); return h.FailWrite ? Results.StatusCode(503) : Results.Ok(new { saved = true }); }).RequireAuthorization();

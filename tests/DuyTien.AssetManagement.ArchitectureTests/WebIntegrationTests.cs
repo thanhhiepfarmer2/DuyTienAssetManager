@@ -33,7 +33,7 @@ public sealed class WebIntegrationTests
     {
         await using var h = await WebIntegrationHost.Start(); using var c = h.Client();
         var home = await c.GetStringAsync("/"); Assert.DoesNotContain("href=\"/Items\"", home); Assert.DoesNotContain("href=\"/Stock\"", home); Assert.Contains("DRAFT", home); Assert.DoesNotContain("bổ sung theo từng Task sau TASK-003", home);
-        Assert.Contains("Hướng dẫn web demo", await c.GetStringAsync("/Help"));
+        var help = WebUtility.HtmlDecode(await c.GetStringAsync("/Help")); Assert.Contains("Hướng dẫn sử dụng", help); Assert.Contains("Ngoại tuyến — chỉ đọc", help); Assert.DoesNotContain("LocalOffline trên máy Windows", help); Assert.DoesNotContain("LocalSetup", help);
         using (var r = await c.GetAsync("/Assets")) Assert.Equal(HttpStatusCode.Redirect, r.StatusCode);
         var login = await c.GetStringAsync("/Account/Login");
         using var invalid = await c.PostAsync("/Account/Login", new FormUrlEncodedContent(new Dictionary<string, string> { ["__RequestVerificationToken"] = Field(login, "__RequestVerificationToken"), ["Username"] = "", ["Password"] = "" }));
@@ -126,7 +126,7 @@ public sealed class WebIntegrationTests
         await using var h = await WebIntegrationHost.Start(); using var c = await h.Cookie("admin"); var html = await c.GetStringAsync("/Categories/Manage/" + h.R.F.Root);
         var fields = new Dictionary<string, string> { ["__RequestVerificationToken"] = Field(html, "__RequestVerificationToken"), ["RequestKey"] = Field(html, "RequestKey"), ["Form.Kind"] = "ARCHIVE_CATEGORY", ["Form.Reason"] = "GIẢ", ["Form.CategoryId"] = h.R.F.Root, ["Form.DestinationCategoryId"] = h.R.F.Other, ["Form.DeletePlan"] = "RELOCATE" };
         using (var response = await c.PostAsync("/Categories/Manage/" + h.R.F.Root + "?handler=Preview", new FormUrlEncodedContent(fields)))
-        { Assert.Equal(HttpStatusCode.OK, response.StatusCode); html = await response.Content.ReadAsStringAsync(); Assert.Contains("Registry/owner", html); Assert.Contains("ITEM", html); Assert.Contains("PHOTO", html); Assert.Contains("PDF", html); }
+        { Assert.Equal(HttpStatusCode.OK, response.StatusCode); html = await response.Content.ReadAsStringAsync(); Assert.Contains("Đối tượng liên quan trong phạm vi", WebUtility.HtmlDecode(html)); Assert.Contains("ITEM", html); Assert.Contains("PHOTO", html); Assert.Contains("PDF", html); }
         fields["PreviewHash"] = Field(html, "PreviewHash"); fields["ExpectedTreeRevision"] = Field(html, "ExpectedTreeRevision"); fields["ExpectedAssetRevision"] = Field(html, "ExpectedAssetRevision"); fields["ConfirmImpact"] = "true"; fields.Remove("__RequestVerificationToken"); var posts = h.R.F.Handler.Posts;
         using (var denied = await c.PostAsync("/Categories/Manage/" + h.R.F.Root + "?handler=Commit", new FormUrlEncodedContent(fields))) Assert.Equal(HttpStatusCode.BadRequest, denied.StatusCode); Assert.Equal(posts, h.R.F.Handler.Posts);
         fields["__RequestVerificationToken"] = Field(html, "__RequestVerificationToken"); using (var committed = await c.PostAsync("/Categories/Manage/" + h.R.F.Root + "?handler=Commit", new FormUrlEncodedContent(fields))) Assert.Equal(HttpStatusCode.OK, committed.StatusCode); Assert.Equal(posts + 1, h.R.F.Handler.Posts);

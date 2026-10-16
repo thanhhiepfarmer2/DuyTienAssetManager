@@ -4,8 +4,8 @@
     ViewData["Title"] = "Đăng nhập";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-4">
+<section class="auth-panel"><div>
+    <div>
         <h1 class="h3 mb-3">Đăng nhập</h1>
         <form method="post">
             <input type="hidden" asp-for="ReturnUrl" />
@@ -28,6 +28,8 @@
         </form>
     </div>
 </div>
+
+</section>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
