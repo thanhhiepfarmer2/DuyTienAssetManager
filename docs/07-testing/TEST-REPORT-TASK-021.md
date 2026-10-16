@@ -1,3 +1,5 @@
+> Checkpoint hiệu năng hiện hành16/10: Google CLI A/B3cặp Assets4→3GET, median5.00→3.77s;166/166local +25/25cross-check +Node11/11pass. Không web-session/browser/p95 pass; xem phần giảm Google reads cuối tài liệu.
+
 > Kết quả hiện hành16/10: partial browser Home/Danh mục, login người dùng+Google thật đã có; sửa asset/auth/cache/Razor,101/101local pass. Browser dừng URL-confidence, gate còn mở; xem phần Runtime16/10 cuối tài liệu.
 
 # TEST-REPORT — TASK-021 / tổng kết PLAN-003
@@ -149,3 +151,63 @@ Backend mới đang chạy1instance tại https://localhost:7008. Mở `DuyTien-
 ### Đối chiếu worktree cuối16/10
 
 AI checker UTF8/JSON/status/204local links:exit0,0issues. Baseline496files đầu lượt:33file đổi đúng allowlist runtime/docs,463file giữ fingerprint;4file mới đúng phạm vi, không mất file.85modified/untracked file thực (Git directory display có thể gộp). TASK-005–015/source core/mobile/scripts/AGENTS và bằng chứng trước ngoài phạm vi nguyên vẹn; không xóa code hoặc workspace. HEAD5c4f5ad8f3cfc22ce937e6ce63027c43abe26128/main, indexempty. Pattern/path scan cơ bản không phải audit bảo mật toàn diện; không in credential. `git diff --check`exit0 trước ghi checkpoint này, kiểm tiếp sau docedit; không build/test lại khi chỉ thêm evidence docs.
+
+
+## TASK-021 — giảm Google reads16/10, checkpoint hiện hành
+
+Nguồn **AI chạy/quan sát trực tiếp** cho code/tests/CLI Google/public HTTPS; không user-run/manual/browser mới. Chỉ tiếp TASK-021, không feature/task/mobile mới. Worktree đầu lượt sạch, HEAD55ddab07cb6eeea6e4e36ba569f175a3a36facb2/main. Giữ workspace/cache/account và mọi gate lịch sử. [Bản đồ request/source/guard](TASK-021-REQUEST-MAP.md), [JSON số đo đầy đủ](TASK-021-READ-PERFORMANCE.json).
+
+### Những lượt đọc đã xử lý
+
+| Luồng | Trước | Sau | Phạm vi bằng chứng |
+|---|---|---|---|
+| Categories list | auth1 + business metadata1 + values1 =3 |3 | Google CLI control, không bỏ đọc cấu trúc/schema |
+| Assets list | auth1 + metadata1 + asset values1 + category values1 =4 | auth1 + metadata1 + union values1 =3 | Google CLI3cặp thật, validators cũ đầy đủ |
+| Category detail + history | metadata1 + category values2 (auth memo1) | metadata1 + category values1 (auth memo1) | fake HTTP adapter3→2 business calls; Razor2business calls; tương ứng4→3 tổng nếu web auth không touch, **chưa đo Google page** |
+| Asset detail + form choices (editor) | metadata1 +2asset values+2category values (auth memo1) | metadata1 + union values1 (auth memo1) | Code trace trước + compiled Razor sau2business calls; dự kiến6→3 tổng không touch, **không gọi là Google browser measurement** |
+| Clean business RECONNECTING | verification GET rồi bỏ response và navigation GET lại | navigation GET duy nhất xác minh auth/data | Node event doubles; NOT_RUN_BROWSER/REAL_NETWORK |
+
+Auth system spreadsheet khác business spreadsheet: không gom hai resource vào một values.batchGet. Auth memo đã reuse giữa session validation/Remember/service trong **cùng request**, không bỏ SecurityVersion/revoke/expiry hoặc dùng cache qua request. Các mẫu web tới touch5ph vẫn có read/write bắt buộc; lượt này không sửa policy/touch. Header/sidebar/breadcrumb không gọi Google. Registry journal trong category parser vẫn đọc; full tree guard/legacy tables/Items/Media/registry checkpoint chỉ ở luồng cần full registry, không thay bằng snapshot list.
+
+`GoogleAssetCategorySnapshotReader` chỉ gom raw ranges cùng API executor/business URI trong một read lease; mỗi range giữ bound5001/20001, đúng subset về parser Assets/Categories để kiểm schema/header/partial/journal/counter/alias/audit/tree digest. `CanReadTogether` kiểm facade category, broker kiểm nguồn/executor trước/sau fetch. Không global cache, không coalescing giữa user/request, không shared filtered data; token cancel/errors không lưu thành task dùng lại, scope/response disposed. Application write Load và Prepare/Commit vẫn đi nhánh fresh riêng, metadata invalidation/single-writer/version/idempotency giữ nguyên. Thêm DetailWithChoices và DetailWithHistory để render các phần từ cùng context; read/update/history scopes vẫn được kiểm độc lập như trước.
+
+Reconnect: trang đọc sạch ở RECONNECTING điều hướng thẳng một GET; dirty/non-readable form giữ input/key, chỉ verification read, không replay. pagehide abort các GET/poll; trạng thái ONLINE không thêm business request. Self-review giữ nhánh SERVICE_UNAVAILABLE dùng verification/backoff tới thành công rồi mới navigation để tránh vòng503 reload; **nhánh phục hồi lỗi này còn có thể read+navigation**, không nhận đã loại mọi trường hợp. Không thay phân loại401/403/429/503 thành offline. Không thêm queue/sync hoặc tăng parallel Google calls.
+
+### Google DEV thật — CLI, không web session
+
+Browser giữ trạng thái **STOPPED_TOOL_URL_CONFIDENCE** từ lượt trước. Lượt này không gọi lại browser, đổi driver, trích cookie/profile hoặc yêu cầu/reset password. Vì không có phiên web qua công cụ được phép, đo bằng operator CLI `catalog-read-diagnose` trong Google/Development và cùng process lease. CLI chỉ lookup admin hiện có/role-scope rồi gọi application services; **không đăng nhập, không ValidateAccessToken, không session touch, không Razor/browser**. Vì vậy các số này là **CLI_SERVICE_READ_NO_WEB_SESSION**, không phải thời gian chuyển trang có đăng nhập.
+
+Cùng Release binary: chế độ Separate bọc store thành đường đọc cũ, Batched dùng capability mới. Mỗi case có fresh request auth/metadata frame và source values, không cache xuyên sample; Categories là control dùng cùng path cả hai mode. Warmup1/case riêng,3cặp mỗi route, luân phiên separate→batch / batch→separate / separate→batch, shared pacing cursor giữ nguyên không reset. MaxRetryAttempts1 chỉ env CLI để giới hạn phép đo; backend trả config retry thường sau đó. Không giảm1250ms pacing/cooldown, không parallel. **6/6cặp payload/authority/revision bằng nhau**, kiểm bằng digest nội bộ nhưng chỉ xuất bool, không data/hash/IDs. Tổng cả warmup **45 Google GET,0 Google API writes trong trace**; OAuth token-provider có thể refresh riêng, không suy số OAuth HTTP từ token invocation. Không business mutations hoặc resource/sharing/schema writes.
+
+| Route / pair | Separate elapsed ms | Batched elapsed ms | GET trước→sau | Google HTTP trước→sau ms | Pacing trước→sau ms |
+|---|---:|---:|---|---|---|
+| Categories1 |3523.53|3802.13|3→3|990.10→1038.52|2482.31→2720.53|
+| Categories2 (đảo thứ tự) |3582.45|3927.82|3→3|1039.43→1054.47|2499.01→2666.14|
+| Categories3 |3774.28|3740.04|3→3|1059.42→1333.20|2672.67→2362.13|
+| Assets1 |4964.57|3748.65|4→3|1406.72→1043.35|3266.56→2658.68|
+| Assets2 (đảo thứ tự) |5021.56|3774.37|4→3|1366.66→1005.88|3389.27→2724.13|
+| Assets3 |5002.12|4359.13|4→3|1385.01→1611.88|3566.08→2703.97|
+
+Trung vị3mẫu Assets **5002.12→3774.37ms**, range4964.57–5021.56→3748.65–4359.13ms. Categories control median3582.45→3802.13ms, không đổi call count/code đọc nên không suy cải thiện hoặc hồi quy nhân quả từ n3/Google latency/pacing carry-in khác. Các phase lồng nhau, không cộng thành tổng. JSON giữ mọi phase đã đo; không có browser render/DOM/paint/Razor trong CLI, không ghi0 giả cho các phase không chạy. **Không tính p95 đại diện hoặc hứa<500ms.** CLI wall time59414.75ms/exit0, không timeout dài.
+
+### Kiểm tra thực tế / exit
+
+Lệnh/filter/env chi tiết tại [COMMANDS](../COMMANDS.md). Build/test chung output tuần tự; native CLI chỉ sau khi xác minh backend dừng.
+
+- Suite adapter/auth/scope/cache/guard/version ban đầu158/158pass/exit0 (25s), có1warning xUnit2031 test assertion Where+Single; đổi sang predicate overload, lượt sau158/158pass/exit0 (17s), không warning. Không fail/skip hoặc sửa expected để bỏ guard.
+- Mở rộng category detail/history và compiled Razor thật qua capability: **166/166passed,0failed/skipped,exit0,17s**. Batch riêng kiểm same-source/executor mismatch trước network, canceled batch rồi đọc lại thành công, header/partial/range/counter/materialized journal sai đều fail closed/noPOST; fresh call sau không reuse values trước, scopes user/admin không chia sẻ projection, revoked assignment bị chặn trước business I/O. Category history nhánh ẩn404/revoke403; Razor Assets/list/detail/Category detail mỗi GET2fake business calls,0writes.
+- Kiểm chéo `WebIntegrationTests|WebUiModuleTests|GoogleApiRequestExecutorTests`: **25/25passed,0failed/skipped,exit0,15s**. Không cộng các run overlap thành tổng unique/UAT cũ.
+- `node --test tests/web-ui-behavior.test.cjs tests/connection-reconnect.test.cjs`: đầu10/10exit0, sau service-error backoff **11/11passed,0failed/skipped,exit0**. `node --check .../connection.js`exit0 trước thêm branch; node runner cuối parse/chạy file cuối. Event/DOM doubles không browser.
+- `powershell.exe -NoProfile -File scripts/Stop-Web.ps1`:exit0, runtime trước đo đã dừng/nativecount0; không dừng PID cũ hoặc process khác. Release build **exit0,0warnings/errors,7.92s**. `catalog-read-diagnose` process exit0, cùng lease; không init/bootstrap/OAuth consent mới.
+- `powershell.exe -NoProfile -File scripts/Start-Web.ps1 -NoBrowser`:exit0, đúng script của DuyTien-Web.cmd. Final **PID24368/1native backend**, Google/Development, build **b9ad1fca-6c42-4bca-9680-a09e24c53494** (cùng binary đoCLI), UIrevision **web-ui-2026-10-16.3**. Python strictTLS public system/login/new connection JS200, no TLS bypass. Anonymous status RECONNECTING không là proof user; Login200 không được tính login PASS. Không mở browser đang bị stop.
+
+### Gate / trạng thái
+
+TASK-021 **IN_REVIEW**. Đã chứng minh giảm Google reads root Assets và giữ kết quả trên cùng nguồn thật; phần browser/phiên đăng nhập/touch trước-sau, Category/Asset detail Google, concurrency nhiều tab/navigation, mạng/reconnect/revoke thật và warm p95 đủ mẫu **NOT_RUN/NOT_MEASURED_THIS_TURN**. Không reopen DEFERRED_BY_USER/STOPPED_BY_USER hoặc yêu cầu chuỗi UAT/manual/secret mới. Snapshot/files/workspace/tài khoản hiện có và source/rule OPEN/TBD giữ; không coi DRAFT/demo là chính thức. Giữ TASK-003IN_REVIEW/004DONE/005–020 như trước; Android dừng/iOS hoãn. Không commit/push/deploy.
+
+Web https://localhost:7008/Account/Login, mở `DuyTien-Web.cmd` để dùng lại một backend. Các số Google CLI thay thế khoảng trống **CLI**, không thay các gate browser/web session chưa có.
+
+
+### Đối chiếu cuối lượt giảm reads
+
+AI checker exit0: baseline500file,21file thay đổi trong phạm vi +7file mới;479file baseline giữ fingerprint/0missing.121local links/UTF8/JSON/status/artifact/credential-pattern checks0issues; chỉ scan cơ bản, không audit bảo mật toàn diện. SDK10.0.400; `node --check` connection.js bản cuối exit0, `git diff --check`exit0, indexempty/HEAD55ddab0/main không đổi. Auth core/policy, Google pacing/coordinator/tree guard, mobile/Local workspace adapter/scripts/launcher/AGENTS và task/report005–020 nguyên vẹn. Không stage/commit/push. Ghi thêm checkpoint docs không làm chạy lại build/test; diff check kiểm lại sau ghi. Backend cuối1/PID24368, build đúng binary đã đo, dữ liệu/workspace/cache cũ không reset/xóa.

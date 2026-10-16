@@ -6,6 +6,7 @@ using DuyTien.AssetManagement.Application.Authentication;
 using DuyTien.AssetManagement.Application.ExternalStorage;
 using DuyTien.AssetManagement.Infrastructure.Google.Configuration;
 using DuyTien.AssetManagement.Infrastructure.Google.Http;
+using ValueRange = DuyTien.AssetManagement.Infrastructure.Google.Adapters.GoogleReadValueRange;
 namespace DuyTien.AssetManagement.Infrastructure.Google.Adapters;
 
 // Explicit asset writes only; never seeds reference data/rules and never touches auth/category journals.
@@ -71,6 +72,14 @@ public sealed class GoogleAssetCatalogStore(GoogleWorkspaceOptions options, Goog
         }
         return requests;
     }
+    internal string ReadSourceKey => UriFor("").AbsoluteUri;
+    internal GoogleApiRequestExecutor ReadExecutor => api;
+    internal async Task<GooglePreparedRead<AssetCatalogState>> PrepareReadAsync(CancellationToken ct)
+    {
+        var metadata = await Metadata(ct);
+        var titles = Headers.Keys.Concat(ReferenceHeaders.Keys).Where(t => metadata.Sheets.Any(sheet => sheet.Properties.Title == t));
+        return new(titles.Select(t => "'" + t + "'!A1:AZ5001").ToArray(), (values, token) => Load(metadata, token, values));
+    }
     private async Task<Spreadsheet> Metadata(CancellationToken ct)
     {
         if (options.GetMissingSheetsSettings().Count > 0 || string.IsNullOrWhiteSpace(options.SystemSpreadsheetId) || options.SpreadsheetId == options.SystemSpreadsheetId)
@@ -81,7 +90,7 @@ public sealed class GoogleAssetCatalogStore(GoogleWorkspaceOptions options, Goog
             throw new ExternalStorageException("Metadata bảng tài sản không hợp lệ.");
         return metadata;
     }
-    private async Task<AssetCatalogState> Load(Spreadsheet metadata, CancellationToken ct)
+    private async Task<AssetCatalogState> Load(Spreadsheet metadata, CancellationToken ct, ValueRange[]? prefetched = null)
     {
         var managed = Headers.Keys.Where(t => metadata.Sheets.Any(s => s.Properties.Title == t)).ToArray();
         if (managed.Length != 0 && managed.Length != Headers.Count) throw new ExternalStorageException("Schema tài sản chưa đầy đủ; không overwrite dữ liệu chưa xác định.");
@@ -90,8 +99,13 @@ public sealed class GoogleAssetCatalogStore(GoogleWorkspaceOptions options, Goog
         if (titles.Length > 0)
         {
             var query = string.Join('&', titles.Select(t => "ranges=" + Uri.EscapeDataString($"'{t}'!A1:AZ5001")));
-            using var response = await api.SendAsync(() => new HttpRequestMessage(HttpMethod.Get, UriFor("/values:batchGet?" + query + "&valueRenderOption=UNFORMATTED_VALUE")), GoogleRequestSemantics.SafeRead, ct);
-            var result = await ReadJson<BatchValues>(response, ct);
+            BatchValues result;
+            if (prefetched is null)
+            {
+                using var response = await api.SendAsync(() => new HttpRequestMessage(HttpMethod.Get, UriFor("/values:batchGet?" + query + "&valueRenderOption=UNFORMATTED_VALUE")), GoogleRequestSemantics.SafeRead, ct);
+                result = await ReadJson<BatchValues>(response, ct);
+            }
+            else result = new(prefetched);
             if (result.ValueRanges?.Length != titles.Length) throw new ExternalStorageException("Google trả thiếu bảng tài sản.");
             for (var i = 0; i < titles.Length; i++)
             {
@@ -178,5 +192,5 @@ public sealed class GoogleAssetCatalogStore(GoogleWorkspaceOptions options, Goog
     private sealed record Properties(int SheetId, string Title, Grid GridProperties);
     private sealed record Grid(int RowCount, int ColumnCount);
     private sealed record BatchValues(ValueRange[] ValueRanges);
-    private sealed record ValueRange(string Range, JsonElement[][]? Values);
+
 }

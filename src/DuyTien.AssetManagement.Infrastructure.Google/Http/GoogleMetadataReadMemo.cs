@@ -21,6 +21,7 @@ public static class GoogleMetadataReadMemo
     private static readonly AsyncLocal<Frame?> Current = new();
     public static IDisposable Begin(bool readRequest)
     { var old = Current.Value; Current.Value = readRequest ? new() : null; return new Reset(() => Current.Value = old); }
+    public static IDisposable JoinOrBegin() => Current.Value is null ? Begin(true) : new Reset(() => { });
     public static long Revision => Current.Value?.Revision ?? -1;
     public static void Invalidate() { if (Current.Value is { } frame) { lock (frame.Sync) { Interlocked.Increment(ref frame.Revision); frame.Responses.Clear(); } } }
     private static bool Metadata(HttpRequestMessage request)

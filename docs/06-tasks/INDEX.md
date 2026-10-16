@@ -1,3 +1,5 @@
+> Hiệu năng02116/10: Google CLI Assets4→3GET/median5.00→3.77s, Categories3→3;166local/25cross/Node11pass, browser/session/p95 gates chưa đạt. TASK-021 IN_REVIEW, không đổi task/gate cũ. [Report](../07-testing/TEST-REPORT-TASK-021.md).
+
 > Hiện hành16/10: TASK-017–021 IN_REVIEW; partial browser Home/Danh mục và login/Google auth thật đã quan sát,101/101local pass. JS public bỏ1Google call, GET chính vẫn nhiều giây; browser tiếp bị tool URL-confidence dừng, mạng/cache/browser còn gate. [Report021](../07-testing/TEST-REPORT-TASK-021.md). TASK-016 DONE tài liệu; các gate/task cũ không đổi.
 
 > Hiện hành PLAN-003: TASK-016 DONE tài liệu; TASK-017–021 IN_REVIEW sau triển khai/check local. HTML STATIC_VERIFIED. [Report021](../07-testing/TEST-REPORT-TASK-021.md). Phụ thuộc tiếp theo ngoại lệ user; browser/Google/mạng NOT_RUN, không đổi các gate cũ.
@@ -30,6 +32,6 @@
 | TASK-018 | [Hoàn thiện giao diện danh mục và tài sản](TASK-018.md) | IN_REVIEW | Local + Categories browser/Google HTTP một phần; sửa cấp F/breadcrumb; Assets visual/network còn gate |
 | TASK-019 | [Hồ sơ ảnh, import, Items và báo cáo](TASK-019.md) | IN_REVIEW | Local đã kiểm; runtime shared fixes101/101; browser/media/Items/report Google chưa kiểm lượt này |
 | TASK-020 | [Quản trị, trang chủ, hướng dẫn và nội dung](TASK-020.md) | IN_REVIEW | Local đã kiểm; Home browser một phần; admin/help/error/narrow còn gate |
-| TASK-021 | [Trải nghiệm, online/offline và hiệu năng web](TASK-021.md) | IN_REVIEW | Local101/101 runtime16/10 + evidence cũ; partial browser/login/Google; static0Google calls; warm page p95/network/browser gates còn mở |
+| TASK-021 | [Trải nghiệm, online/offline và hiệu năng web](TASK-021.md) | IN_REVIEW | Read-performance166/166 +25/25 +Node11/11; Google CLI Assets4→3GET; session/browser/network/p95 gates còn mở |
 
 Ghi chú lịch sử từ scaffold TASK-003: scaffold không tự chứng minh các task sau. Trạng thái hiện hành và gate theo bảng/report ở trên.

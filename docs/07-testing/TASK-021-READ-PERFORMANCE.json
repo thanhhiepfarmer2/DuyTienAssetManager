@@ -1,0 +1,634 @@
+{
+  "date": "2026-10-16",
+  "source": "AI ran directly; CLI_SERVICE_READ_NO_WEB_SESSION",
+  "headBeforeChanges": "55ddab07cb6eeea6e4e36ba569f175a3a36facb2",
+  "pacingUnchangedMs": 1250,
+  "globalReadCache": false,
+  "authSessionValidation": false,
+  "authTouch": false,
+  "googleGetCallsIncludingWarmup": 45,
+  "googleApiWritesObserved": 0,
+  "cli": {
+    "exitCode": 0,
+    "source": "CLI_SERVICE_READ_NO_WEB_SESSION",
+    "elapsedMs": 59414.7467
+  },
+  "records": [
+    {
+      "diagnostic": "business-read",
+      "stage": "warmup",
+      "route": "Categories",
+      "source": "CLI_SERVICE_READ_NO_WEB_SESSION",
+      "authTouch": false,
+      "noBusinessMutation": true,
+      "measurement": {
+        "elapsedMs": 4540.9547,
+        "phases": {
+          "google-token": {
+            "milliseconds": 295.75120000000004,
+            "count": 3
+          },
+          "google-read-http": {
+            "milliseconds": 3853.6457,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 3853.6653,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1514.7211,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0043,
+            "count": 1
+          },
+          "google-pacing": {
+            "milliseconds": 52.2585,
+            "count": 2
+          }
+        }
+      }
+    },
+    {
+      "diagnostic": "business-read",
+      "stage": "pair",
+      "route": "Categories",
+      "sample": 1,
+      "order": "separate-then-batch",
+      "source": "CLI_SERVICE_READ_NO_WEB_SESSION",
+      "authTouch": false,
+      "noBusinessMutation": true,
+      "equivalentPayload": true,
+      "sameAuthority": true,
+      "sameRevision": true,
+      "separate": {
+        "elapsedMs": 3523.5275,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0261,
+            "count": 3
+          },
+          "google-pacing": {
+            "milliseconds": 2482.3148,
+            "count": 3
+          },
+          "google-read-http": {
+            "milliseconds": 990.0844999999999,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 990.0971999999999,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1014.7275,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0023,
+            "count": 1
+          }
+        }
+      },
+      "batched": {
+        "elapsedMs": 3802.1275,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.012299999999999998,
+            "count": 3
+          },
+          "google-pacing": {
+            "milliseconds": 2720.5329,
+            "count": 3
+          },
+          "google-read-http": {
+            "milliseconds": 1038.5043,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 1038.519,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1267.7916,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0021,
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "diagnostic": "business-read",
+      "stage": "pair",
+      "route": "Categories",
+      "sample": 2,
+      "order": "batch-then-separate",
+      "source": "CLI_SERVICE_READ_NO_WEB_SESSION",
+      "authTouch": false,
+      "noBusinessMutation": true,
+      "equivalentPayload": true,
+      "sameAuthority": true,
+      "sameRevision": true,
+      "separate": {
+        "elapsedMs": 3582.4477,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.012499999999999999,
+            "count": 3
+          },
+          "google-pacing": {
+            "milliseconds": 2499.0084,
+            "count": 4
+          },
+          "google-read-http": {
+            "milliseconds": 1039.417,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 1039.4261,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1058.9043,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.001,
+            "count": 1
+          }
+        }
+      },
+      "batched": {
+        "elapsedMs": 3927.8232,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.022699999999999998,
+            "count": 3
+          },
+          "google-pacing": {
+            "milliseconds": 2666.1391999999996,
+            "count": 4
+          },
+          "google-read-http": {
+            "milliseconds": 1054.4611,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 1054.4699,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1228.5955,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0014,
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "diagnostic": "business-read",
+      "stage": "pair",
+      "route": "Categories",
+      "sample": 3,
+      "order": "separate-then-batch",
+      "source": "CLI_SERVICE_READ_NO_WEB_SESSION",
+      "authTouch": false,
+      "noBusinessMutation": true,
+      "equivalentPayload": true,
+      "sameAuthority": true,
+      "sameRevision": true,
+      "separate": {
+        "elapsedMs": 3774.281,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0154,
+            "count": 3
+          },
+          "google-pacing": {
+            "milliseconds": 2672.6719000000003,
+            "count": 3
+          },
+          "google-read-http": {
+            "milliseconds": 1059.4063,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 1059.4151,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1248.8041,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0008,
+            "count": 1
+          }
+        }
+      },
+      "batched": {
+        "elapsedMs": 3740.0388,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0228,
+            "count": 3
+          },
+          "google-pacing": {
+            "milliseconds": 2362.1311,
+            "count": 3
+          },
+          "google-read-http": {
+            "milliseconds": 1333.1926,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 1333.1988,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1275.3191,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0014,
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "diagnostic": "business-read",
+      "stage": "warmup",
+      "route": "Assets",
+      "source": "CLI_SERVICE_READ_NO_WEB_SESSION",
+      "authTouch": false,
+      "noBusinessMutation": true,
+      "measurement": {
+        "elapsedMs": 3807.5497,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0116,
+            "count": 3
+          },
+          "google-pacing": {
+            "milliseconds": 2644.4120999999996,
+            "count": 9
+          },
+          "google-read-http": {
+            "milliseconds": 1027.286,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 1027.2909,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1262.5829,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0132,
+            "count": 1
+          },
+          "journal-replay": {
+            "milliseconds": 15.0708,
+            "count": 1
+          },
+          "business-batch": {
+            "milliseconds": 2517.2899,
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "diagnostic": "business-read",
+      "stage": "pair",
+      "route": "Assets",
+      "sample": 1,
+      "order": "separate-then-batch",
+      "source": "CLI_SERVICE_READ_NO_WEB_SESSION",
+      "authTouch": false,
+      "noBusinessMutation": true,
+      "equivalentPayload": true,
+      "sameAuthority": true,
+      "sameRevision": true,
+      "separate": {
+        "elapsedMs": 4964.5663,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0199,
+            "count": 4
+          },
+          "google-pacing": {
+            "milliseconds": 3266.5620999999996,
+            "count": 4
+          },
+          "google-read-http": {
+            "milliseconds": 1406.7086,
+            "count": 4
+          },
+          "google-http": {
+            "milliseconds": 1406.7152999999998,
+            "count": 4
+          },
+          "auth-store-read": {
+            "milliseconds": 1191.5568,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0012,
+            "count": 1
+          },
+          "journal-replay": {
+            "milliseconds": 0.6857,
+            "count": 1
+          }
+        }
+      },
+      "batched": {
+        "elapsedMs": 3748.649,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0338,
+            "count": 3
+          },
+          "google-pacing": {
+            "milliseconds": 2658.6824,
+            "count": 7
+          },
+          "google-read-http": {
+            "milliseconds": 1043.3484,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 1043.3536,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1282.0521,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0018,
+            "count": 1
+          },
+          "journal-replay": {
+            "milliseconds": 0.1823,
+            "count": 1
+          },
+          "business-batch": {
+            "milliseconds": 2466.2281,
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "diagnostic": "business-read",
+      "stage": "pair",
+      "route": "Assets",
+      "sample": 2,
+      "order": "batch-then-separate",
+      "source": "CLI_SERVICE_READ_NO_WEB_SESSION",
+      "authTouch": false,
+      "noBusinessMutation": true,
+      "equivalentPayload": true,
+      "sameAuthority": true,
+      "sameRevision": true,
+      "separate": {
+        "elapsedMs": 5021.5632,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.012899999999999998,
+            "count": 4
+          },
+          "google-pacing": {
+            "milliseconds": 3389.2738,
+            "count": 4
+          },
+          "google-read-http": {
+            "milliseconds": 1366.6513,
+            "count": 4
+          },
+          "google-http": {
+            "milliseconds": 1366.6583,
+            "count": 4
+          },
+          "auth-store-read": {
+            "milliseconds": 1246.5136,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0024,
+            "count": 1
+          },
+          "journal-replay": {
+            "milliseconds": 0.3007,
+            "count": 1
+          }
+        }
+      },
+      "batched": {
+        "elapsedMs": 3774.3659,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0152,
+            "count": 3
+          },
+          "google-pacing": {
+            "milliseconds": 2724.1311000000005,
+            "count": 8
+          },
+          "google-read-http": {
+            "milliseconds": 1005.8723,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 1005.8761999999999,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1240.9234,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0009,
+            "count": 1
+          },
+          "journal-replay": {
+            "milliseconds": 0.093,
+            "count": 1
+          },
+          "business-batch": {
+            "milliseconds": 2533.2332,
+            "count": 1
+          }
+        }
+      }
+    },
+    {
+      "diagnostic": "business-read",
+      "stage": "pair",
+      "route": "Assets",
+      "sample": 3,
+      "order": "separate-then-batch",
+      "source": "CLI_SERVICE_READ_NO_WEB_SESSION",
+      "authTouch": false,
+      "noBusinessMutation": true,
+      "equivalentPayload": true,
+      "sameAuthority": true,
+      "sameRevision": true,
+      "separate": {
+        "elapsedMs": 5002.1203,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0123,
+            "count": 4
+          },
+          "google-pacing": {
+            "milliseconds": 3566.0760999999998,
+            "count": 11
+          },
+          "google-read-http": {
+            "milliseconds": 1385.0017,
+            "count": 4
+          },
+          "google-http": {
+            "milliseconds": 1385.0084000000002,
+            "count": 4
+          },
+          "auth-store-read": {
+            "milliseconds": 1232.8426,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0012,
+            "count": 1
+          },
+          "journal-replay": {
+            "milliseconds": 0.2577,
+            "count": 1
+          }
+        }
+      },
+      "batched": {
+        "elapsedMs": 4359.1297,
+        "phases": {
+          "google-token": {
+            "milliseconds": 0.0081,
+            "count": 3
+          },
+          "google-pacing": {
+            "milliseconds": 2703.9747,
+            "count": 4
+          },
+          "google-read-http": {
+            "milliseconds": 1611.8813,
+            "count": 3
+          },
+          "google-http": {
+            "milliseconds": 1611.8845999999999,
+            "count": 3
+          },
+          "auth-store-read": {
+            "milliseconds": 1228.8043,
+            "count": 1
+          },
+          "coordinator-wait": {
+            "milliseconds": 0.0013,
+            "count": 1
+          },
+          "journal-replay": {
+            "milliseconds": 0.1379,
+            "count": 1
+          },
+          "business-batch": {
+            "milliseconds": 3130.0535,
+            "count": 1
+          }
+        }
+      }
+    }
+  ],
+  "summary": {
+    "Categories": {
+      "separate": {
+        "samples": 3,
+        "medianMs": 3582.4477,
+        "minMs": 3523.5275,
+        "maxMs": 3774.281,
+        "readCounts": [
+          3,
+          3,
+          3
+        ]
+      },
+      "batched": {
+        "samples": 3,
+        "medianMs": 3802.1275,
+        "minMs": 3740.0388,
+        "maxMs": 3927.8232,
+        "readCounts": [
+          3,
+          3,
+          3
+        ]
+      }
+    },
+    "Assets": {
+      "separate": {
+        "samples": 3,
+        "medianMs": 5002.1203,
+        "minMs": 4964.5663,
+        "maxMs": 5021.5632,
+        "readCounts": [
+          4,
+          4,
+          4
+        ]
+      },
+      "batched": {
+        "samples": 3,
+        "medianMs": 3774.3659,
+        "minMs": 3748.649,
+        "maxMs": 4359.1297,
+        "readCounts": [
+          3,
+          3,
+          3
+        ]
+      }
+    }
+  },
+  "runtimePublic": {
+    "status": {
+      "mode": "Connected",
+      "state": "RECONNECTING",
+      "singleWriterMode": true,
+      "buildId": "b9ad1fca-6c42-4bca-9680-a09e24c53494",
+      "environment": "Development",
+      "storage": "Google"
+    },
+    "loginGetStatus": 200,
+    "connectionJsStatus": 200,
+    "uiRevision": "web-ui-2026-10-16.3",
+    "tlsValidation": "enabled/default; no bypass"
+  },
+  "limits": [
+    "3 paired samples per route, not representative p95",
+    "No browser navigation/login/session/touch or real offline/reconnect run this turn",
+    "Service-error reconnect fallback still may prefetch then navigate after success",
+    "No cross-request in-flight coalescing or filtered snapshot sharing",
+    "Categories root remains 3 mandatory reads",
+    "Existing schema/journal/guard still validated; no Google business mutations"
+  ]
+}

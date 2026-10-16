@@ -5,7 +5,7 @@ namespace DuyTien.AssetManagement.Server.Presentation;
 public sealed record WebNavigation(string Url, string Label, string Icon);
 public static class WebUi
 {
-    public const string CacheRevision = "web-ui-2026-10-16.2";
+    public const string CacheRevision = "web-ui-2026-10-16.3";
     public static IReadOnlyList<WebNavigation> Navigation(ClaimsPrincipal user)
     {
         var items = new List<WebNavigation> { new("/", "Trang chủ", "home") };

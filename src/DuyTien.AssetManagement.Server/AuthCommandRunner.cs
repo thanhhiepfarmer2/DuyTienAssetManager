@@ -14,7 +14,7 @@ internal static class AuthCommandRunner
         CancellationToken cancellationToken = default)
     {
         var command = args.FirstOrDefault();
-        if (command is not ("auth-system-init" or "auth-bootstrap-admin" or "auth-recover-admin" or "auth-diagnose"))
+        if (command is not ("auth-system-init" or "auth-bootstrap-admin" or "auth-recover-admin" or "auth-diagnose" or "catalog-read-diagnose"))
         {
             return false;
         }
@@ -25,6 +25,9 @@ internal static class AuthCommandRunner
                 .AcquireAsync(command, cancellationToken);
             switch (command)
             {
+                case "catalog-read-diagnose":
+                    await Diagnostics.BusinessReadDiagnostic.RunAsync(services, cancellationToken);
+                    break;
                 case "auth-diagnose":
                     await AuthReadDiagnostic.RunAsync(services, cancellationToken);
                     break;

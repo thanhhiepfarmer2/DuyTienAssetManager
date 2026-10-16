@@ -26,9 +26,15 @@ public static class BusinessReadProof
     public static void Track(MediaCatalogState s) => Add("Media", s.Revision.ToString(System.Globalization.CultureInfo.InvariantCulture));
     private sealed class Reset(Action reset) : IDisposable { public void Dispose() => reset(); }
 }
-public sealed class ObservedBusinessStores(IAssetCatalogStore assets, ICategoryCatalogStore categories, IInventoryStore inventory, IMediaCatalogStore media, ITreeMutationStore tree)
-    : IAssetCatalogStore, ICategoryCatalogStore, IInventoryStore, IMediaCatalogStore, ITreeMutationStore
+public sealed class ObservedBusinessStores(IAssetCatalogStore assets, ICategoryCatalogStore categories, IInventoryStore inventory, IMediaCatalogStore media, ITreeMutationStore tree, IAssetCategorySnapshotReader? combined = null)
+    : IAssetCategorySnapshotReader, IAssetCatalogStore, ICategoryCatalogStore, IInventoryStore, IMediaCatalogStore, ITreeMutationStore
 {
+    public bool CanReadTogether(ICategoryCatalogStore other) => ReferenceEquals(this, other);
+    public async Task<(AssetCatalogState Assets, CategoryCatalogState Categories)> ReadAssetCategoriesAsync(CancellationToken ct = default)
+    {
+        var result = combined is null ? (await assets.ReadAsync(ct), await categories.ReadAsync(ct)) : await combined.ReadAssetCategoriesAsync(ct);
+        BusinessReadProof.Track(result.Item1); BusinessReadProof.Track(result.Item2); return result;
+    }
     async Task<AssetCatalogState> IAssetCatalogStore.ReadAsync(CancellationToken ct) { var s = await assets.ReadAsync(ct); BusinessReadProof.Track(s); return s; }
     async Task<CategoryCatalogState> ICategoryCatalogStore.ReadAsync(CancellationToken ct) { var s = await categories.ReadAsync(ct); BusinessReadProof.Track(s); return s; }
     async Task<InventoryState> IInventoryStore.ReadAsync(CancellationToken ct) { var s = await inventory.ReadAsync(ct); BusinessReadProof.Track(s); return s; }

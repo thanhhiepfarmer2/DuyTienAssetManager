@@ -78,6 +78,7 @@ if (!localOffline)
     builder.Services.AddSingleton<GoogleSheetsDataStore>();
     builder.Services.AddSingleton<GoogleAuthSystemStore>();
     builder.Services.AddSingleton<GoogleAssetCatalogStore>();
+    builder.Services.AddSingleton<GoogleAssetCategorySnapshotReader>();
     builder.Services.AddSingleton<IAssetCatalogStore>(p => p.GetRequiredService<ObservedBusinessStores>());
     builder.Services.AddSingleton<AssetCrudService>();
     builder.Services.AddSingleton<GoogleInventoryStore>();
@@ -111,7 +112,7 @@ if (!localOffline)
         serviceProvider.GetRequiredService<GoogleDriveFileStore>());
     builder.Services.AddSingleton<GoogleDriveAccessVerifier>();
     builder.Services.AddSingleton<GoogleWorkspaceProvisioner>();
-    builder.Services.AddSingleton<ObservedBusinessStores>(p => new(p.GetRequiredService<GoogleAssetCatalogStore>(), p.GetRequiredService<GoogleCategoryCatalogStore>(), p.GetRequiredService<GoogleInventoryStore>(), p.GetRequiredService<GoogleMediaCatalogStore>(), p.GetRequiredService<GoogleTreeMutationStore>()));
+    builder.Services.AddSingleton<ObservedBusinessStores>(p => new(p.GetRequiredService<GoogleAssetCatalogStore>(), p.GetRequiredService<GoogleCategoryCatalogStore>(), p.GetRequiredService<GoogleInventoryStore>(), p.GetRequiredService<GoogleMediaCatalogStore>(), p.GetRequiredService<GoogleTreeMutationStore>(), p.GetRequiredService<GoogleAssetCategorySnapshotReader>()));
     builder.Services.AddSingleton<ISingleWriterCoordinator, InProcessSingleWriterCoordinator>();
 }
 else builder.AddLocalOffline();

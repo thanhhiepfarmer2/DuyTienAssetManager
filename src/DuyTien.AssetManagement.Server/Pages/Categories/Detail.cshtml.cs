@@ -13,7 +13,7 @@ public sealed class DetailModel(CategoryCatalogService service) : PageModel
     public async Task<IActionResult> OnGetAsync(string id, CancellationToken ct)
     {
         Response.Headers.CacheControl = "no-store";
-        try { Category = await service.DetailAsync(CategoryWeb.Actor(User), id, ct); History = await service.HistoryAsync(CategoryWeb.Actor(User), id, ct); return Page(); }
+        try { (Category, History) = await service.DetailWithHistoryAsync(CategoryWeb.Actor(User), id, ct); return Page(); }
         catch (CategoryNotFoundException) { return NotFound(); }
         catch (CategoryForbiddenException) { return Forbid(); }
         catch (Exception e) when (CategoryWeb.IsExpected(e)) { Error = CategoryWeb.Message(e); Response.StatusCode = CategoryWeb.Status(e); return Page(); }

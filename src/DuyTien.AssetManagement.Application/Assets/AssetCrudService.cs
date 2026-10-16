@@ -17,7 +17,7 @@ public sealed class AssetCrudService(IAssetCatalogStore store, ICategoryCatalogS
     private async Task<(AssetList List, AssetFormChoices Filters)> BrowseCore(string actor, AssetQuery query, CancellationToken ct)
     {
         ValidateQuery(query);
-        var c = await Load(actor, "ASSETS_READ", ct);
+        var c = await Load(actor, "ASSETS_READ", ct, combinedRead: true);
         var visible = c.State.Assets.Where(a => Allowed(c, actor, "ASSETS_READ", a));
         if (!query.IncludeDeleted) visible = visible.Where(a => !a.IsDeleted);
         if (!string.IsNullOrEmpty(query.CategoryId))
@@ -38,14 +38,22 @@ public sealed class AssetCrudService(IAssetCatalogStore store, ICategoryCatalogS
     public Task<AssetView> DetailAsync(string actor, string id, CancellationToken ct = default) => writer.ReadAsync(t => DetailCore(actor, id, t), ct);
     private async Task<AssetView> DetailCore(string actor, string id, CancellationToken ct)
     {
-        var c = await Load(actor, "ASSETS_READ", ct);
+        var c = await Load(actor, "ASSETS_READ", ct, combinedRead: true);
         return View(c, Find(c, actor, "ASSETS_READ", id));
     }
+    public Task<(AssetView Item, AssetFormChoices? Choices)> DetailWithChoicesAsync(string actor, string id, bool editing, CancellationToken ct = default) => writer.ReadAsync(async token =>
+    {
+        var c = await Load(actor, "ASSETS_READ", token, combinedRead: true);
+        var item = View(c, Find(c, actor, "ASSETS_READ", id));
+        if (!editing) return (item, (AssetFormChoices?)null);
+        RequirePermission(c.Auth, actor, "ASSETS_UPDATE");
+        return (item, Choices(c, actor, "ASSETS_UPDATE"));
+    }, ct);
     public Task<AssetFormChoices> ChoicesAsync(string actor, bool editing = false, CancellationToken ct = default) => writer.ReadAsync(t => ChoicesCore(actor, editing, t), ct);
     private async Task<AssetFormChoices> ChoicesCore(string actor, bool editing, CancellationToken ct)
     {
         var permission = editing ? "ASSETS_UPDATE" : "ASSETS_CREATE";
-        var c = await Load(actor, permission, ct);
+        var c = await Load(actor, permission, ct, combinedRead: true);
         return Choices(c, actor, permission);
     }
     private AssetFormChoices Choices(Context c, string actor, string permission)
@@ -165,11 +173,13 @@ public sealed class AssetCrudService(IAssetCatalogStore store, ICategoryCatalogS
             if (!state.Aliases.Any(a => a.AssetId == id && string.Equals(a.OldCode, code, StringComparison.OrdinalIgnoreCase)))
                 state.Aliases.Add(new("ALIAS-" + Guid.NewGuid().ToString("N"), "DEMO", code, id, true));
     }
-    private async Task<Context> Load(string actor, string permission, CancellationToken ct)
+    private async Task<Context> Load(string actor, string permission, CancellationToken ct, bool combinedRead = false)
     {
         var auth = await authStore.ReadAsync(s => s.Clone(), ct);
         RequirePermission(auth, actor, permission);
-        var state = await store.ReadAsync(ct); var tree = await categories.ReadAsync(ct);
+        AssetCatalogState state; CategoryCatalogState tree;
+        if (combinedRead && store is IAssetCategorySnapshotReader combined && combined.CanReadTogether(categories)) (state, tree) = await combined.ReadAssetCategoriesAsync(ct);
+        else { state = await store.ReadAsync(ct); tree = await categories.ReadAsync(ct); }
         try
         {
             var h = new ScopeHierarchySet(ScopeHierarchy.Create(AuthScopeType.OrgUnit, state.OrgUnits.Select(n => new ScopeNode(n.Id, n.ParentId))),

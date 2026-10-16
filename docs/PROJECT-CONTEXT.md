@@ -1,3 +1,13 @@
+# Hiệu năng TASK-021 —16/10, IN_REVIEW
+
+Giảm source calls, giữ pacing1250ms/cooldown/single-writer/auth/scope/freshness/guard. Assets raw ranges + categories cùng business spreadsheet1batch, system auth giữ riêng; hai parser/schema/journal/counter/alias/audit/digest đều chạy. Detail/choices và category detail/history chia context/read lease, không persistent shared raw/filtered cache. Reconnect clean readable điều hướng thẳng, dirty giữ form; service-error giữ verification/backoff (nhánh này vẫn có thể fetch+navigation), pagehide abort GET/poll.
+
+Google CLI A/B3cặp mỗi route, cùng binary/data/authority/revision, no web session/no touch: Assets4→3GET, median5002.12→3774.37ms; Categories3→3/control. Tổng45GET kể warmup/0Google API writes, không business data writes. Không suy web-navigation/browser/p95<500ms.166/166tests +25/25crosschecks +Node11/11exit0; Releaseexit0/0warnings/errors7.92s. Backend hiện1/PID24368, Google/Development, buildb9ad1fca-6c42-4bca-9680-a09e24c53494/UIrevisionweb-ui-2026-10-16.3; launcher DuyTien-Web.cmd→https://localhost:7008/Account/Login. StrictTLS publicGET200 không login proof.
+
+Browser vẫn STOPPED_TOOL_URL_CONFIDENCE, không thử driver khác/cookie extraction/reset hoặc giao UAT user. Detail Google/session/touch/network/concurrency browser chưa đo. Task021IN_REVIEW; task/gates cũ giữ, Android dừng/iOS hoãn, source/rule OPEN/TBD. Không task mới/commit/push/deploy. [Map](07-testing/TASK-021-REQUEST-MAP.md), [report](07-testing/TEST-REPORT-TASK-021.md), [số đo](07-testing/TASK-021-READ-PERFORMANCE.json). Các checkpoint dưới giữ lịch sử theo phiên bản.
+
+---
+
 # Runtime16/10 — TASK-017–021 tiếp tục IN_REVIEW
 
 User đã login admin hiện có trực tiếp form, AI thấy Home/Danh mục trong Chrome qua Windows sky. Google auth CLI3snapshot đọc thật/admin Active3ALL/exit0; POST login302 và protected Google reads đã có. Tool lại dừng URL-confidence khi mở Assets, không tiếp tục browser input; các module/narrow/download/network/cache browser chưa đủ. Các checkpoint NOT_RUN bên dưới là lịch sử theo lượt, không phủ nhận evidence mới.

@@ -6,6 +6,7 @@ using DuyTien.AssetManagement.Application.Categories;
 using DuyTien.AssetManagement.Application.ExternalStorage;
 using DuyTien.AssetManagement.Infrastructure.Google.Configuration;
 using DuyTien.AssetManagement.Infrastructure.Google.Http;
+using ValueRange = DuyTien.AssetManagement.Infrastructure.Google.Adapters.GoogleReadValueRange;
 namespace DuyTien.AssetManagement.Infrastructure.Google.Adapters;
 
 // All managed category tables share the BUSINESS spreadsheet, never the auth spreadsheet.
@@ -98,6 +99,14 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
     public static string[] TreeChangeDetailHeader { get; } = ["OperationId", "CategoryId", "Name", "BeforePath", "AfterPath", "BeforeLevel", "AfterLevel", "BeforeState", "AfterState"];
     public static string[] TreeRegistryHeader { get; } = ["OperationId", "Kind", "EntityId", "RecordJson"];
     private static IReadOnlyDictionary<string, string[]> AllHeaders => Headers.Concat(new[] { new KeyValuePair<string, string[]>("TreeChanges", TreeChangeHeader), new KeyValuePair<string, string[]>("TreeChangeDetails", TreeChangeDetailHeader), new KeyValuePair<string, string[]>("TreeRegistryDetails", TreeRegistryHeader) }).ToDictionary(p => p.Key, p => p.Value, StringComparer.Ordinal);
+    internal string ReadSourceKey => UriFor("").AbsoluteUri;
+    internal GoogleApiRequestExecutor ReadExecutor => api;
+    internal async Task<GooglePreparedRead<CategoryCatalogState>> PrepareReadAsync(CancellationToken ct)
+    {
+        var metadata = await Metadata(ct);
+        var titles = AllHeaders.Keys.Where(t => metadata.Sheets.Any(sheet => sheet.Properties.Title == t));
+        return new(titles.Select(t => "'" + t + "'!A1:AZ20001").ToArray(), (values, token) => Load(metadata, token, values));
+    }
     private async Task<Spreadsheet> Metadata(CancellationToken ct)
     {
         if (options.GetMissingSheetsSettings().Count > 0 || string.IsNullOrWhiteSpace(options.SystemSpreadsheetId) || options.SpreadsheetId == options.SystemSpreadsheetId)
@@ -107,7 +116,7 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
         if (value.Sheets is null || value.Sheets.Any(s => s?.Properties?.GridProperties is null || string.IsNullOrWhiteSpace(s.Properties.Title)) || value.Sheets.Select(s => s.Properties.Title).Distinct(StringComparer.Ordinal).Count() != value.Sheets.Length) throw new ExternalStorageException("Metadata danh mục không hợp lệ.");
         return value;
     }
-    private async Task<CategoryCatalogState> Load(Spreadsheet metadata, CancellationToken ct)
+    private async Task<CategoryCatalogState> Load(Spreadsheet metadata, CancellationToken ct, ValueRange[]? prefetched = null)
     {
         var existing = Headers.Keys.Where(t => metadata.Sheets.Any(s => s.Properties.Title == t)).ToArray();
         var hasChanges = metadata.Sheets.Any(s => s.Properties.Title == "TreeChanges");
@@ -121,8 +130,13 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
         if (hasRegistry) existing = existing.Append("TreeRegistryDetails").ToArray();
         var allHeaders = AllHeaders;
         var query = string.Join('&', existing.Select(t => "ranges=" + Uri.EscapeDataString($"'{t}'!A1:AZ20001")));
-        using var response = await api.SendAsync(() => new HttpRequestMessage(HttpMethod.Get, UriFor("/values:batchGet?" + query + "&valueRenderOption=UNFORMATTED_VALUE")), GoogleRequestSemantics.SafeRead, ct).ConfigureAwait(false);
-        var value = await ReadJson<BatchValues>(response, ct);
+        BatchValues value;
+        if (prefetched is null)
+        {
+            using var response = await api.SendAsync(() => new HttpRequestMessage(HttpMethod.Get, UriFor("/values:batchGet?" + query + "&valueRenderOption=UNFORMATTED_VALUE")), GoogleRequestSemantics.SafeRead, ct).ConfigureAwait(false);
+            value = await ReadJson<BatchValues>(response, ct);
+        }
+        else value = new(prefetched);
         if (value?.ValueRanges?.Length != existing.Length) throw new ExternalStorageException("Google trả thiếu bảng danh mục.");
         var tables = new Dictionary<string, string[][]>(StringComparer.Ordinal);
         for (var i = 0; i < existing.Length; i++)
@@ -252,5 +266,5 @@ public sealed class GoogleCategoryCatalogStore(GoogleWorkspaceOptions options, G
     private sealed record Properties(int SheetId, string Title, Grid GridProperties);
     private sealed record Grid(int RowCount, int ColumnCount);
     private sealed record BatchValues(ValueRange[] ValueRanges);
-    private sealed record ValueRange(string Range, JsonElement[][]? Values);
+
 }

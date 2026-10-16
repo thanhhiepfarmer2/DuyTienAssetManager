@@ -148,10 +148,16 @@ internal sealed class WebIntegrationHost(WebApplication app, TreeRegistryRig rig
     public HttpClient Client() { var client = new HttpClient(new HttpClientHandler { AllowAutoRedirect = false }) { BaseAddress = new(address) }; client.DefaultRequestHeaders.Accept.Add(new("text/html")); return client; }
     public async Task<HttpClient> Cookie(string username)
     { var client = Client(); var result = await app.Services.GetRequiredService<AuthApplicationService>().LoginAsync(new(username, "fake-password", AuthClientType.Web, false, "web-fixture")); Assert.Equal(LoginStatus.Success, result.Status); client.DefaultRequestHeaders.Add("Cookie", "dt_session=" + result.AccessToken); return client; }
-    public static async Task<WebIntegrationHost> Start()
+    public static async Task<WebIntegrationHost> Start(bool batchReads = false)
     {
         var r = await TreeRegistryRig.Start(); var builder = WebApplication.CreateBuilder(new WebApplicationOptions { EnvironmentName = "Testing", ApplicationName = typeof(AssetWeb).Assembly.GetName().Name, ContentRootPath = AppContext.BaseDirectory }); builder.Logging.ClearProviders(); builder.WebHost.UseKestrel(); builder.Services.AddRazorPages();
         builder.Services.AddSingleton(r.F.Options); builder.Services.AddSingleton(r.Catalog); builder.Services.AddSingleton(r.Tree); builder.Services.AddSingleton(r.AssetService); builder.Services.AddSingleton(r.InventoryService); builder.Services.AddSingleton(r.MediaService);
+        if (batchReads)
+        {
+            var assets = r.Assets; var categories = r.Categories;
+            var observed = new DuyTien.AssetManagement.Server.ConnectedCache.ObservedBusinessStores(assets, categories, r.Inventory, r.Media, r.Joint(), new DuyTien.AssetManagement.Infrastructure.Google.Adapters.GoogleAssetCategorySnapshotReader(r.Api, assets, categories));
+            builder.Services.AddSingleton(new DuyTien.AssetManagement.Application.Assets.AssetCrudService(observed, observed, r.F.AuthFixture.Auth, r.F.Writer, r.F.AuthFixture.Clock));
+        }
         builder.Services.AddSingleton(new CategoryPreviewCache(r.F.AuthFixture.Clock)); builder.Services.AddSingleton(new MediaUploadOptions()); builder.Services.AddSingleton(new ReportService(r.Assets, r.Categories, r.Inventory, r.F.AuthFixture.Auth, r.F.Writer, r.F.AuthFixture.Clock));
         builder.Services.AddSingleton<IAuthSystemStore>(r.F.AuthFixture.Auth); builder.Services.AddSingleton<IPasswordHashService>(new TestPasswordHashService()); builder.Services.AddSingleton(new AuthPolicyOptions()); builder.Services.AddSingleton<TimeProvider>(r.F.AuthFixture.Clock); builder.Services.AddSingleton<AuthApplicationService>();
         builder.Services.AddAuthentication(OpaqueSessionAuthenticationHandler.SchemeName).AddScheme<AuthenticationSchemeOptions, OpaqueSessionAuthenticationHandler>(OpaqueSessionAuthenticationHandler.SchemeName, _ => { }); builder.Services.AddAuthorization();

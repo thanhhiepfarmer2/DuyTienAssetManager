@@ -1,7 +1,10 @@
 (() => {
-    let dirty = false, refreshing = false, refreshAttempts = 0, nextRefresh = 0;
+    let dirty = false, refreshing = false, refreshAttempts = 0, nextRefresh = 0, leaving = false;
+    const lifetime = new AbortController();
+    window.addEventListener('pagehide', () => { leaving = true; lifetime.abort(); });
     window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
     document.addEventListener('input', e => { if (e.target.closest('form[method="post"]')) dirty = true; });
+    document.addEventListener('change', e => { if (e.target.closest('form[method="post"]')) dirty = true; });
     function setReadOnly(blocked) {
         document.body.dataset.writeBlocked = String(blocked);
         document.querySelectorAll('form[method="post"] button, form[method="post"] input:not([type="hidden"]), form[method="post"] select, form[method="post"] textarea').forEach(el => {
@@ -12,8 +15,9 @@
     }
     if (document.body.dataset.connectionState === 'OFFLINE_READ_ONLY') setReadOnly(true);
     async function poll() {
+        if (leaving) return;
         try {
-            const response = await fetch('/api/connection', { cache: 'no-store' });
+            const response = await fetch('/api/connection', { cache: 'no-store', signal: lifetime.signal });
             if (!response.ok) return;
             const state = await response.json();
             const identity = document.querySelector('[data-viewer]');
@@ -39,7 +43,7 @@
                 banner.append(button);
             }
             if (state.state === 'OFFLINE_READ_ONLY') {
-                const result = await fetch('/api/connection/files', { cache: 'no-store' });
+                const result = await fetch('/api/connection/files', { cache: 'no-store', signal: lifetime.signal });
                 if (result.ok) {
                     const files = (await result.json()).files;
                     document.querySelectorAll('a[href*="/api/files/"], a[href*="/Files/Content/"]').forEach(link => {
@@ -56,13 +60,24 @@
             if (['RECONNECTING', 'SERVICE_UNAVAILABLE'].includes(state.state) && state.hasOfflineSession && !refreshing && Date.now() >= nextRefresh && !location.pathname.startsWith('/Account/')) {
                 refreshing = true;
                 nextRefresh = Date.now() + Math.min(60000, 5000 * (2 ** Math.min(refreshAttempts++, 4)));
-                const fresh = await fetch(state.refreshPath, { cache: 'no-store', headers: { 'X-DuyTien-Reconnect': '1' } });
+                // Clean readable page: navigation itself revalidates auth + loads current data.
+                // Never prefetch then discard that same response before navigating again.
+                const readablePage = /^\/(Categories|Assets|Documents|Items|Stock|Reports)(\/|$)/i.test(location.pathname) && !/\/(Create|Edit|Import|Move|Deactivate|History)(\/|$)/i.test(location.pathname);
+                if (state.state === 'RECONNECTING' && !dirty && (readablePage || location.pathname === '/Offline')) {
+                    location.replace(location.pathname === '/Offline' ? state.refreshPath : location.href);
+                    return;
+                }
+                const fresh = await fetch(state.refreshPath, { cache: 'no-store', signal: lifetime.signal, headers: { 'X-DuyTien-Reconnect': '1' } });
                 await fresh.text();
-                if (fresh.ok && fresh.headers.get('X-DuyTien-State') === 'ONLINE') { refreshAttempts = 0; if (!dirty) location.assign(location.pathname === '/Offline' ? state.refreshPath : location.href); }
+                if (fresh.ok && fresh.headers.get('X-DuyTien-State') === 'ONLINE') {
+                    refreshAttempts = 0;
+                    // Service-error recovery keeps backoff until a verified read succeeds.
+                    if (!dirty && (readablePage || location.pathname === '/Offline')) location.replace(location.pathname === '/Offline' ? state.refreshPath : location.href);
+                }
                 refreshing = false;
             }
         } catch { refreshing = false; /* backend unavailable differs from Internet loss; preserve form and never replay writes */ }
-        finally { setTimeout(poll, 5000); }
+        finally { if (!leaving) setTimeout(poll, 5000); }
     }
     poll();
 })();

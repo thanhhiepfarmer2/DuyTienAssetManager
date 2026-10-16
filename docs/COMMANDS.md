@@ -866,3 +866,22 @@ Runtime021 sửa lỗi browser cấp F/breadcrumb và public static manifest:
 `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebStaticAssetTests|FullyQualifiedName~WebUiShellTests|FullyQualifiedName~WebUiModuleTests|FullyQualifiedName~TreeMutationHttpRazorTests|FullyQualifiedName~ConnectedCacheTests|FullyQualifiedName~GoogleAuthSystemStoreTests|FullyQualifiedName~AuthApiIntegrationTests|FullyQualifiedName~LoginFailureDiagnosticsTests|FullyQualifiedName~GoogleApiRequestExecutorTests"`
 
 Static probe trước/sau dùng URL JS fingerprint thực từ HTML login và cookie giả hoàn toàn, strict TLS; chỉ GET public asset/auth lookup invalid, không dùng cookie browser. Chỉ route manifest công khai được short-circuit; `/Files/Content`, API và route giả dưới `/css` vẫn qua kiểm quyền. Browser bị tool URL-confidence dừng thì không tiếp tục app input hoặc chuyển driver để lách.
+
+
+## TASK-021 giảm Google reads16/10
+
+`dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~GoogleAssetCategoryBatchTests|FullyQualifiedName~GoogleAssetCatalogTests|FullyQualifiedName~GoogleCategoryCatalogStoreTests|FullyQualifiedName~GoogleTreeMutationTests|FullyQualifiedName~TreeRegistryTests|FullyQualifiedName~AssetCrudHttpRazorTests|FullyQualifiedName~ConnectedCacheTests|FullyQualifiedName~GoogleAuthSystemStoreTests|FullyQualifiedName~ScopeAuthorizationTests"`
+
+`node --test tests/web-ui-behavior.test.cjs tests/connection-reconnect.test.cjs`
+`node --check src/DuyTien.AssetManagement.Server/wwwroot/js/connection.js`
+
+
+`catalog-read-diagnose`: operator CLI read-only qua cùng process lease, Google/Development; `Diagnostics__BusinessReadSamples=3` bounded1–5. Chỉ fresh auth + service reads, không đăng nhập/session validation/touch; không phát sinh auth/business POST. Hai chế độ cùng binary (Separate read-only wrapper so với capability batch), warmup riêng từng route, luân phiên thứ tự3pairs, chỉ in bool equivalence/timing/count, không IDs/data/hash/credentials. Dừng backend bằng Stop-Web trước CLI, sau đó Release native `DuyTien.AssetManagement.Server.exe catalog-read-diagnose` từ Server folder; MaxRetryAttempts=1 chỉ cho lượt đo có giới hạn, pacing/cooldown không đổi. Khởi động lại bằng script Start-Web của launcher sau đo.
+
+Filter mở rộng sau sửa Category detail/history và Razor batching:
+`dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~GoogleAssetCategoryBatchTests|FullyQualifiedName~GoogleAssetCatalogTests|FullyQualifiedName~GoogleCategoryCatalogStoreTests|FullyQualifiedName~GoogleTreeMutationTests|FullyQualifiedName~TreeRegistryTests|FullyQualifiedName~AssetCrudHttpRazorTests|FullyQualifiedName~CategoryHttpRazorTests|FullyQualifiedName~CategoryHistoryTests|FullyQualifiedName~ConnectedCacheTests|FullyQualifiedName~GoogleAuthSystemStoreTests|FullyQualifiedName~ScopeAuthorizationTests"`
+
+
+Cross-check sau final source: `dotnet test tests/DuyTien.AssetManagement.ArchitectureTests/DuyTien.AssetManagement.ArchitectureTests.csproj --no-restore --nologo -v:minimal --filter "FullyQualifiedName~WebIntegrationTests|FullyQualifiedName~WebUiModuleTests|FullyQualifiedName~GoogleApiRequestExecutorTests"`.
+
+Lượt Google CLI thực16/10: Stop-Web báo recorded process already stopped/nativecount0, rồi Release build; từ repo root đặt biến process `Storage__Mode=Google`, `ConnectedCache__Enabled=true`, `DOTNET_ENVIRONMENT=Development`, `ASPNETCORE_ENVIRONMENT=Development`, `GoogleWorkspace__MaxRetryAttempts=1`, `Diagnostics__BusinessReadSamples=3`. `Start-Process` native `src\DuyTien.AssetManagement.Server\bin\Release\net10.0\DuyTien.AssetManagement.Server.exe` với `-ArgumentList @('catalog-read-diagnose')`, working directory `src\DuyTien.AssetManagement.Server`, `-WindowStyle Hidden -Wait -PassThru`, stdout/stderr vào `%LOCALAPPDATA%\DuyTienAssets\Performance021` ngoài Git. Lưu exit code và khôi phục toàn bộ env trong finally; không in log raw. `powershell.exe -NoProfile -File scripts/Start-Web.ps1 -NoBrowser` sau CLI. So payload/authority/revision boolean và counts trong JSON safe, không credentials hoặc dữ liệu nghiệp vụ. `python -B -` xử lý JSON/strict urllib HTTPS probes:exit0, không cookie/SSL bypass. Không chạy browser đang STOPPED_TOOL_URL_CONFIDENCE.

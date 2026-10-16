@@ -101,6 +101,10 @@ public sealed partial class CategoryCatalogService(ICategoryCatalogStore store, 
         var permission = export ? "CATEGORIES_EXPORT" : "CATEGORIES_READ";
         RequirePermission(auth, actor, permission);
         var state = await store.ReadAsync(ct).ConfigureAwait(false);
+        return ListSnapshot(auth, actor, permission, state, search);
+    }
+    private CategoryList ListSnapshot(AuthSystemState auth, string actor, string permission, CategoryCatalogState state, string? search)
+    {
         var nodes = state.ActiveNodes; var hierarchy = Hierarchies(nodes);
         var visible = nodes.Where(n => n.State == "DRAFT" && Allowed(auth, actor, permission, n.CategoryId, hierarchy)).ToDictionary(n => n.CategoryId, StringComparer.Ordinal);
         var views = Ordered(nodes).Where(n => visible.ContainsKey(n.CategoryId)).Select(n => View(n, visible)).ToArray();

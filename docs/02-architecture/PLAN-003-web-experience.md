@@ -57,3 +57,8 @@ TASK-021:137/137 integration passed exit0 (17s), Node5/5 exit0, benchmark Connec
 ## Runtime16/10 — cập nhật tiến độ, không thêm feature/plan
 
 Giữ016DONE/017–021IN_REVIEW. Login trung tâm hiện có được user xác nhận, Home/Danh mục được AI quan sát browser; Google auth/HTTP timing thật đã có nhưng browser dừng URL-confidence ở Assets. Sửa literal cấp F/breadcrumb, cache UI revision/legacy và Google auth read capability; public static manifest không gây Google auth thừa (actual14GET/0calls sau sửa).101/101localpass/exit0, Release0warnings/errors; backend một instance PID13680. Main Google GET vẫn nhiều giây, chưa có warm p95/page before-after/browser/cache/network đầy đủ. [Report021](../07-testing/TEST-REPORT-TASK-021.md). Không tắt pacing/guard, ghi nghiệp vụ trung tâm, reset admin, mở lại gate hoãn hoặc tiếp mobile; không đổi trạng thái để vượt AC.
+
+
+## TASK-02116/10 — hiệu năng source reads
+
+Tiếp đúng021, không task/feature mới. Fresh business values Asset+Category gom cùng spreadsheet, auth riêng; detail render chung snapshot. Read guards/coordinator/pacing giữ. Google CLI A/B3cặp Assets4→3GET/median5.00→3.77s, Categories3→3;166/166+25/25+Node11/11exit0. Chỉ CLI/no web session/touch; browser stop được tôn trọng, chưa page p95/network/runtime UAT. Giữ021IN_REVIEW và mọi gate/task trước. [Request map](../07-testing/TASK-021-REQUEST-MAP.md), [report](../07-testing/TEST-REPORT-TASK-021.md). Không mobile/commit/push/deploy.

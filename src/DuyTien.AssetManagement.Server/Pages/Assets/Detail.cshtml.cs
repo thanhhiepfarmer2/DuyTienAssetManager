@@ -20,9 +20,9 @@ public sealed class DetailModel(AssetCrudService service) : PageModel
         Response.Headers.CacheControl = "no-store";
         try
         {
-            Item = await service.DetailAsync(AssetWeb.Actor(User), id, ct); Form = AssetForm.From(Item);
+            var detail = await service.DetailWithChoicesAsync(AssetWeb.Actor(User), id, CanEdit, ct); Item = detail.Item; Form = AssetForm.From(Item);
             ExpectedVersion = Item.Asset.Version; RequestKey = Guid.NewGuid().ToString("N");
-            if (CanEdit) { Form.Choices = await service.ChoicesAsync(AssetWeb.Actor(User), true, ct); TreeVersionId = Form.Choices.TreeVersionId ?? ""; }
+            if (CanEdit) { Form.Choices = detail.Choices!; TreeVersionId = Form.Choices.TreeVersionId ?? ""; }
             return Page();
         }
         catch (AssetNotFoundException) { return NotFound(); }
@@ -54,9 +54,9 @@ public sealed class DetailModel(AssetCrudService service) : PageModel
             if (e is AssetValidationException v && v.Field is not null) ModelState.AddModelError(v.Field == "Reason" ? "Reason" : "Form." + (v.Field == "Aliases" ? "AliasesText" : v.Field), v.Message);
             try
             {
-                Item = await service.DetailAsync(AssetWeb.Actor(User), id, ct);
+                var detail = await service.DetailWithChoicesAsync(AssetWeb.Actor(User), id, true, ct); Item = detail.Item;
                 if (action != "UPDATE") Form = AssetForm.From(Item);
-                Form.Choices = await service.ChoicesAsync(AssetWeb.Actor(User), true, ct);
+                Form.Choices = detail.Choices!;
             }
             catch (AssetNotFoundException) { return NotFound(); }
             catch (AssetForbiddenException) { return Forbid(); }
